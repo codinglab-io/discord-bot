@@ -1,5 +1,25 @@
 {
+  "name": "discord-bot",
+  "type": "module",
+  "private": true,
+  "description": "Discord bot for our server",
+  "author": "Codinglab <codinglabio@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsup-node src/main.ts",
+    "dev": "tsx watch src/main.ts",
+    "lint": "eslint src/**/*.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "discord-api-types": "0.37.42",
+    "discord.js": "14.11.0"
+  },
   "devDependencies": {
-    "prettier": "^2.8.8"
+    "@types/node": "20.1.7",
+    "prettier": "2.8.8",
+    "tsup": "6.7.0",
+    "tsx": "3.12.7",
+    "typescript": "5.0.4"
   }
 }
