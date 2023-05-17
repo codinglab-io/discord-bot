@@ -43,10 +43,10 @@ jobs:
         run: pnpm typecheck
 
       - name: Lint project
-        run: pnpm affected:lint
+        run: pnpm lint
 
       - name: Build project
-        run: pnpm affected:build
+        run: pnpm build
 
       - name: Build Docker image for project
         uses: docker/build-push-action@v4
