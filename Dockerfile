@@ -3,7 +3,7 @@ FROM node:20.1.0-alpine as base
 WORKDIR /app
 
 RUN corepack enable
-RUN apk add --no-cache python3 make g++ git
+RUN apk add --no-cache python3 make g++
 
 COPY pnpm-lock.yaml ./pnpm-lock.yaml
 
