@@ -1,0 +1,15 @@
+# Node
+node_modules
+
+# Logs
+*.log
+
+# IDE
+.vscode
+.idea
+
+# Build output
+dist
+
+# Environment
+.env

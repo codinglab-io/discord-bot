@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", ":semanticCommitTypeAll(chore)"],
+  "packageRules": [
+    {
+      "groupName": "all dependencies",
+      "groupSlug": "all",
+      "packageRules": [
+        {
+          "groupName": "all dependencies",
+          "groupSlug": "all",
+          "matchPackagePatterns": ["*"],
+          "ignoreUnstable": false
+        }
+      ],
+      "ignoreUnstable": false,
+      "separateMajorMinor": true
+    }
+  ],
+  "timezone": "Europe/Paris",
+  "schedule": ["every saturday"],
+  "rangeStrategy": "pin",
+  "enabledManagers": ["npm", "nvm", "dockerfile", "docker-compose", "github-actions"]
+}
