@@ -1,4 +1,11 @@
-import { setTimeout } from 'node:timers/promises';
+import { Client } from 'discord.js';
 
-await setTimeout(1000);
-console.log('it works');
+import { bootstrap } from './bootstrap';
+
+const client = new Client({
+  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers'],
+});
+
+await bootstrap(client);
+
+console.log('Bot started.');

@@ -5,16 +5,16 @@ WORKDIR /app
 RUN corepack enable
 RUN apk add --no-cache python3 make g++
 
-COPY pnpm-lock.yaml ./pnpm-lock.yaml
+COPY pnpm-lock.yaml package.json ./
 
 RUN pnpm fetch
-
-COPY package.json .npmrc tsup.config.ts tsconfig.json ./
-COPY src ./src
 
 FROM base as build
 
 WORKDIR /app
+
+COPY tsup.config.ts ./
+COPY src ./src
 
 RUN pnpm install --frozen-lockfile --offline && \
     pnpm run build
