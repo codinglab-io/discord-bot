@@ -1,4 +1,4 @@
-FROM node:20.1.0-alpine as base
+FROM node:20.2.0-alpine as base
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ WORKDIR /app
 
 RUN pnpm install --production --frozen-lockfile --offline
 
-FROM node:20.1.0-alpine as application
+FROM node:20.2.0-alpine as application
 
 WORKDIR /app
 
