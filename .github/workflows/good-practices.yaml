@@ -19,6 +19,7 @@ jobs:
 
     permissions:
       security-events: write
+      pull-requests: read
 
     steps:
       - name: Checkout repository
