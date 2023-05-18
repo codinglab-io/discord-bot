@@ -1,0 +1,28 @@
+parser: '@typescript-eslint/parser'
+parserOptions:
+  sourceType: module
+  ecmaVersion: 2022
+  project: ./tsconfig.json
+
+extends:
+  - plugin:@typescript-eslint/recommended
+  - plugin:@typescript-eslint/recommended-requiring-type-checking
+  - plugin:sonarjs/recommended
+  - plugin:prettier/recommended
+
+plugins:
+  - simple-import-sort
+  - import
+  - only-error
+  - unused-imports
+
+rules:
+  import/exports-last: error
+  import/first: error
+  import/no-duplicates: error
+  import/order: off
+
+  simple-import-sort/imports: error
+  simple-import-sort/exports: error
+
+  unused-imports/no-unused-imports: error
