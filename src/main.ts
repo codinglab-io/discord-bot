@@ -82,4 +82,4 @@ await rest.put(Routes.applicationGuildCommands(discord.clientId, discord.guildId
   body: [voiceOnDemandCommand],
 });
 
-console.log('Bot started');
+console.log('Bot started.');
