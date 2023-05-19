@@ -21,9 +21,6 @@ dependencies:
     version: 3.0.4
 
 devDependencies:
-  '@types/is-url':
-    specifier: 1.2.30
-    version: 1.2.30
   '@types/node':
     specifier: 20.2.0
     version: 20.2.0
@@ -481,10 +478,6 @@ packages:
   /@tokenizer/token@0.3.0:
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
     dev: false
-
-  /@types/is-url@1.2.30:
-    resolution: {integrity: sha512-AnlNFwjzC8XLda5VjRl4ItSd8qp8pSNowvsut0WwQyBWHpOxjxRJm8iO6uETWqEyLdYdb9/1j+Qd9gQ4l5I4fw==}
-    dev: true
 
   /@types/json-schema@7.0.11:
     resolution: {integrity: sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==}
