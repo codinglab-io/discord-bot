@@ -17,8 +17,11 @@ concurrency:
 jobs:
   deployment:
     runs-on: ubuntu-22.04
-
     permissions: read-all
+
+    environment:
+      name: production
+      url: http://discord.gg/7Guzz9e
 
     steps:
       - name: Checkout repository
