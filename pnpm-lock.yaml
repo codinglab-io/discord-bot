@@ -4,9 +4,6 @@ dependencies:
   '@keyv/redis':
     specifier: 2.5.8
     version: 2.5.8
-  discord-api-types:
-    specifier: 0.37.42
-    version: 0.37.42
   discord.js:
     specifier: 14.11.0
     version: 14.11.0
