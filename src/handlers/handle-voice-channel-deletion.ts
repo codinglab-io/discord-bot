@@ -1,8 +1,15 @@
-import type { VoiceChannel } from 'discord.js';
+import type { DMChannel, NonThreadGuildBasedChannel } from 'discord.js';
+import { ChannelType } from 'discord.js';
 
 import { cache } from '../helpers/cache';
 
-export const handleVoiceChannelDeletion = async (channel: VoiceChannel): Promise<void> => {
+export const handleVoiceChannelDeletion = async (
+  channel: DMChannel | NonThreadGuildBasedChannel
+): Promise<void> => {
+  if (channel.type !== ChannelType.GuildVoice) {
+    return;
+  }
+
   const lobbyId = await cache.get('lobbyId');
 
   const { guild, id } = channel;
