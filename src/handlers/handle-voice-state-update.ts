@@ -6,13 +6,13 @@ import { cache } from '../helpers/cache';
 
 type CheckedVoiceState = SetNonNullable<VoiceState, 'channel' | 'channelId' | 'member'>;
 
-export const isJoinState = (newState: VoiceState): newState is CheckedVoiceState =>
+const isJoinState = (newState: VoiceState): newState is CheckedVoiceState =>
   newState.channel !== null && newState.channelId !== null && newState.member !== null;
 
-export const isLeaveState = (oldDate: VoiceState): oldDate is CheckedVoiceState =>
+const isLeaveState = (oldDate: VoiceState): oldDate is CheckedVoiceState =>
   oldDate.channel !== null && oldDate.channelId !== null && oldDate.member !== null;
 
-export const handleJoin = async (state: CheckedVoiceState, lobbyId: string): Promise<void> => {
+const handleJoin = async (state: CheckedVoiceState, lobbyId: string): Promise<void> => {
   if (state.channelId !== lobbyId) {
     return;
   }
@@ -21,7 +21,7 @@ export const handleJoin = async (state: CheckedVoiceState, lobbyId: string): Pro
   await state.member.voice.setChannel(channel);
 };
 
-export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
+const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
   const channels = await cache.get('channels', []);
 
   const { channel } = state;
@@ -33,5 +33,23 @@ export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
 
     const filtered = channels.filter((channelId) => channelId !== id);
     await cache.set('channels', filtered);
+  }
+};
+
+export const handleVoiceStateUpdate = async (
+  oldState: VoiceState,
+  newState: VoiceState
+): Promise<void> => {
+  const lobbyId = await cache.get('lobbyId');
+  if (lobbyId === undefined) {
+    return;
+  }
+
+  if (isLeaveState(oldState)) {
+    await handleLeave(oldState);
+  }
+
+  if (isJoinState(newState)) {
+    await handleJoin(newState, lobbyId);
   }
 };

@@ -1,18 +1,12 @@
-import { ChannelType, Client, MessageType, REST, Routes } from 'discord.js';
+import { Client, MessageType, REST, Routes } from 'discord.js';
 
 import { voiceOnDemandCommand } from './commands';
 import { config } from './config';
-import { createLobby } from './create-lobby';
 import { deleteExistingCommands } from './delete-existing-commands';
 import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
+import { handleInteractionCreation } from './handlers/handle-interaction-creation';
 import { handleVoiceChannelDeletion } from './handlers/handle-voice-channel-deletion';
-import {
-  handleJoin,
-  handleLeave,
-  isJoinState,
-  isLeaveState,
-} from './handlers/voice-state-handlers';
-import { cache } from './helpers/cache';
+import { handleVoiceStateUpdate } from './handlers/handle-voice-state-update';
 
 const { discord } = config;
 
@@ -37,42 +31,15 @@ const client = new Client({
 await bootstrap(client);
 
 client.on('channelDelete', async (channel) => {
-  if (channel.type === ChannelType.GuildVoice) {
-    await handleVoiceChannelDeletion(channel);
-  }
+  await handleVoiceChannelDeletion(channel);
 });
 
 client.on('voiceStateUpdate', async (oldState, newState) => {
-  const lobbyId = await cache.get('lobbyId');
-  if (lobbyId === undefined) {
-    return;
-  }
-
-  if (isLeaveState(oldState)) {
-    await handleLeave(oldState);
-  }
-
-  if (isJoinState(newState)) {
-    await handleJoin(newState, lobbyId);
-  }
+  await handleVoiceStateUpdate(oldState, newState);
 });
 
 client.on('interactionCreate', async (interaction) => {
-  if (
-    !interaction.isCommand() ||
-    !interaction.inGuild() ||
-    !interaction.isChatInputCommand() ||
-    interaction.commandName !== 'voice-on-demand'
-  ) {
-    return;
-  }
-
-  if (interaction.options.getSubcommand(true) !== 'create') {
-    await interaction.reply('Unknown subcommand');
-    return;
-  }
-
-  await createLobby(interaction);
+  await handleInteractionCreation(interaction);
 });
 
 client.on('messageCreate', async (message) => {
