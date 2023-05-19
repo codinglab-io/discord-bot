@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deployment:
     runs-on: ubuntu-22.04
-
+    environment: production
     permissions: read-all
 
     steps:
