@@ -1,8 +1,10 @@
-import { ChannelType, Client, REST, Routes } from 'discord.js';
+import { ChannelType, Client, MessageType, REST, Routes } from 'discord.js';
 
+import { voiceOnDemandCommand } from './commands';
 import { config } from './config';
 import { createLobby } from './create-lobby';
 import { deleteExistingCommands } from './delete-existing-commands';
+import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
 import { handleVoiceChannelDeletion } from './handlers/handle-voice-channel-deletion';
 import {
   handleJoin,
@@ -11,7 +13,6 @@ import {
   isLeaveState,
 } from './handlers/voice-state-handlers';
 import { cache } from './helpers/cache';
-import { voiceOnDemandCommand } from './commands';
 
 const { discord } = config;
 
@@ -30,7 +31,7 @@ const bootstrap = async (client: Client) => {
 };
 
 const client = new Client({
-  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers'],
+  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers', 'GuildMessages', 'MessageContent'],
 });
 
 await bootstrap(client);
@@ -72,6 +73,18 @@ client.on('interactionCreate', async (interaction) => {
   }
 
   await createLobby(interaction);
+});
+
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) {
+    return;
+  }
+
+  if (message.type !== MessageType.Default) {
+    return;
+  }
+
+  await handleGuildMessageCreation(message);
 });
 
 const rest = new REST({ version: '10' }).setToken(discord.token);
