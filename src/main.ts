@@ -1,4 +1,4 @@
-import { Client, MessageType, REST, Routes } from 'discord.js';
+import { Client, REST, Routes } from 'discord.js';
 
 import { voiceOnDemandCommand } from './commands';
 import { config } from './config';
@@ -43,14 +43,6 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) {
-    return;
-  }
-
-  if (message.type !== MessageType.Default) {
-    return;
-  }
-
   await handleGuildMessageCreation(message);
 });
 
