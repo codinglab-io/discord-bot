@@ -33,7 +33,7 @@
     "eslint-plugin-unused-imports": "2.0.0",
     "prettier": "2.8.8",
     "tsup": "6.7.0",
-    "type-fest": "3.10.0",
+    "type-fest": "3.11.0",
     "typescript": "5.0.4"
   },
   "packageManager": "pnpm@8.6.0",
