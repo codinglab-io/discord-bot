@@ -3,6 +3,7 @@ import { Client, REST, Routes } from 'discord.js';
 import { voiceOnDemandCommand } from './commands';
 import { config } from './config';
 import { deleteExistingCommands } from './delete-existing-commands';
+import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
 import { handleInteractionCreation } from './handlers/handle-interaction-creation';
 import { handleVoiceChannelDeletion } from './handlers/handle-voice-channel-deletion';
 import { handleVoiceStateUpdate } from './handlers/handle-voice-state-update';
@@ -24,7 +25,7 @@ const bootstrap = async (client: Client) => {
 };
 
 const client = new Client({
-  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers'],
+  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers', 'GuildMessages', 'MessageContent'],
 });
 
 await bootstrap(client);
@@ -39,6 +40,10 @@ client.on('voiceStateUpdate', async (oldState, newState) => {
 
 client.on('interactionCreate', async (interaction) => {
   await handleInteractionCreation(interaction);
+});
+
+client.on('messageCreate', async (message) => {
+  await handleGuildMessageCreation(message);
 });
 
 const rest = new REST({ version: '10' }).setToken(discord.token);
