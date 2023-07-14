@@ -30,11 +30,11 @@ class CacheImpl implements Cache<CacheEntries> {
   public get<Key extends keyof CacheEntries>(key: Key): Promise<CacheEntries[Key] | undefined>;
   public get<Key extends keyof CacheEntries>(
     key: Key,
-    defaultValue: CacheEntries[Key]
+    defaultValue: CacheEntries[Key],
   ): Promise<CacheEntries[Key]>;
   public async get<Key extends keyof CacheEntries>(
     key: Key,
-    defaultValue?: CacheEntries[Key]
+    defaultValue?: CacheEntries[Key],
   ): Promise<CacheEntries[Key] | undefined> {
     const value = (await this.backend.get(key)) as CacheEntries[Key] | undefined;
 
@@ -43,7 +43,7 @@ class CacheImpl implements Cache<CacheEntries> {
 
   public async set<Key extends keyof CacheEntries>(
     key: Key,
-    value: CacheEntries[Key]
+    value: CacheEntries[Key],
   ): Promise<void> {
     await this.backend.set(key, value);
   }

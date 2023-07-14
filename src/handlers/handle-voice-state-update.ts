@@ -38,7 +38,7 @@ const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
 
 export const handleVoiceStateUpdate = async (
   oldState: VoiceState,
-  newState: VoiceState
+  newState: VoiceState,
 ): Promise<void> => {
   const lobbyId = await cache.get('lobbyId');
   if (lobbyId === undefined) {

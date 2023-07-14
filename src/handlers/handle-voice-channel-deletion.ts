@@ -4,7 +4,7 @@ import { ChannelType } from 'discord.js';
 import { cache } from '../helpers/cache';
 
 export const handleVoiceChannelDeletion = async (
-  channel: DMChannel | NonThreadGuildBasedChannel
+  channel: DMChannel | NonThreadGuildBasedChannel,
 ): Promise<void> => {
   if (channel.type !== ChannelType.GuildVoice) {
     return;
@@ -27,7 +27,7 @@ export const handleVoiceChannelDeletion = async (
           await guild.channels.delete(id);
           guild.channels.cache.delete(id);
         }
-      })
+      }),
     );
   }
 };
