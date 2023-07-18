@@ -10,15 +10,20 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
-  const urls = message.content.match(/https?:\/\/\S+/g);
-  if (urls === null) {
+  const twitterUrlRegex = /https?:\/\/(mobile\.)?twitter\.com\/\S+/g;
+  const twitterUrls = message.content.match(twitterUrlRegex);
+
+  if (twitterUrls === null) {
     return;
   }
 
-  const newContent = message.content.replaceAll(
-    /https?:\/\/(mobile\.)?twitter\.com/g,
-    'https://vxtwitter.com'
-  );
+  const tweetInfo = await fetch('https://api.vxtwitter.com/' + twitterUrls[0].split('/').pop());
+  const tweetInfoJson = await tweetInfo.json();
+  if (tweetInfoJson.mediaURLs.length) {
+    return;
+  }
+
+  const newContent = message.content.replace(twitterUrlRegex, 'https://vxtwitter.com');
 
   const newMessage = [`<@${message.author.id}>`, newContent].join('\n');
 
