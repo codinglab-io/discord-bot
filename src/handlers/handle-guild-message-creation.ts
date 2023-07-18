@@ -27,6 +27,10 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
+  if (!tweetInfoJson.mediaURLs.map((url) => url.split('.').pop()).includes('mp4')) {
+    return;
+  }
+
   const newContent = message.content.replace(twitterUrlRegex, 'https://vxtwitter.com');
 
   const newMessage = [`<@${message.author.id}>`, newContent].join('\n');
