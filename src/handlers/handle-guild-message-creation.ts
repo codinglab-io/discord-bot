@@ -3,10 +3,11 @@ import { MessageType } from 'discord.js';
 
 const urlMappings = [
   {
-    pattern: /https?:\/\/(mobile\.)?twitter\.com\/\S+/g,
-    replacement: 'https://vxtwitter.com',
+    pattern: /https?:\/\/(mobile\.)?twitter\.com\/(\S+)/g,
+    replacement: 'https://vxtwitter.com/$2',
   },
 ];
+
 export const handleGuildMessageCreation = async (message: Message) => {
   if (message.author.bot) {
     return;
