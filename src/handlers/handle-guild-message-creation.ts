@@ -1,6 +1,12 @@
 import type { Message } from 'discord.js';
 import { MessageType } from 'discord.js';
 
+const urlMappings = [
+  {
+    pattern: /https?:\/\/(mobile\.)?twitter\.com\/\S+/g,
+    replacement: 'https://vxtwitter.com',
+  },
+];
 export const handleGuildMessageCreation = async (message: Message) => {
   if (message.author.bot) {
     return;
@@ -10,17 +16,20 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
-  const urls = message.content.match(/https?:\/\/\S+/g);
-  if (urls === null) {
-    return;
+  let modifiedContent = message.content;
+  let hasModification = false;
+
+  for (const { pattern, replacement } of urlMappings) {
+    if (pattern.test(modifiedContent)) {
+      modifiedContent = modifiedContent.replace(pattern, replacement);
+      hasModification = true;
+    }
   }
 
-  const newContent = message.content.replaceAll(
-    /https?:\/\/(mobile\.)?twitter\.com/g,
-    'https://vxtwitter.com'
-  );
-
-  const newMessage = [`<@${message.author.id}>`, newContent].join('\n');
+  if (!hasModification) {
+    return;
+  }
+  const newMessage = [`<@${message.author.id}>`, modifiedContent].join('\n');
 
   await message.channel.send(newMessage);
   await message.delete();
