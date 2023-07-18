@@ -4,7 +4,7 @@ import { MessageType } from 'discord.js';
 const urlMappings = [
   {
     pattern: /https?:\/\/(mobile\.)?twitter\.com\/(\S+)\/status\/(\d+)/g,
-    replacement: 'https://vxtwitter.com/$3',
+    replacement: 'https://vxtwitter.com/$2/status/$3',
   },
 ];
 
