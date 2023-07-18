@@ -17,7 +17,7 @@ export const handleGuildMessageCreation = async (message: Message) => {
 
   const newContent = message.content.replaceAll(
     /https?:\/\/(mobile\.)?twitter\.com/g,
-    'https://vxtwitter.com'
+    'https://vxtwitter.com',
   );
 
   const newMessage = [`<@${message.author.id}>`, newContent].join('\n');
