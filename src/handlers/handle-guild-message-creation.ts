@@ -3,8 +3,8 @@ import { MessageType } from 'discord.js';
 
 const urlMappings = [
   {
-    pattern: /https?:\/\/(mobile\.)?twitter\.com\/(\S+)/g,
-    replacement: 'https://vxtwitter.com/$2',
+    pattern: /https?:\/\/(mobile\.)?twitter\.com\/(\S+)\/status\/(\d+)/g,
+    replacement: 'https://vxtwitter.com/$3',
   },
 ];
 
