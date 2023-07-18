@@ -1,6 +1,10 @@
 import type { Message } from 'discord.js';
 import { MessageType } from 'discord.js';
 
+interface TweetInfo {
+  mediaURLs: string[];
+}
+
 export const handleGuildMessageCreation = async (message: Message) => {
   if (message.author.bot) {
     return;
@@ -18,7 +22,7 @@ export const handleGuildMessageCreation = async (message: Message) => {
   }
 
   const tweetInfo = await fetch('https://api.vxtwitter.com/' + twitterUrls[0].split('/').pop());
-  const tweetInfoJson = await tweetInfo.json();
+  const tweetInfoJson = (await tweetInfo.json()) as unknown as TweetInfo;
   if (tweetInfoJson.mediaURLs.length) {
     return;
   }
