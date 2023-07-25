@@ -12,9 +12,16 @@ export const coolLinksManagement = async (message: Message) => {
 
   await message.react('✅');
   await message.react('❌');
-  const { result, error } = await ogs({ url: detectedURLs[0] });
-  const threadName = error ? message.content : `${result.ogSiteName} - ${result.ogTitle}`;
-  await message.startThread({
-    name: threadName,
-  });
+  try {
+    const { result } = await ogs({ url: detectedURLs[0] });
+    const threadName = result.success
+      ? `${result.ogSiteName} - ${result.ogTitle}`
+      : message.content;
+    await message.startThread({
+      name: threadName,
+      autoArchiveDuration: 4320,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 };
