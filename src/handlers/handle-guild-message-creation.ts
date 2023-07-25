@@ -3,13 +3,7 @@ import { MessageType } from 'discord.js';
 
 import { config } from '../config';
 import { coolLinksManagement } from '../cool-links-management';
-
-const urlMappings = [
-  {
-    pattern: /https?:\/\/(mobile\.)?twitter\.com\/(\S+)\/status\/(\d+)/g,
-    replacement: 'https://vxtwitter.com/$2/status/$3',
-  },
-];
+import { patternReplacement } from '../pattern-replacement';
 
 export const handleGuildMessageCreation = async (message: Message) => {
   if (message.author.bot) {
@@ -25,21 +19,5 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
-  let modifiedContent = message.content;
-  let hasModification = false;
-
-  for (const { pattern, replacement } of urlMappings) {
-    if (pattern.test(modifiedContent)) {
-      modifiedContent = modifiedContent.replace(pattern, replacement);
-      hasModification = true;
-    }
-  }
-
-  if (!hasModification) {
-    return;
-  }
-  const newMessage = [`<@${message.author.id}>`, modifiedContent].join('\n');
-
-  await message.channel.send(newMessage);
-  await message.delete();
+  await patternReplacement(message);
 };
