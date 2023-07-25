@@ -7,15 +7,21 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
     !interaction.isCommand() ||
     !interaction.inGuild() ||
     !interaction.isChatInputCommand() ||
-    interaction.commandName !== 'voice-on-demand'
+    !['voice-on-demand', 'fart'].includes(interaction.commandName)
   ) {
     return;
   }
 
-  if (interaction.options.getSubcommand(true) !== 'create') {
-    await interaction.reply('Unknown subcommand');
-    return;
+  switch (interaction.commandName) {
+    case 'voice-on-demand':
+      if (interaction.options.getSubcommand(true) !== 'create') {
+        await interaction.reply('Unknown subcommand');
+        return;
+      }
+      await createLobby(interaction);
+      break;
+    case 'fart':
+      await interaction.reply('http://prout.dev');
+      break;
   }
-
-  await createLobby(interaction);
 };
