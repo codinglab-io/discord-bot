@@ -1,9 +1,10 @@
-import { Client, REST, Routes } from 'discord.js';
+import { Client, Partials, REST, Routes } from 'discord.js';
 
-import { fartCommand, voiceOnDemandCommand } from './commands';
+import { bankCommand, fartCommand, voiceOnDemandCommand } from './commands';
 import { config } from './config';
 import { deleteExistingCommands } from './delete-existing-commands';
 import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
+import { handleGuildMessageReaction } from './handlers/handle-guild-message-reaction';
 import { handleInteractionCreation } from './handlers/handle-interaction-creation';
 import { handleVoiceChannelDeletion } from './handlers/handle-voice-channel-deletion';
 import { handleVoiceStateUpdate } from './handlers/handle-voice-state-update';
@@ -25,7 +26,15 @@ const bootstrap = async (client: Client) => {
 };
 
 const client = new Client({
-  intents: ['Guilds', 'GuildVoiceStates', 'GuildMembers', 'GuildMessages', 'MessageContent'],
+  intents: [
+    'Guilds',
+    'GuildVoiceStates',
+    'GuildMembers',
+    'GuildMessages',
+    'MessageContent',
+    'GuildMessageReactions',
+  ],
+  partials: [Partials.Reaction, Partials.Message],
 });
 
 await bootstrap(client);
@@ -46,12 +55,16 @@ client.on('messageCreate', async (message) => {
   await handleGuildMessageCreation(message);
 });
 
+client.on('messageReactionAdd', async (reaction, user) => {
+  await handleGuildMessageReaction(reaction, user);
+});
+
 const rest = new REST({ version: '10' }).setToken(discord.token);
 
 await deleteExistingCommands(rest, discord);
 
 await rest.put(Routes.applicationGuildCommands(discord.clientId, discord.guildId), {
-  body: [voiceOnDemandCommand, fartCommand],
+  body: [voiceOnDemandCommand, fartCommand, bankCommand],
 });
 
 console.log('Bot started.');
