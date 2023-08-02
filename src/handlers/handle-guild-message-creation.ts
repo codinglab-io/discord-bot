@@ -19,5 +19,12 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
+  const content = message.content.toLowerCase().replace(/[^a-z]/g, '');
+  const feurPattern = /\bfe+u+r+\b/;
+  if (feurPattern.test(content)) {
+    await message.delete();
+    return;
+  }
+
   await patternReplacement(message);
 };
