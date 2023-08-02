@@ -1,4 +1,4 @@
-import type { Message } from 'discord.js';
+import { type Message, ThreadAutoArchiveDuration } from 'discord.js';
 import ogs from 'open-graph-scraper';
 
 const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> => {
@@ -10,9 +10,11 @@ const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> =
     const ogTitle = result.ogTitle;
     if (ogSiteName && ogTitle) {
       return `${ogSiteName} - ${ogTitle}`;
-    } else if (ogSiteName) {
+    }
+    if (ogSiteName) {
       return ogSiteName;
-    } else if (ogTitle) {
+    }
+    if (ogTitle) {
       return ogTitle;
     }
   } catch (error) {
@@ -37,6 +39,6 @@ export const coolLinksManagement = async (message: Message) => {
   const threadName = await getThreadNameFromOpenGraph(detectedURLs[0]);
   await message.startThread({
     name: threadName ?? message.content,
-    autoArchiveDuration: 4320,
+    autoArchiveDuration: ThreadAutoArchiveDuration.ThreeDays,
   });
 };
