@@ -21,7 +21,7 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
       await createLobby(interaction);
       break;
     case 'fart':
-      await interaction.reply('http://prout.dev');
+      await interaction.reply('https://prout.dev');
       break;
   }
 };
