@@ -10,5 +10,5 @@ export const voiceOnDemandCommand = new SlashCommandBuilder()
 
 export const fartCommand = new SlashCommandBuilder()
   .setName('fart')
-  .setDescription("Replies with http://prout.dev, the YaourtGG's masterpiece")
+  .setDescription("Replies with http://prout.dev")
   .toJSON();
