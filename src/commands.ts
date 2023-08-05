@@ -7,3 +7,8 @@ export const voiceOnDemandCommand = new SlashCommandBuilder()
     subcommand.setName('create').setDescription('Creates the voice lobby'),
   )
   .toJSON();
+
+export const fartCommand = new SlashCommandBuilder()
+  .setName('fart')
+  .setDescription("Replies with https://prout.dev")
+  .toJSON();

@@ -17,6 +17,7 @@
     "discord.js": "14.12.1",
     "env-var": "7.3.1",
     "keyv": "4.5.3",
+    "open-graph-scraper": "6.2.2",
     "param-case": "3.0.4"
   },
   "devDependencies": {
