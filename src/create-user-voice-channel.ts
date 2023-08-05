@@ -6,7 +6,7 @@ import { normalizeName } from './utils/normalize-name';
 
 export const createUserVoiceChannel = async (
   parent: CategoryChannel | null,
-  member: GuildMember
+  member: GuildMember,
 ): Promise<string> => {
   const { displayName, id, guild } = member;
 

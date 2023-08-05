@@ -9,7 +9,8 @@
     "build": "tsup-node src/main.ts",
     "dev": "tsup-node src/main.ts --watch --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
     "lint": "eslint src/**/*.ts --report-unused-disable-directives",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest"
   },
   "dependencies": {
     "@keyv/redis": "2.7.0",
@@ -35,7 +36,8 @@
     "prettier": "3.0.0",
     "tsup": "7.2.0",
     "type-fest": "4.1.0",
-    "typescript": "5.1.6"
+    "typescript": "5.1.6",
+    "vitest": "0.34.1"
   },
   "packageManager": "pnpm@8.6.11",
   "engines": {
