@@ -1,18 +1,40 @@
+import { to } from 'await-to-js';
 import { load } from 'cheerio';
 
+import { config } from './config';
 // langfrom can't be changed to another language, this result in a translation of the summary that throw an HTTP error
-// const parseBaseUrl = `${config.thirdParties.pageSummarizerBaseUrl}/convert.php?type=expand&lang=en&langfrom=user&url=`;
+const parseBaseUrl = `${config.thirdParties.pageSummarizerBaseUrl}/convert.php?type=expand&lang=en&langfrom=user&url=`;
 
-export type PageSummary = {
+type PageSummary = {
   title: string;
   keyFeatures: string[];
   readingTime: string;
 };
+
+type PageSummarizerDataSuccess = {
+  success: true;
+  html: string;
+};
+
+type PageSummarizerDataFailure = {
+  success: false;
+  html?: undefined;
+};
+
+type PageSummarizerData = PageSummarizerDataSuccess | PageSummarizerDataFailure;
+
+const isPageSummarizeSuccessData = (
+  data: PageSummarizerData,
+): data is PageSummarizerDataSuccess => {
+  return data?.success && typeof data?.html === 'string';
+};
+
 export class NoContentFoundSummaryError extends Error {
   constructor() {
     super('No content found');
   }
 }
+
 export const parseHtmlSummarized = (html: string): Promise<PageSummary> => {
   const $ = load(html);
 
@@ -32,6 +54,33 @@ export const parseHtmlSummarized = (html: string): Promise<PageSummary> => {
   });
 };
 
-/* export const getCoolPageSummarized = async (url: string) => {
-  const response = await fetch(url);
-}; */
+export const getPageSummaryDiscordView = (pageSummary: PageSummary) => {
+  const { title, keyFeatures, readingTime } = pageSummary;
+  return `**${title}** \n
+  ${keyFeatures.map((keyFeature) => `- ${keyFeature}`).join('\n')} \n
+  ⌛ ${readingTime}`;
+};
+
+export const getPageSummary = async (pageUrl: string) => {
+  const [responseError, response] = await to(fetch(`${parseBaseUrl}${pageUrl}`));
+  if (responseError) {
+    throw responseError;
+  }
+  const [dataError, data]: [Error | null, PageSummarizerData | null | undefined] = await to(
+    response.json(),
+  );
+  if (dataError) {
+    throw dataError;
+  }
+  // idk what's the type of data if success is false, I don't tried to make it crash
+  if (data && isPageSummarizeSuccessData(data)) {
+    const { html } = data;
+
+    const [pageSummaryError, pageSummary] = await to(parseHtmlSummarized(html));
+    if (pageSummaryError) {
+      throw pageSummaryError;
+    }
+    return getPageSummaryDiscordView(pageSummary);
+  }
+  throw new Error('Page summarization failed');
+};
