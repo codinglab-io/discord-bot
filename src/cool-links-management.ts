@@ -58,7 +58,7 @@ export const coolLinksManagement = async (message: Message) => {
 
     await thread.send(summary);
   }
-  if (!youtubeUrlRegex.test(url) || !socialNetworksUrlRegex.test(url)) {
+  if (!youtubeUrlRegex.test(url) && !socialNetworksUrlRegex.test(url)) {
     try {
       const pageSummaryDiscordView = await getPageSummary(url);
       await thread.send(pageSummaryDiscordView);
