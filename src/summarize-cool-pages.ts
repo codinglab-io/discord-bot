@@ -2,7 +2,7 @@ import { to } from 'await-to-js';
 import { load } from 'cheerio';
 
 import { config } from './config';
-// langfrom can't be changed to another language, this result in a translation of the summary that throw an HTTP error
+// langfrom can't be changed to another language, this result in a translation of the summary that throw an HTTP error because we are in "FREE PLAN"
 const parseBaseUrl = `${config.thirdParties.pageSummarizerBaseUrl}/convert.php?type=expand&lang=en&langfrom=user&url=`;
 
 type PageSummary = {
