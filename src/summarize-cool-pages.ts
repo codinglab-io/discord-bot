@@ -31,7 +31,7 @@ const isPageSummarizeSuccessData = (
 
 export class NoContentFoundSummaryError extends Error {
   constructor() {
-    super('No content found');
+    super(`No content found in ${parseBaseUrl}`);
   }
 }
 
@@ -56,9 +56,9 @@ export const parseHtmlSummarized = (html: string): Promise<PageSummary> => {
 
 export const getPageSummaryDiscordView = (pageSummary: PageSummary) => {
   const { title, keyFeatures, readingTime } = pageSummary;
-  return `**${title}** \n
-  ${keyFeatures.map((keyFeature) => `- ${keyFeature}`).join('\n')} \n
-  ⌛ ${readingTime}`;
+  return `**${title}** \n${keyFeatures
+    .map((keyFeature) => `- ${keyFeature}`)
+    .join('\n')}\n⌛ ${readingTime}`;
 };
 
 export const getPageSummary = async (pageUrl: string) => {
