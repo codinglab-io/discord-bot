@@ -1,4 +1,6 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach } from 'node:test';
+
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   getPageSummaryDiscordView,
@@ -28,8 +30,15 @@ type SummarizeCoolPagesFixture = ReturnType<typeof createSummarizeCoolPagesFixtu
 describe('Feature: summarize cool pages', () => {
   let fixture: SummarizeCoolPagesFixture;
   beforeEach(() => {
+    // config is mocked to avoid to call the third party API and to avoid to handle env-var
+    vi.mock('../config', async () => ({
+      config: (await import('./mocks/config.mock')).default,
+    }));
     // useless atm but will be useful when we will have to reset the fixture
     fixture = createSummarizeCoolPagesFixture();
+  });
+  afterEach(() => {
+    vi.resetAllMocks();
   });
   describe('Rule: parseHtmlSummarized() should parse an html content', () => {
     it('parseHtmlSummarized() should return a PageSummary with an html with a summary content', async () => {

@@ -62,7 +62,7 @@ export const getPageSummaryDiscordView = (pageSummary: PageSummary) => {
 };
 
 export const getPageSummary = async (pageUrl: string) => {
-  const [responseError, response] = await to(fetch(`${parseBaseUrl}${pageUrl}`));
+  const [responseError, response] = await to(fetch(`${parseBaseUrl}${pageUrl}`, { method: 'GET' }));
   if (responseError) {
     throw responseError;
   }
