@@ -1,7 +1,7 @@
-import { to } from 'await-to-js';
 import { load } from 'cheerio';
 
 import { config } from './config';
+import { resolveCatch } from './helpers/resolve-catch.helper';
 // langfrom can't be changed to another language, this result in a translation of the summary that throw an HTTP error because we are in "FREE PLAN"
 const parseBaseUrl = `${config.thirdParties.pageSummarizerBaseUrl}/convert.php?type=expand&lang=en&langfrom=user&url=`;
 
@@ -62,13 +62,14 @@ export const getPageSummaryDiscordView = (pageSummary: PageSummary) => {
 };
 
 export const getPageSummary = async (pageUrl: string) => {
-  const [responseError, response] = await to(fetch(`${parseBaseUrl}${pageUrl}`, { method: 'GET' }));
+  const [responseError, response] = await resolveCatch(
+    fetch(`${parseBaseUrl}${pageUrl}`, { method: 'GET' }),
+  );
   if (responseError) {
     throw responseError;
   }
-  const [dataError, data]: [Error | null, PageSummarizerData | null | undefined] = await to(
-    response.json(),
-  );
+  const [dataError, data]: [Error | null, PageSummarizerData | null | undefined] =
+    await resolveCatch(response.json());
   if (dataError) {
     throw dataError;
   }
@@ -76,7 +77,7 @@ export const getPageSummary = async (pageUrl: string) => {
   if (data && isPageSummarizeSuccessData(data)) {
     const { html } = data;
 
-    const [pageSummaryError, pageSummary] = await to(parseHtmlSummarized(html));
+    const [pageSummaryError, pageSummary] = await resolveCatch(parseHtmlSummarized(html));
     if (pageSummaryError) {
       throw pageSummaryError;
     }
