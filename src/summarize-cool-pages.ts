@@ -30,23 +30,41 @@ const isPageSummarizeSuccessData = (
 };
 
 export class NoContentFoundSummaryError extends Error {
-  constructor() {
-    super(`No content found in ${parseBaseUrl}`);
+  constructor(readonly pageUrl: string) {
+    super();
+    this.message = `Content Not Found for ${pageUrl}`;
+    this.name = 'NotContentFoundError';
   }
 }
-
-export const parseHtmlSummarized = (html: string): Promise<PageSummary> => {
+export class PageSummarizerInvalidDataError extends Error {
+  constructor(
+    readonly pageUrl: string,
+    readonly data?: PageSummarizerDataFailure,
+  ) {
+    super();
+    this.message = `Invalid data for ${pageUrl}, check the third party API, received: ${JSON.stringify(
+      data,
+    )}`;
+    this.name = 'PageSummarizerInvalidDataError';
+  }
+}
+export const parseHtmlSummarized = ({
+  html,
+  url,
+}: {
+  html: string;
+  url: string;
+}): Promise<PageSummary> => {
   const $ = load(html);
 
   const title = $('.box.narrow h2').text();
   if (title === 'No content found') {
-    throw new NoContentFoundSummaryError();
+    throw new NoContentFoundSummaryError(url);
   }
   const keyFeatures = $('.box.narrow ul li')
     .toArray()
     .map((li) => $(li).text());
   const readingTime = $('.time-to-read').text();
-
   return Promise.resolve({
     title,
     keyFeatures,
@@ -68,20 +86,24 @@ export const getPageSummary = async (pageUrl: string) => {
   if (responseError) {
     throw responseError;
   }
-  const [dataError, data]: [Error | null, PageSummarizerData | null | undefined] =
-    await resolveCatch(response.json());
+  const [dataError, data] = await resolveCatch(response.json() as Promise<PageSummarizerData>);
   if (dataError) {
     throw dataError;
   }
   // idk what's the type of data if success is false, I don't tried to make it crash
-  if (data && isPageSummarizeSuccessData(data)) {
+  if (isPageSummarizeSuccessData(data)) {
     const { html } = data;
 
-    const [pageSummaryError, pageSummary] = await resolveCatch(parseHtmlSummarized(html));
+    const [pageSummaryError, pageSummary] = await resolveCatch(
+      parseHtmlSummarized({
+        html,
+        url: pageUrl,
+      }),
+    );
     if (pageSummaryError) {
       throw pageSummaryError;
     }
     return getPageSummaryDiscordView(pageSummary);
   }
-  throw new Error('Page summarization failed');
+  throw new PageSummarizerInvalidDataError(pageUrl, data);
 };
