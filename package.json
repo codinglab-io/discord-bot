@@ -15,15 +15,15 @@
   "dependencies": {
     "@keyv/redis": "2.7.0",
     "discord.js": "14.13.0",
-    "env-var": "7.4.0",
+    "env-var": "7.4.1",
     "keyv": "4.5.3",
     "open-graph-scraper": "6.2.2",
     "param-case": "3.0.4"
   },
   "devDependencies": {
-    "@types/node": "20.5.6",
-    "@typescript-eslint/eslint-plugin": "6.4.1",
-    "@typescript-eslint/parser": "6.4.1",
+    "@types/node": "20.5.7",
+    "@typescript-eslint/eslint-plugin": "6.5.0",
+    "@typescript-eslint/parser": "6.5.0",
     "dotenv": "16.3.1",
     "eslint": "8.48.0",
     "eslint-config-prettier": "9.0.0",
@@ -35,11 +35,11 @@
     "eslint-plugin-unused-imports": "3.0.0",
     "prettier": "3.0.2",
     "tsup": "7.2.0",
-    "type-fest": "4.2.0",
+    "type-fest": "4.3.1",
     "typescript": "5.2.2",
     "vitest": "0.34.3"
   },
-  "packageManager": "pnpm@8.6.12",
+  "packageManager": "pnpm@8.7.0",
   "engines": {
     "node": "20.5.1"
   }
