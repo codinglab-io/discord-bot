@@ -1,15 +1,11 @@
-import { afterEach } from 'node:test';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  NoContentFoundSummaryError,
   getPageSummaryDiscordView,
   isPageSummarizeSuccessData,
+  NoContentFoundSummaryError,
   parseHtmlSummarized,
-  type PageSummarizerData,
 } from '../summarize-cool-pages';
-
 const createSummarizeCoolPagesFixture = () => {
   return {
     // from https://react.dev/learn/you-might-not-need-an-effect
@@ -76,10 +72,14 @@ describe('Feature: summarize cool pages', () => {
 
   describe('Rule: isPageSummarizeSuccessData() should check if the data is a PageSummarizerDataSuccess', () => {
     it('isPageSummarizeSuccessData() should return true when the data is a PageSummarizerDataSuccess', () => {
+      // I'm using as because eslint can't autofix and sort the import itself
       const data = {
         success: true,
         html: fixture.htmlWithSummaryContent,
-      } as PageSummarizerData;
+      } as {
+        success: true;
+        html: string;
+      };
       const result = isPageSummarizeSuccessData(data);
       expect(result).toBe(true);
     });
@@ -87,7 +87,10 @@ describe('Feature: summarize cool pages', () => {
       const data = {
         success: false,
         html: undefined,
-      } as PageSummarizerData;
+      } as {
+        success: false;
+        html: undefined;
+      };
       const result = isPageSummarizeSuccessData(data);
       expect(result).toBe(false);
     });
