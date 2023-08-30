@@ -10,4 +10,7 @@ export const config = {
   redis: {
     url: env.get('REDIS_URL').required().asString(),
   },
+  thirdParties: {
+    pageSummarizerBaseUrl: env.get('PAGE_SUMMARIZER_BASE_URL').required().asString(),
+  },
 };
