@@ -3,9 +3,11 @@ import { afterEach } from 'node:test';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
-  getPageSummaryDiscordView,
   NoContentFoundSummaryError,
+  getPageSummaryDiscordView,
+  isPageSummarizeSuccessData,
   parseHtmlSummarized,
+  type PageSummarizerData,
 } from '../summarize-cool-pages';
 
 const createSummarizeCoolPagesFixture = () => {
@@ -70,5 +72,24 @@ describe('Feature: summarize cool pages', () => {
   });
   it('getPageSummaryDiscordView() should return a string with the page summary', () => {
     expect(getPageSummaryDiscordView(fixture.pageSummary)).toEqual(fixture.pageSummaryDiscordView);
+  });
+
+  describe('Rule: isPageSummarizeSuccessData() should check if the data is a PageSummarizerDataSuccess', () => {
+    it('isPageSummarizeSuccessData() should return true when the data is a PageSummarizerDataSuccess', () => {
+      const data = {
+        success: true,
+        html: fixture.htmlWithSummaryContent,
+      } as PageSummarizerData;
+      const result = isPageSummarizeSuccessData(data);
+      expect(result).toBe(true);
+    });
+    it('isPageSummarizeSuccessData() should return false when the data is not a PageSummarizerDataSuccess', () => {
+      const data = {
+        success: false,
+        html: undefined,
+      } as PageSummarizerData;
+      const result = isPageSummarizeSuccessData(data);
+      expect(result).toBe(false);
+    });
   });
 });

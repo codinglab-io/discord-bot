@@ -1,6 +1,7 @@
 import { ThreadAutoArchiveDuration, type Message } from 'discord.js';
 import ogs from 'open-graph-scraper';
 
+import { isASocialNetworkUrl } from './helpers/regex.helper';
 import { getPageSummary } from './summarize-cool-pages';
 import { getVideoSummary } from './summarize-cool-videos';
 
@@ -28,9 +29,6 @@ const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> =
 };
 
 const youtubeUrlRegex = new RegExp('^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))');
-const socialNetworksUrlRegex = new RegExp(
-  '^(?!.*(fb.me|facebook.com|t.co|instagr.am|instagram.com|lnkd.in|youtu.be|tiktok.com)).*$',
-);
 
 export const coolLinksManagement = async (message: Message) => {
   const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
@@ -58,7 +56,7 @@ export const coolLinksManagement = async (message: Message) => {
 
     await thread.send(summary);
   }
-  if (!youtubeUrlRegex.test(url) && !socialNetworksUrlRegex.test(url)) {
+  if (!youtubeUrlRegex.test(url) && !isASocialNetworkUrl(url)) {
     try {
       const pageSummaryDiscordView = await getPageSummary(url);
       await thread.send(pageSummaryDiscordView);
