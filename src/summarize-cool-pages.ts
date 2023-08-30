@@ -11,19 +11,19 @@ type PageSummary = {
   readingTime: string;
 };
 
-type PageSummarizerDataSuccess = {
+export type PageSummarizerDataSuccess = {
   success: true;
   html: string;
 };
 
-type PageSummarizerDataFailure = {
+export type PageSummarizerDataFailure = {
   success: false;
   html?: undefined;
 };
 
-type PageSummarizerData = PageSummarizerDataSuccess | PageSummarizerDataFailure;
+export type PageSummarizerData = PageSummarizerDataSuccess | PageSummarizerDataFailure;
 
-const isPageSummarizeSuccessData = (
+export const isPageSummarizeSuccessData = (
   data: PageSummarizerData,
 ): data is PageSummarizerDataSuccess => {
   return data?.success && typeof data?.html === 'string';

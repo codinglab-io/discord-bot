@@ -1,13 +1,11 @@
-import { afterEach } from 'node:test';
-
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   getPageSummaryDiscordView,
+  isPageSummarizeSuccessData,
   NoContentFoundSummaryError,
   parseHtmlSummarized,
 } from '../summarize-cool-pages';
-
 const createSummarizeCoolPagesFixture = () => {
   return {
     // from https://react.dev/learn/you-might-not-need-an-effect
@@ -70,5 +68,31 @@ describe('Feature: summarize cool pages', () => {
   });
   it('getPageSummaryDiscordView() should return a string with the page summary', () => {
     expect(getPageSummaryDiscordView(fixture.pageSummary)).toEqual(fixture.pageSummaryDiscordView);
+  });
+
+  describe('Rule: isPageSummarizeSuccessData() should check if the data is a PageSummarizerDataSuccess', () => {
+    it('isPageSummarizeSuccessData() should return true when the data is a PageSummarizerDataSuccess', () => {
+      // I'm using as because eslint can't autofix and sort the import itself
+      const data = {
+        success: true,
+        html: fixture.htmlWithSummaryContent,
+      } as {
+        success: true;
+        html: string;
+      };
+      const result = isPageSummarizeSuccessData(data);
+      expect(result).toBe(true);
+    });
+    it('isPageSummarizeSuccessData() should return false when the data is not a PageSummarizerDataSuccess', () => {
+      const data = {
+        success: false,
+        html: undefined,
+      } as {
+        success: false;
+        html: undefined;
+      };
+      const result = isPageSummarizeSuccessData(data);
+      expect(result).toBe(false);
+    });
   });
 });
