@@ -1,6 +1,6 @@
 import { Client, REST, Routes } from 'discord.js';
 
-import { fartCommand, voiceOnDemandCommand } from './commands';
+import { cronCommand, fartCommand, voiceOnDemandCommand } from './commands';
 import { config } from './config';
 import { deleteExistingCommands } from './delete-existing-commands';
 import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
@@ -51,7 +51,7 @@ const rest = new REST({ version: '10' }).setToken(discord.token);
 await deleteExistingCommands(rest, discord);
 
 await rest.put(Routes.applicationGuildCommands(discord.clientId, discord.guildId), {
-  body: [voiceOnDemandCommand, fartCommand],
+  body: [voiceOnDemandCommand, fartCommand, cronCommand],
 });
 
 console.log('Bot started.');

@@ -1,5 +1,6 @@
 import type { Interaction } from 'discord.js';
 
+import { addCron } from '../add-cron';
 import { createLobby } from '../create-lobby';
 
 export const handleInteractionCreation = async (interaction: Interaction): Promise<void> => {
@@ -7,7 +8,7 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
     !interaction.isCommand() ||
     !interaction.inGuild() ||
     !interaction.isChatInputCommand() ||
-    !['voice-on-demand', 'fart'].includes(interaction.commandName)
+    !['voice-on-demand', 'fart', 'cron'].includes(interaction.commandName)
   ) {
     return;
   }
@@ -22,6 +23,13 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
       break;
     case 'fart':
       await interaction.reply('https://prout.dev');
+      break;
+    case 'cron':
+      if (interaction.options.getSubcommand(true) !== 'add') {
+        await interaction.reply('Unknown subcommand');
+        return;
+      }
+      addCron(interaction);
       break;
   }
 };
