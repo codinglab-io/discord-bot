@@ -1,6 +1,6 @@
 import { type Guild } from 'discord.js';
 
-import { MUTED_BY_BOT } from '../constants.ts/roles';
+import { MUTED_BY_BOT } from '../constants/roles';
 
 export const handleRoleCreation = async (guild: Guild) => {
   const hasMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_BY_BOT);

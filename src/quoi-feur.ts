@@ -1,6 +1,6 @@
 import { type ChatInputCommandInteraction, type Message, TextChannel } from 'discord.js';
 
-import { MUTED_BY_BOT } from './constants.ts/roles';
+import { MUTED_BY_BOT } from './constants/roles';
 import { cache } from './helpers/cache';
 
 const quoiDetector = new RegExp(/\b\s*[qQ][uU][oO][iI]\s*[.,!?]*\s*$/i);
@@ -41,10 +41,11 @@ export const quoiFeurReact = async (message: Message) => {
   if (!quoiDetector.test(message.content)) return;
 
   const probability = 1 / 20;
-  if (Math.random() <= probability) {
-    await reactWithCoubeh(message);
-  } else {
-    await reactWithFeur(message);
+
+  try {
+    Math.random() <= probability ? await reactWithCoubeh(message) : await reactWithFeur(message);
+  } catch (error) {
+    console.error(error);
   }
 };
 
