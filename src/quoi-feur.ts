@@ -2,8 +2,8 @@ import { type ChatInputCommandInteraction, type Message, TextChannel } from 'dis
 
 import { MUTED_BY_BOT } from './constants/roles';
 import { cache } from './helpers/cache';
+import { endWithQuoi } from './helpers/regex.helper';
 
-const quoiDetector = new RegExp(/\b\s*[qQ][uU][oO][iI]\s*[.,!?]*\s*$/i);
 const ONE_MINUTE = 1 * 60 * 1000;
 
 const reactWithFeur = async (message: Message) => {
@@ -38,7 +38,7 @@ export const quoiFeurReact = async (message: Message) => {
   const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
   if (!channelHasGame) return;
 
-  if (!quoiDetector.test(message.content)) return;
+  if (!endWithQuoi(message.content)) return;
 
   const probability = 1 / 20;
 
