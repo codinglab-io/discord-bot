@@ -29,7 +29,7 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
         await interaction.reply('Unknown subcommand');
         return;
       }
-      addCron(interaction);
+      await addCron(interaction);
       break;
   }
 };
