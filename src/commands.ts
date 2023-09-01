@@ -15,5 +15,11 @@ export const fartCommand = new SlashCommandBuilder()
 
 export const quoiFeurCommand = new SlashCommandBuilder()
   .setName('quoi-feur')
-  .setDescription('Add quoi-feur game to the channel')
+  .setDescription('Manage quoi-feur game in the channel')
+  .addSubcommand((subcommand) =>
+    subcommand.setName('add').setDescription('Add the quoi-feur game in the channel'),
+  )
+  .addSubcommand((subcommand) =>
+    subcommand.setName('remove').setDescription('Remove the quoi-feur game in the channel'),
+  )
   .toJSON();

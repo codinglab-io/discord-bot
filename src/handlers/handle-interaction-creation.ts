@@ -1,7 +1,7 @@
 import type { Interaction } from 'discord.js';
 
 import { createLobby } from '../create-lobby';
-import { addQuoiFeurChannel } from '../quoi-feur';
+import { addQuoiFeurChannel, removeQuoiFeurChannel } from '../quoi-feur';
 
 export const handleInteractionCreation = async (interaction: Interaction): Promise<void> => {
   if (
@@ -25,7 +25,15 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
       await interaction.reply('https://prout.dev');
       break;
     case 'quoi-feur':
-      await addQuoiFeurChannel(interaction);
+      if (interaction.options.getSubcommand(true) === 'add') {
+        await addQuoiFeurChannel(interaction);
+        return;
+      }
+      if (interaction.options.getSubcommand(true) === 'remove') {
+        await removeQuoiFeurChannel(interaction);
+        return;
+      }
+      await interaction.reply('Unknown subcommand');
       break;
   }
 };

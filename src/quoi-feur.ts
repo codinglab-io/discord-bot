@@ -75,3 +75,25 @@ export const addQuoiFeurChannel = async (interaction: ChatInputCommandInteractio
   await cache.set('quoiFeurChannels', [...channels, channel.id]);
   await interaction.reply('Quoi-feur enabled in this channel');
 };
+
+export const removeQuoiFeurChannel = async (interaction: ChatInputCommandInteraction) => {
+  const channel = interaction.channel;
+  if (!channel || !channel.isTextBased()) return;
+
+  const channels = await cache.get('quoiFeurChannels', []);
+  if (!channels.includes(channel.id)) {
+    await interaction.reply('Quoi-feur is not enabled in this channel');
+    return;
+  }
+
+  const role = interaction.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
+  if (!role) return;
+  if (!(channel instanceof TextChannel)) return;
+
+  await channel.permissionOverwrites.delete(role);
+  await cache.set(
+    'quoiFeurChannels',
+    channels.filter((channelId) => channelId !== channel.id),
+  );
+  await interaction.reply('Quoi-feur disabled in this channel');
+};
