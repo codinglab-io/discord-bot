@@ -4,7 +4,7 @@ import { MUTED_BY_BOT } from './constants/roles';
 import { cache } from './helpers/cache';
 
 const quoiDetector = new RegExp(/\b\s*[qQ][uU][oO][iI]\s*[.,!?]*\s*$/i);
-const ONE_MINUTE = 60000;
+const ONE_MINUTE = 1 * 60 * 1000;
 
 const reactWithFeur = async (message: Message) => {
   await message.react('🇫');
