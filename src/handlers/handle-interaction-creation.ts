@@ -1,13 +1,14 @@
 import type { Interaction } from 'discord.js';
 
 import { createLobby } from '../create-lobby';
+import { addQuoiFeurChannel } from '../quoi-feur';
 
 export const handleInteractionCreation = async (interaction: Interaction): Promise<void> => {
   if (
     !interaction.isCommand() ||
     !interaction.inGuild() ||
     !interaction.isChatInputCommand() ||
-    !['voice-on-demand', 'fart'].includes(interaction.commandName)
+    !['voice-on-demand', 'fart', 'quoi-feur'].includes(interaction.commandName)
   ) {
     return;
   }
@@ -22,6 +23,9 @@ export const handleInteractionCreation = async (interaction: Interaction): Promi
       break;
     case 'fart':
       await interaction.reply('https://prout.dev');
+      break;
+    case 'quoi-feur':
+      await addQuoiFeurChannel(interaction);
       break;
   }
 };

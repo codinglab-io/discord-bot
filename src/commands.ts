@@ -10,5 +10,10 @@ export const voiceOnDemandCommand = new SlashCommandBuilder()
 
 export const fartCommand = new SlashCommandBuilder()
   .setName('fart')
-  .setDescription("Replies with https://prout.dev")
+  .setDescription('Replies with https://prout.dev')
+  .toJSON();
+
+export const quoiFeurCommand = new SlashCommandBuilder()
+  .setName('quoi-feur')
+  .setDescription('Add quoi-feur game to the channel')
   .toJSON();

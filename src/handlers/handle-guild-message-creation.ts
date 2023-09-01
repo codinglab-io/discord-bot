@@ -15,9 +15,7 @@ export const handleGuildMessageCreation = async (message: Message) => {
     return;
   }
 
-  if (message.channelId === config.discord.blablaChannelId) {
-    await quoiFeurReact(message);
-  }
+  await quoiFeurReact(message);
 
   if (message.channelId === config.discord.coolLinksChannelId) {
     await coolLinksManagement(message);
