@@ -1,5 +1,6 @@
 import type { Message } from 'discord.js';
-import { config } from './config';
+
+import { MUTED_BY_BOT } from './constants.ts/roles';
 
 const quoiDetector = new RegExp(/\b\s*[qQ][uU][oO][iI]\s*[.,!?]*\s*$/i);
 const ONE_MINUTE = 60000;
@@ -20,9 +21,14 @@ const reactWithCoubeh = async (message: Message) => {
   await message.react('🇭');
   await message.react('🔇');
 
-  message.member?.roles.add(config.discord.mutedRoleId);
+  const mutedRole = message.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
+
+  if (!mutedRole?.id) return;
+
+  await message.member?.roles.add(mutedRole.id);
+
   setTimeout(() => {
-    message.member?.roles.remove(config.discord.mutedRoleId);
+    message.member?.roles.remove(mutedRole.id).catch(console.error);
   }, ONE_MINUTE * 5);
 };
 

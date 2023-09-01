@@ -5,6 +5,7 @@ import { config } from './config';
 import { deleteExistingCommands } from './delete-existing-commands';
 import { handleGuildMessageCreation } from './handlers/handle-guild-message-creation';
 import { handleInteractionCreation } from './handlers/handle-interaction-creation';
+import { handleRoleCreation } from './handlers/handle-role-creation';
 import { handleVoiceChannelDeletion } from './handlers/handle-voice-channel-deletion';
 import { handleVoiceStateUpdate } from './handlers/handle-voice-state-update';
 
@@ -53,5 +54,8 @@ await deleteExistingCommands(rest, discord);
 await rest.put(Routes.applicationGuildCommands(discord.clientId, discord.guildId), {
   body: [voiceOnDemandCommand, fartCommand],
 });
+
+const guild = await client.guilds.fetch(discord.guildId);
+await handleRoleCreation(guild);
 
 console.log('Bot started.');

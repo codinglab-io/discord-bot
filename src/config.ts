@@ -7,7 +7,6 @@ export const config = {
     guildId: env.get('DISCORD_GUILD_ID').required().asString(),
     blablaChannelId: env.get('BLABLA_CHANNEL_ID').required().asString(),
     coolLinksChannelId: env.get('COOL_LINKS_CHANNEL_ID').required().asString(),
-    mutedRoleId: env.get('MUTED_ROLE_ID').required().asString(),
   },
   redis: {
     url: env.get('REDIS_URL').required().asString(),
