@@ -1,4 +1,4 @@
-import { ThreadAutoArchiveDuration, type Message } from 'discord.js';
+import { type Message, ThreadAutoArchiveDuration } from 'discord.js';
 import ogs from 'open-graph-scraper';
 
 import { isASocialNetworkUrl } from './helpers/regex.helper';
