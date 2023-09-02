@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsup-node src/main.ts",
     "dev": "tsup-node src/main.ts --watch --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
-    "lint": "eslint src/**/*.ts --report-unused-disable-directives",
+    "lint": "eslint src --report-unused-disable-directives",
+    "format": "prettier -c src",
     "typecheck": "tsc --noEmit",
     "test": "vitest"
   },
