@@ -1,4 +1,5 @@
 import { REST, Routes } from 'discord.js';
+
 import { config } from './config';
 
 export const deleteExistingCommands = async (
