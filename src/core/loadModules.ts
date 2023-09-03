@@ -11,7 +11,7 @@ export const loadModules = async (
 ): Promise<void> => {
   const botCommands = Object.values(modulesToLoad).flatMap((module) => module.slashCommands ?? []);
 
-  checkUniqueSlashCommandNames(modulesToLoad);
+  checkUniqueSlashCommandNames(botCommands);
   routeCommands(client, botCommands);
   await pushCommands(botCommands.map((command) => command.schema));
 
