@@ -1,10 +1,16 @@
-import { type ChatInputCommandInteraction, type Message, TextChannel } from 'discord.js';
+import {
+  ChannelType,
+  type ChatInputCommandInteraction,
+  Guild,
+  type Message,
+  Role,
+} from 'discord.js';
 
-import { MUTED_BY_BOT } from '../../constants/roles';
 import { cache } from '../../core/cache';
 import { endWithQuoi } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
+const MUTED_BY_BOT = 'Muted by bot';
 
 const reactWithFeur = async (message: Message) => {
   await message.react('🇫');
@@ -33,7 +39,7 @@ const reactWithCoubeh = async (message: Message) => {
   }, ONE_MINUTE * 5);
 };
 
-export const quoiFeurReact = async (message: Message) => {
+export const reactOnEndWithQuoi = async (message: Message) => {
   const channelIds = await cache.get('quoiFeurChannels', []);
   const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
   if (!channelHasGame) return;
@@ -49,9 +55,34 @@ export const quoiFeurReact = async (message: Message) => {
   }
 };
 
-export const addQuoiFeurChannel = async (interaction: ChatInputCommandInteraction) => {
+export const createRoleMutedByBot = async (guild: Guild | null): Promise<Role> => {
+  if (!guild) {
+    throw new Error('Guild is null in createRoleMutedByBot');
+  }
+  const existingMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_BY_BOT);
+
+  return (
+    existingMutedByBot ??
+    guild.roles.create({
+      name: MUTED_BY_BOT,
+    })
+  );
+};
+
+export const deleteRoleMutedByBot = async (guild: Guild | null): Promise<void> => {
+  if (!guild) {
+    throw new Error('Guild is null in removeRoleMutedByBot');
+  }
+  const existingMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_BY_BOT);
+
+  if (existingMutedByBot) {
+    await existingMutedByBot.delete();
+  }
+};
+
+export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
   const channel = interaction.channel;
-  if (!channel || !channel.isTextBased()) return;
+  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (channels.includes(channel.id)) {
@@ -59,12 +90,7 @@ export const addQuoiFeurChannel = async (interaction: ChatInputCommandInteractio
     return;
   }
 
-  const role = interaction.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
-  if (!role) {
-    throw new Error(`Role ${MUTED_BY_BOT} is missing`);
-  }
-
-  if (!(channel instanceof TextChannel)) return;
+  const role = await createRoleMutedByBot(interaction.guild);
   await channel.permissionOverwrites.create(role, {
     SendMessages: false,
     CreatePublicThreads: false,
@@ -77,9 +103,9 @@ export const addQuoiFeurChannel = async (interaction: ChatInputCommandInteractio
   await interaction.reply('Quoi-feur enabled in this channel');
 };
 
-export const removeQuoiFeurChannel = async (interaction: ChatInputCommandInteraction) => {
+export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
   const channel = interaction.channel;
-  if (!channel || !channel.isTextBased()) return;
+  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (!channels.includes(channel.id)) {
@@ -88,10 +114,9 @@ export const removeQuoiFeurChannel = async (interaction: ChatInputCommandInterac
   }
 
   const role = interaction.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
-  if (!role) return;
-  if (!(channel instanceof TextChannel)) return;
-
-  await channel.permissionOverwrites.delete(role);
+  if (role) {
+    await channel.permissionOverwrites.delete(role);
+  }
   await cache.set(
     'quoiFeurChannels',
     channels.filter((channelId) => channelId !== channel.id),
