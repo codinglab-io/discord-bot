@@ -2,7 +2,11 @@ import { SlashCommandBuilder } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import type { BotModule } from '../../types/bot';
-import { addRecurringMessage, hasPermission } from './recurringMessage.helpers';
+import {
+  addRecurringMessage,
+  hasPermission,
+  removeRecurringMessage,
+} from './recurringMessage.helpers';
 
 export const fart: BotModule = {
   slashCommands: [
@@ -30,7 +34,15 @@ export const fart: BotModule = {
             ),
         )
         .addSubcommand((subcommand) =>
-          subcommand.setName('remove').setDescription('Remove a recurring message'),
+          subcommand
+            .setName('remove')
+            .setDescription('Remove a recurring message')
+            .addStringOption((option) =>
+              option
+                .setName('id')
+                .setDescription('The id of the recurring message to remove')
+                .setRequired(true),
+            ),
         )
         .addSubcommand((subcommand) =>
           subcommand.setName('list').setDescription('List recurring messages'),
@@ -45,7 +57,7 @@ export const fart: BotModule = {
         remove: async (interaction) => {
           if (!hasPermission(interaction)) return;
 
-          await interaction.reply('Not implemented yet');
+          await removeRecurringMessage(interaction);
         },
         list: async (interaction) => {
           if (!hasPermission(interaction)) return;
