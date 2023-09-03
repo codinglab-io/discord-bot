@@ -9,8 +9,10 @@ export const loadModules = async (
   client: Client<true>,
   modulesToLoad: Record<string, BotModule>,
 ): Promise<void> => {
-  const botCommands = Object.values(modulesToLoad).flatMap((module) => module.slashCommands ?? []);
+  const moduleInitPromises = Object.values(modulesToLoad).map((module) => module.init?.(client));
+  await Promise.allSettled(moduleInitPromises);
 
+  const botCommands = Object.values(modulesToLoad).flatMap((module) => module.slashCommands ?? []);
   checkUniqueSlashCommandNames(botCommands);
   routeCommands(client, botCommands);
   await pushCommands(botCommands.map((command) => command.schema));
