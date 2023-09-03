@@ -1,6 +1,6 @@
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
-import type { ChatInputCommandInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, Client } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { isModo } from '../../helpers/roles';
@@ -19,6 +19,8 @@ const frequencyDisplay = {
   monthly: 'the 1st of every month at 9am',
 };
 
+const inMemoryJobList: { id: string; job: CronJob }[] = [];
+
 export type Frequency = keyof typeof cronTime;
 
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
@@ -29,36 +31,55 @@ export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   return true;
 };
 
-export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
-  const frequency = interaction.options.getString('every', true) as keyof typeof cronTime;
-  const message = interaction.options.getString('message', true);
-  const jobId = randomUUID();
-
-  const displayId = `\n (id: ${jobId})`;
-  const jobMessage = message + displayId;
-
-  if (jobMessage.length > MAX_MESSAGE_LENGTH) {
-    interaction
-      .reply(`Message is too long (max ${MAX_MESSAGE_LENGTH - displayId.length} characters)`)
-      .catch(console.error);
-    return;
-  }
-
-  const job = new CronJob(
+export const createRecurringMessage = (
+  client: Client<true>,
+  channelId: string,
+  frequency: Frequency,
+  message: string,
+): CronJob => {
+  return new CronJob(
     cronTime[frequency],
     () => {
-      interaction.channel?.send(jobMessage).catch(console.error);
+      const channel = client.channels.cache.get(channelId);
+      if (!channel || !channel.isTextBased()) {
+        console.error(`Channel ${channelId} not found`);
+        return;
+      }
+      channel.send(message).catch(console.error);
     },
     null,
     true,
     'Europe/Paris',
   );
+};
+
+export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
+  const jobId = randomUUID();
+  const channelId = interaction.channelId;
+  const frequency = interaction.options.getString('frequency', true) as keyof typeof cronTime;
+  const message = interaction.options.getString('message', true);
+
+  const displayIdInMessage = `\n (id: ${jobId})`;
+  const jobMessage = message + displayIdInMessage;
+
+  if (jobMessage.length > MAX_MESSAGE_LENGTH) {
+    interaction
+      .reply(
+        `Message is too long (max ${MAX_MESSAGE_LENGTH - displayIdInMessage.length} characters)`,
+      )
+      .catch(console.error);
+    return;
+  }
+
+  const job = createRecurringMessage(interaction.client, channelId, frequency, jobMessage);
   job.start();
+
+  inMemoryJobList.push({ id: jobId, job });
 
   const recurringMessages = await cache.get('recurringMessages', []);
   await cache.set('recurringMessages', [
     ...recurringMessages,
-    { id: jobId, job, frequency, message },
+    { id: jobId, channelId, frequency, message },
   ]);
 
   await interaction.reply(`Recurring message added ${frequencyDisplay[frequency]}`);
@@ -67,8 +88,10 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
 export const removeRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
   const jobId = interaction.options.getString('id', true);
 
+  console.log(jobId, inMemoryJobList);
+
   const recurringMessages = await cache.get('recurringMessages', []);
-  const job = recurringMessages.find(({ id }) => id === jobId)?.job;
+  const job = inMemoryJobList.find(({ id }) => id === jobId)?.job;
 
   if (!job) {
     interaction.reply('Recurring message not found').catch(console.error);
@@ -95,9 +118,21 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
   const recurringMessagesList = recurringMessages
     .map(
       ({ id, frequency, message }) =>
-        `id: ${id} - frequency: ${frequency} - ${message.substring(0, 50) + '...'}`,
+        `id: ${id} - frequency: ${frequency} - ${message.substring(0, 50)}${
+          message.length > 50 ? '...' : ''
+        }`,
     )
     .join('\n');
 
   await interaction.reply(recurringMessagesList);
+};
+
+export const relaunchRecurringMessages = async (client: Client<true>) => {
+  const recurringMessages = await cache.get('recurringMessages', []);
+
+  recurringMessages.forEach(({ id, channelId, frequency, message }) => {
+    const job = createRecurringMessage(client, channelId, frequency, message);
+    job.start();
+    inMemoryJobList.push({ id, job });
+  });
 };

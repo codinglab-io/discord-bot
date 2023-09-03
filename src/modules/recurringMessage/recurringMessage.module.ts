@@ -1,15 +1,15 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import { cache } from '../../core/cache';
 import type { BotModule } from '../../types/bot';
 import {
   addRecurringMessage,
   hasPermission,
   listRecurringMessages,
+  relaunchRecurringMessages,
   removeRecurringMessage,
 } from './recurringMessage.helpers';
 
-export const fart: BotModule = {
+export const recurringMessage: BotModule = {
   slashCommands: [
     {
       schema: new SlashCommandBuilder()
@@ -21,7 +21,7 @@ export const fart: BotModule = {
             .setDescription('Add a recurring message')
             .addStringOption((option) =>
               option
-                .setName('every')
+                .setName('frequency')
                 .setDescription('How often to send the message')
                 .addChoices(
                   { name: 'daily', value: 'daily' },
@@ -69,14 +69,9 @@ export const fart: BotModule = {
     },
   ],
   eventHandlers: {
-    ready: async () => {
+    ready: async (client) => {
       // relaunch recurring messages on bot restart
-      await cache
-        .get('recurringMessages', [])
-        .then((recurringMessages) => {
-          recurringMessages.forEach(({ job }) => job.start());
-        })
-        .catch(console.error);
+      await relaunchRecurringMessages(client);
     },
   },
 };
