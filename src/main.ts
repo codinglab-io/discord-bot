@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 
 import { config } from './config';
-import { loadModules } from './core/loaderModules';
+import { loadModules } from './core/loadModules';
 import { modules } from './modules/modules';
 
 const { discord } = config;

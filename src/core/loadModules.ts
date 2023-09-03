@@ -1,9 +1,9 @@
 import { type Client } from 'discord.js';
 
 import type { BotModule } from '../types/bot';
-import { checkUniqueSlashCommandNames } from './checkModules';
+import { checkUniqueSlashCommandNames } from './checkUniqueSlashCommandNames';
 import { pushCommands, routeCommands } from './loaderCommands';
-import { routeHandlers } from './loaderHandlers';
+import { routeHandlers } from './routeHandlers';
 
 export const loadModules = async (
   client: Client<true>,
