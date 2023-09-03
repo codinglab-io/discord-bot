@@ -56,7 +56,7 @@ export const createRecurringMessage = (
 export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
   const jobId = randomUUID();
   const channelId = interaction.channelId;
-  const frequency = interaction.options.getString('frequency', true) as keyof typeof cronTime;
+  const frequency = interaction.options.getString('frequency', true) as Frequency;
   const message = interaction.options.getString('message', true);
 
   const displayIdInMessage = `\n (id: ${jobId})`;
@@ -91,18 +91,18 @@ export const removeRecurringMessage = async (interaction: ChatInputCommandIntera
   console.log(jobId, inMemoryJobList);
 
   const recurringMessages = await cache.get('recurringMessages', []);
-  const job = inMemoryJobList.find(({ id }) => id === jobId)?.job;
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ id }) => id !== jobId),
+  );
 
+  const job = inMemoryJobList.find(({ id }) => id === jobId)?.job;
   if (!job) {
     interaction.reply('Recurring message not found').catch(console.error);
     return;
   }
 
   job.stop();
-  await cache.set(
-    'recurringMessages',
-    recurringMessages.filter(({ id }) => id !== jobId),
-  );
 
   await interaction.reply('Recurring message removed');
 };
