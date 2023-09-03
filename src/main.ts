@@ -12,8 +12,6 @@ const client = new Client({
 await client.login(discord.token);
 await new Promise<void>((resolve) => {
   client.on('ready', () => {
-    // eslint-disable-next-line
-    Object.values(modules).forEach((module) => module.eventHandlers?.ready?.(client));
     resolve();
   });
 });
