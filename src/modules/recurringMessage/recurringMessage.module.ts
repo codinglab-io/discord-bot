@@ -1,5 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 
+import { cache } from '../../core/cache';
 import type { BotModule } from '../../types/bot';
 import { addRecurringMessage, hasPermission } from './recurringMessage.helpers';
 
@@ -54,4 +55,15 @@ export const fart: BotModule = {
       },
     },
   ],
+  eventHandlers: {
+    ready: async () => {
+      // relaunch recurring messages on bot restart
+      await cache
+        .get('recurringMessages', [])
+        .then((recurringMessages) => {
+          recurringMessages.forEach(({ job }) => job.start());
+        })
+        .catch(console.error);
+    },
+  },
 };
