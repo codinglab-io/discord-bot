@@ -58,3 +58,23 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
 
   await interaction.reply(`Recurring message added ${frequencyDisplay[frequency]}`);
 };
+
+export const removeRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
+  const jobId = interaction.options.getString('id', true);
+
+  const recurringMessages = await cache.get('recurringMessages', []);
+  const job = recurringMessages.find(({ id }) => id === jobId)?.job;
+
+  if (!job) {
+    interaction.reply('Recurring message not found').catch(console.error);
+    return;
+  }
+
+  job.stop();
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ id }) => id !== jobId),
+  );
+
+  await interaction.reply('Recurring message removed');
+};
