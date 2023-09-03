@@ -19,6 +19,8 @@ const frequencyDisplay = {
   monthly: 'the 1st of every month at 9am',
 };
 
+export type Frequency = keyof typeof cronTime;
+
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   if (!isModo(interaction.member)) {
     interaction.reply('You are not allowed to use this command').catch(console.error);
@@ -54,7 +56,10 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
   job.start();
 
   const recurringMessages = await cache.get('recurringMessages', []);
-  await cache.set('recurringMessages', [...recurringMessages, { id: jobId, job }]);
+  await cache.set('recurringMessages', [
+    ...recurringMessages,
+    { id: jobId, job, frequency, message },
+  ]);
 
   await interaction.reply(`Recurring message added ${frequencyDisplay[frequency]}`);
 };
@@ -77,4 +82,22 @@ export const removeRecurringMessage = async (interaction: ChatInputCommandIntera
   );
 
   await interaction.reply('Recurring message removed');
+};
+
+export const listRecurringMessages = async (interaction: ChatInputCommandInteraction) => {
+  const recurringMessages = await cache.get('recurringMessages', []);
+
+  if (recurringMessages.length === 0) {
+    interaction.reply('No recurring message found').catch(console.error);
+    return;
+  }
+
+  const recurringMessagesList = recurringMessages
+    .map(
+      ({ id, frequency, message }) =>
+        `id: ${id} - frequency: ${frequency} - ${message.substring(0, 50) + '...'}`,
+    )
+    .join('\n');
+
+  await interaction.reply(recurringMessagesList);
 };

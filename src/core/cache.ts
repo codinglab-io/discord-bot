@@ -4,6 +4,7 @@ import type { CronJob } from 'cron';
 import Keyv from 'keyv';
 
 import { config } from '../config';
+import type { Frequency } from '../modules/recurringMessage/recurringMessage.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface CacheGet<Entries extends Record<string, any>> {
@@ -23,7 +24,7 @@ interface Cache<Entries extends Record<string, any>> {
 interface CacheEntries {
   lobbyId: string;
   channels: string[];
-  recurringMessages: { id: string; job: CronJob }[];
+  recurringMessages: { id: string; job: CronJob; frequency: Frequency; message: string }[];
 }
 
 class CacheImpl implements Cache<CacheEntries> {
