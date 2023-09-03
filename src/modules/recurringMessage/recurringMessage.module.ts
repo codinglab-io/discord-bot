@@ -5,6 +5,7 @@ import type { BotModule } from '../../types/bot';
 import {
   addRecurringMessage,
   hasPermission,
+  listRecurringMessages,
   removeRecurringMessage,
 } from './recurringMessage.helpers';
 
@@ -62,7 +63,7 @@ export const fart: BotModule = {
         list: async (interaction) => {
           if (!hasPermission(interaction)) return;
 
-          await interaction.reply('Not implemented yet');
+          await listRecurringMessages(interaction);
         },
       },
     },
