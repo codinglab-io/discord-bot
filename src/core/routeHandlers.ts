@@ -1,10 +1,10 @@
-import type { Client } from 'discord.js';
+import type { Client, ClientEvents } from 'discord.js';
 
-import type { BotModule, CustomClientEvents, EventHandler } from '../types/bot';
+import type { BotModule, EventHandler } from '../types/bot';
 
 export const routeHandlers = (client: Client<true>, modulesToLoad: Record<string, BotModule>) => {
   const eventNames = Object.values(modulesToLoad).flatMap(
-    (module) => Object.keys(module.eventHandlers ?? {}) as (keyof CustomClientEvents)[],
+    (module) => Object.keys(module.eventHandlers ?? {}) as (keyof ClientEvents)[],
   );
   const uniqueEventNames = [...new Set(eventNames)];
 
