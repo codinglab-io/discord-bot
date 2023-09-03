@@ -1,8 +1,8 @@
 import { type ChatInputCommandInteraction, type Message, TextChannel } from 'discord.js';
 
-import { MUTED_BY_BOT } from './constants/roles';
-import { cache } from './helpers/cache';
-import { endWithQuoi } from './helpers/regex.helper';
+import { MUTED_BY_BOT } from '../../constants/roles';
+import { cache } from '../../core/cache';
+import { endWithQuoi } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
 
