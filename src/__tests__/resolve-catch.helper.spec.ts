@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { resolveCatch } from '../helpers/resolve-catch.helper';
+import { resolveCatch } from '../helpers/resolveCatch.helper';
 
 describe('resolve-catch.helper', () => {
   it('should throw an error if the promise is rejected with an error', async () => {

@@ -5,7 +5,7 @@ import {
   isPageSummarizeSuccessData,
   NoContentFoundSummaryError,
   parseHtmlSummarized,
-} from '../summarize-cool-pages';
+} from '../modules/coolLinkManagement/summarizeCoolPages';
 const createSummarizeCoolPagesFixture = () => {
   return {
     // from https://react.dev/learn/you-might-not-need-an-effect
