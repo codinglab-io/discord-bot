@@ -1,6 +1,6 @@
 import type { Client, ClientEvents } from 'discord.js';
 
-import type { BotModule } from '../types/bot';
+import type { BotModule, EventHandler } from '../types/bot';
 
 export const routeHandlers = (client: Client<true>, modulesToLoad: Record<string, BotModule>) => {
   const eventNames = Object.values(modulesToLoad).flatMap(
@@ -11,7 +11,7 @@ export const routeHandlers = (client: Client<true>, modulesToLoad: Record<string
   uniqueEventNames.forEach((eventName) => {
     const eventHandlersToCall = Object.values(modulesToLoad)
       .map((module) => module.eventHandlers?.[eventName])
-      .filter((e): e is (...args: ClientEvents[keyof ClientEvents]) => Promise<void> => Boolean(e));
+      .filter((e): e is EventHandler => Boolean(e));
 
     client.on(eventName, async (...args) => {
       const handlersPromises = eventHandlersToCall.map(async (handler) => handler(...args));
