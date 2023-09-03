@@ -1,6 +1,5 @@
 import '@keyv/redis';
 
-import type { CronJob } from 'cron';
 import Keyv from 'keyv';
 
 import { config } from '../config';
@@ -25,7 +24,7 @@ interface CacheEntries {
   lobbyId: string;
   channels: string[];
   quoiFeurChannels: string[];
-  recurringMessages: { id: string; job: CronJob; frequency: Frequency; message: string }[];
+  recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
 class CacheImpl implements Cache<CacheEntries> {
