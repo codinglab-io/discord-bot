@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import type { BotModule } from '../../types/bot';
 import {
   addQuoiFeurToChannel,
-  deleteRoleMutedByBot,
+  deleteRoleMutedOnCoubeh,
   reactOnEndWithQuoi,
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
@@ -29,7 +29,7 @@ export const quoiFeur: BotModule = {
   ],
   eventHandlers: {
     // unmute everyone in every server on bot restart
-    ready: deleteRoleMutedByBot,
+    ready: deleteRoleMutedOnCoubeh,
     messageCreate: reactOnEndWithQuoi,
   },
 };

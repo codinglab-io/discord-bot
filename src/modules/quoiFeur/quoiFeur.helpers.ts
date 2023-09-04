@@ -11,7 +11,7 @@ import { cache } from '../../core/cache';
 import { removeEmoji, removePunctuation } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
-const MUTED_BY_BOT = 'Muted by bot';
+const MUTED_ON_COUBEH = 'Muted on Coubeh';
 
 const quoiDetectorRegex = /\bquoi\s*$/i;
 const endWithQuoi = (text: string) => quoiDetectorRegex.test(removeEmoji(removePunctuation(text)));
@@ -32,7 +32,7 @@ const reactWithCoubeh = async (message: Message) => {
   await message.react('🇭');
   await message.react('🔇');
 
-  const mutedRole = message.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
+  const mutedRole = message.guild?.roles.cache.find((r) => r.name === MUTED_ON_COUBEH);
 
   if (!mutedRole?.id) return;
 
@@ -59,24 +59,24 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   }
 };
 
-export const createRoleMutedByBot = async (guild: Guild | null): Promise<Role> => {
+export const createRoleMutedOnCoubeh = async (guild: Guild | null): Promise<Role> => {
   if (!guild) {
     throw new Error('Guild is null in createRoleMutedByBot');
   }
-  const existingMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_BY_BOT);
+  const existingMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_ON_COUBEH);
 
   return (
     existingMutedByBot ??
     guild.roles.create({
-      name: MUTED_BY_BOT,
+      name: MUTED_ON_COUBEH,
     })
   );
 };
 
-export const deleteRoleMutedByBot = async (client: Client<true>): Promise<void> => {
+export const deleteRoleMutedOnCoubeh = async (client: Client<true>): Promise<void> => {
   const guilds = await client.guilds.fetch().then((guilds) => guilds.map((guild) => guild.fetch()));
   const roles = await Promise.all(guilds).then((guilds) =>
-    guilds.map((guild) => guild.roles.cache.find((role) => role.name === MUTED_BY_BOT)),
+    guilds.map((guild) => guild.roles.cache.find((role) => role.name === MUTED_ON_COUBEH)),
   );
 
   for (const role of roles) {
@@ -95,7 +95,7 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
     return;
   }
 
-  const role = await createRoleMutedByBot(interaction.guild);
+  const role = await createRoleMutedOnCoubeh(interaction.guild);
   await channel.permissionOverwrites.create(role, {
     SendMessages: false,
     CreatePublicThreads: false,
@@ -118,7 +118,7 @@ export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInt
     return;
   }
 
-  const role = interaction.guild?.roles.cache.find((r) => r.name === MUTED_BY_BOT);
+  const role = interaction.guild?.roles.cache.find((r) => r.name === MUTED_ON_COUBEH);
   if (role) {
     await channel.permissionOverwrites.delete(role);
   }
