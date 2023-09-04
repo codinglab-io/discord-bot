@@ -23,6 +23,10 @@ const inMemoryJobList: { id: string; job: CronJob }[] = [];
 
 export type Frequency = keyof typeof cronTime;
 
+export const isFrequency = (frequency: string): frequency is Frequency => {
+  return Object.keys(cronTime).includes(frequency);
+};
+
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   if (!isModo(interaction.member)) {
     interaction.reply('You are not allowed to use this command').catch(console.error);
@@ -45,7 +49,7 @@ export const createRecurringMessage = (
         console.error(`Channel ${channelId} not found`);
         return;
       }
-      channel.send(message).catch(console.error);
+      void channel.send(message);
     },
     null,
     true,
@@ -56,18 +60,20 @@ export const createRecurringMessage = (
 export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
   const jobId = randomUUID();
   const channelId = interaction.channelId;
-  const frequency = interaction.options.getString('frequency', true) as Frequency;
+  const frequency = interaction.options.getString('frequency', true);
+  if (!isFrequency(frequency)) {
+    await interaction.reply(`${frequency} is not a valid frequency`);
+    return;
+  }
   const message = interaction.options.getString('message', true);
 
   const displayIdInMessage = `\n (id: ${jobId})`;
   const jobMessage = message + displayIdInMessage;
 
   if (jobMessage.length > MAX_MESSAGE_LENGTH) {
-    interaction
-      .reply(
-        `Message is too long (max ${MAX_MESSAGE_LENGTH - displayIdInMessage.length} characters)`,
-      )
-      .catch(console.error);
+    await interaction.reply(
+      `Message is too long (max ${MAX_MESSAGE_LENGTH - displayIdInMessage.length} characters)`,
+    );
     return;
   }
 
@@ -98,7 +104,7 @@ export const removeRecurringMessage = async (interaction: ChatInputCommandIntera
 
   const job = inMemoryJobList.find(({ id }) => id === jobId)?.job;
   if (!job) {
-    interaction.reply('Recurring message not found').catch(console.error);
+    await interaction.reply('Recurring message not found');
     return;
   }
 
@@ -111,7 +117,7 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
   const recurringMessages = await cache.get('recurringMessages', []);
 
   if (recurringMessages.length === 0) {
-    interaction.reply('No recurring message found').catch(console.error);
+    await interaction.reply('No recurring message found');
     return;
   }
 
