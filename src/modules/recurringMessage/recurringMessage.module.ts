@@ -69,9 +69,7 @@ export const recurringMessage: BotModule = {
     },
   ],
   eventHandlers: {
-    ready: async (client) => {
-      // relaunch recurring messages on bot restart
-      await relaunchRecurringMessages(client);
-    },
+    // relaunch recurring messages on bot restart
+    ready: relaunchRecurringMessages,
   },
 };
