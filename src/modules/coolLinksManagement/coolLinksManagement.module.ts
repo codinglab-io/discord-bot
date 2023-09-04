@@ -77,4 +77,5 @@ export const coolLinksManagement: BotModule = {
       }
     },
   },
+  intents: ['GuildMessages', 'MessageContent', 'GuildMessageReactions'],
 };
