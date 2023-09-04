@@ -15,6 +15,7 @@ export const loadModules = async (
   await pushCommands(botCommands.map((command) => command.schema));
 
   routeHandlers(client, modulesToLoad);
-  // eslint-disable-next-line
-  Object.values(modulesToLoad).forEach((module) => module.eventHandlers?.ready?.(client));
+  Object.values(modulesToLoad).forEach((module) => {
+    void module.eventHandlers?.ready?.(client);
+  });
 };
