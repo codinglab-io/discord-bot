@@ -22,6 +22,7 @@ interface Cache<Entries extends Record<string, any>> {
 interface CacheEntries {
   lobbyId: string;
   channels: string[];
+  quoiFeurChannels: string[];
 }
 
 class CacheImpl implements Cache<CacheEntries> {
