@@ -44,11 +44,11 @@ const reactWithCoubeh = async (message: Message) => {
 };
 
 export const reactOnEndWithQuoi = async (message: Message) => {
+  if (!endWithQuoi(message.content)) return;
+
   const channelIds = await cache.get('quoiFeurChannels', []);
   const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
   if (!channelHasGame) return;
-
-  if (!endWithQuoi(message.content)) return;
 
   const probability = 1 / 20;
 
