@@ -52,11 +52,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
 
   const probability = 1 / 20;
 
-  try {
-    Math.random() <= probability ? await reactWithCoubeh(message) : await reactWithFeur(message);
-  } catch (error) {
-    console.error(error);
-  }
+  Math.random() <= probability ? await reactWithCoubeh(message) : await reactWithFeur(message);
 };
 
 export const createRoleMutedOnCoubeh = async (guild: Guild | null): Promise<Role> => {
