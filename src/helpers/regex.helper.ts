@@ -3,7 +3,6 @@ const socialNetworksUrlRegex = new RegExp(
 );
 const punctuationRegex = new RegExp(/[.,!?]/g);
 const emojiRegex = new RegExp(/(\p{Extended_Pictographic}|\p{Emoji_Component})/gu);
-const quoiDetectorRegex = new RegExp(/\b\s*[q][u][o][i]\s*$/i);
 
 export const isASocialNetworkUrl = (url: string): boolean => {
   return socialNetworksUrlRegex.test(url);
@@ -11,5 +10,3 @@ export const isASocialNetworkUrl = (url: string): boolean => {
 
 export const removePunctuation = (text: string) => text.replaceAll(punctuationRegex, '');
 export const removeEmoji = (text: string) => text.replaceAll(emojiRegex, '');
-export const endWithQuoi = (text: string) =>
-  quoiDetectorRegex.test(removeEmoji(removePunctuation(text)));

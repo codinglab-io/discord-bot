@@ -1,16 +1,20 @@
 import {
   ChannelType,
   type ChatInputCommandInteraction,
+  Client,
   Guild,
   type Message,
   Role,
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
-import { endWithQuoi } from '../../helpers/regex.helper';
+import { removeEmoji, removePunctuation } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
 const MUTED_BY_BOT = 'Muted by bot';
+
+const quoiDetectorRegex = /\bquoi\s*$/i;
+const endWithQuoi = (text: string) => quoiDetectorRegex.test(removeEmoji(removePunctuation(text)));
 
 const reactWithFeur = async (message: Message) => {
   await message.react('🇫');
@@ -69,14 +73,15 @@ export const createRoleMutedByBot = async (guild: Guild | null): Promise<Role> =
   );
 };
 
-export const deleteRoleMutedByBot = async (guild: Guild | null): Promise<void> => {
-  if (!guild) {
-    throw new Error('Guild is null in removeRoleMutedByBot');
-  }
-  const existingMutedByBot = guild.roles.cache.find((role) => role.name === MUTED_BY_BOT);
+export const deleteRoleMutedByBot = async (client: Client<true>): Promise<void> => {
+  const guilds = await client.guilds.fetch().then((guilds) => guilds.map((guild) => guild.fetch()));
+  const roles = await Promise.all(guilds).then((guilds) =>
+    guilds.map((guild) => guild.roles.cache.find((role) => role.name === MUTED_BY_BOT)),
+  );
 
-  if (existingMutedByBot) {
-    await existingMutedByBot.delete();
+  for (const role of roles) {
+    if (!role) continue;
+    await role.delete();
   }
 };
 

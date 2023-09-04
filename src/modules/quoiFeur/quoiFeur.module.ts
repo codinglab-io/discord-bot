@@ -1,6 +1,5 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import { config } from '../../config';
 import type { BotModule } from '../../types/bot';
 import {
   addQuoiFeurToChannel,
@@ -23,23 +22,14 @@ export const quoiFeur: BotModule = {
         )
         .toJSON(),
       handler: {
-        add: async (interaction) => {
-          await addQuoiFeurToChannel(interaction).catch(console.error);
-        },
-        remove: async (interaction) => {
-          await removeQuoiFeurFromChannel(interaction).catch(console.error);
-        },
+        add: addQuoiFeurToChannel,
+        remove: removeQuoiFeurFromChannel,
       },
     },
   ],
   eventHandlers: {
-    ready: async (client) => {
-      const guild = client.guilds.cache.get(config.discord.guildId) ?? null;
-      // unmute everyone on bot restart
-      await deleteRoleMutedByBot(guild).catch(console.error);
-    },
-    messageCreate: async (message) => {
-      await reactOnEndWithQuoi(message).catch(console.error);
-    },
+    // unmute everyone in every server on bot restart
+    ready: deleteRoleMutedByBot,
+    messageCreate: reactOnEndWithQuoi,
   },
 };
