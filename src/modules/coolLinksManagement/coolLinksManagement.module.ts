@@ -1,7 +1,8 @@
 import { MessageType, ThreadAutoArchiveDuration } from 'discord.js';
 import ogs from 'open-graph-scraper';
+import { z } from 'zod';
 
-import { config } from '../../config';
+import { getEnv } from '../../core/env';
 import { isASocialNetworkUrl } from '../../helpers/regex.helper';
 import type { BotModule } from '../../types/bot';
 import { getPageSummary } from './summarizeCoolPages';
@@ -33,12 +34,16 @@ const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> =
 const youtubeUrlRegex = new RegExp('^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))');
 
 export const coolLinksManagement: BotModule = {
+  env: {
+    COOL_LINKS_CHANNEL_ID: z.string().nonempty(),
+  },
   eventHandlers: {
     messageCreate: async (message) => {
+      const env = getEnv();
       if (
         message.author.bot ||
         message.type !== MessageType.Default ||
-        message.channelId !== config.discord.coolLinksChannelId
+        message.channelId !== env['COOL_LINKS_CHANNEL_ID']
       ) {
         return;
       }

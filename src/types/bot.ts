@@ -3,6 +3,7 @@ import type {
   ClientEvents,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from 'discord.js';
+import type { ZodTypeAny } from 'zod';
 
 type slashCommandHandler = (
   interaction: ChatInputCommandInteraction<'cached' | 'raw'>,
@@ -18,6 +19,9 @@ export type BotCommand = {
 };
 
 export type BotModule = {
+  env?: {
+    [key: string]: ZodTypeAny;
+  };
   slashCommands?: Array<BotCommand>;
   eventHandlers?: {
     [key in keyof ClientEvents]?: EventHandler<key>;
