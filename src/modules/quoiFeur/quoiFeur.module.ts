@@ -32,4 +32,5 @@ export const quoiFeur: BotModule = {
     ready: deleteRoleMutedOnCoubeh,
     messageCreate: reactOnEndWithQuoi,
   },
+  intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
 };

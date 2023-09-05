@@ -1,6 +1,7 @@
 import type {
   ChatInputCommandInteraction,
   ClientEvents,
+  ClientOptions,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from 'discord.js';
 
@@ -22,4 +23,5 @@ export type BotModule = {
   eventHandlers?: {
     [key in keyof ClientEvents]?: EventHandler<key>;
   };
+  intents?: ClientOptions['intents'];
 };

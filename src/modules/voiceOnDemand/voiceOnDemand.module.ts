@@ -93,4 +93,5 @@ export const voiceOnDemand: BotModule = {
       }
     },
   },
+  intents: ['GuildVoiceStates', 'GuildMembers'],
 };

@@ -38,4 +38,5 @@ export const patternReplace: BotModule = {
       await message.delete();
     },
   },
+  intents: ['GuildMessages', 'MessageContent'],
 };
