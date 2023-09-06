@@ -14,13 +14,10 @@ const reactWith = async (message: Message, reactions: string[]) => {
   }
 };
 
-const reactWithCoubeh = async (message: Message) => {
-  await reactWith(message, ['🇨', '🇴', '🇺', '🇧', '🇪', '🇭', '🔇']);
-};
+const reactWithCoubeh = async (message: Message) =>
+  reactWith(message, ['🇨', '🇴', '🇺', '🇧', '🇪', '🇭', '🔇']);
 
-const reactWithFeur = async (message: Message) => {
-  await reactWith(message, ['🇫', '🇪', '🇺', '🇷']);
-};
+const reactWithFeur = async (message: Message) => reactWith(message, ['🇫', '🇪', '🇺', '🇷']);
 
 export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
