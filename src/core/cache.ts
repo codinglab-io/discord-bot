@@ -3,6 +3,7 @@ import '@keyv/redis';
 import Keyv from 'keyv';
 
 import { config } from '../config';
+import type { Frequency } from '../modules/recurringMessage/recurringMessage.helpers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface CacheGet<Entries extends Record<string, any>> {
@@ -23,6 +24,7 @@ interface CacheEntries {
   lobbyId: string;
   channels: string[];
   quoiFeurChannels: string[];
+  recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
 class CacheImpl implements Cache<CacheEntries> {
