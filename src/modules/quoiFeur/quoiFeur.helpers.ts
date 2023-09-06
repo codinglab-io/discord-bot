@@ -8,23 +8,18 @@ const ONE_MINUTE = 1 * 60 * 1000;
 const quoiDetectorRegex = /\bquoi\s*$/i;
 const endWithQuoi = (text: string) => quoiDetectorRegex.test(removeEmoji(removePunctuation(text)));
 
-const reactWithFeur = async (message: Message) => {
-  await message.react('🇫');
-  await message.react('🇪');
-  await message.react('🇺');
-  await message.react('🇷');
+const reactWith = async (message: Message, reactions: string[]) => {
+  for (const reaction of reactions) {
+    await message.react(reaction);
+  }
 };
 
 const reactWithCoubeh = async (message: Message) => {
-  await message.react('🇨');
-  await message.react('🇴');
-  await message.react('🇺');
-  await message.react('🇧');
-  await message.react('🇪');
-  await message.react('🇭');
-  await message.react('🔇');
+  await reactWith(message, ['🇨', '🇴', '🇺', '🇧', '🇪', '🇭', '🔇']);
+};
 
-  await message.member?.timeout(ONE_MINUTE * 5, 'User have the cramptés');
+const reactWithFeur = async (message: Message) => {
+  await reactWith(message, ['🇫', '🇪', '🇺', '🇷']);
 };
 
 export const reactOnEndWithQuoi = async (message: Message) => {
@@ -36,11 +31,17 @@ export const reactOnEndWithQuoi = async (message: Message) => {
 
   const probability = 1 / 20;
 
-  Math.random() <= probability ? await reactWithCoubeh(message) : await reactWithFeur(message);
+  if (Math.random() <= probability) {
+    await reactWithCoubeh(message);
+    await message.member?.timeout(ONE_MINUTE * 5, 'User have the cramptés');
+    return;
+  }
+
+  await reactWithFeur(message);
 };
 
 export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
-  const channel = interaction.channel;
+  const { channel } = interaction;
   if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
 
   const channels = await cache.get('quoiFeurChannels', []);
@@ -54,7 +55,7 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
 };
 
 export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
-  const channel = interaction.channel;
+  const { channel } = interaction;
   if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
 
   const channels = await cache.get('quoiFeurChannels', []);
