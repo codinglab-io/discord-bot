@@ -11,6 +11,9 @@ dependencies:
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
+  cron:
+    specifier: 2.4.3
+    version: 2.4.3
   discord.js:
     specifier: 14.13.0
     version: 14.13.0
@@ -712,6 +715,10 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
+  /@types/luxon@3.3.2:
+    resolution: {integrity: sha512-l5cpE57br4BIjK+9BSkFBOsWtwv6J9bJpC7gdXIzZyI0vuKvNTk0wZZrkQxMGsUAuGW9+WMNWF2IJMD7br2yeQ==}
+    dev: false
+
   /@types/node@20.5.8:
     resolution: {integrity: sha512-eajsR9aeljqNhK028VG0Wuw+OaY5LLxYmxeoXynIoE6jannr9/Ucd1LL0hSSoafk5LTYG+FfqsyGt81Q6Zkybw==}
 
@@ -1176,6 +1183,13 @@ packages:
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
+
+  /cron@2.4.3:
+    resolution: {integrity: sha512-YBvExkQYF7w0PxyeFLRyr817YVDhGxaCi5/uRRMqa4aWD3IFKRd+uNbpW1VWMdqQy8PZ7CElc+accXJcauPKzQ==}
+    dependencies:
+      '@types/luxon': 3.3.2
+      luxon: 3.3.0
+    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -2246,6 +2260,11 @@ packages:
     dependencies:
       yallist: 4.0.0
     dev: true
+
+  /luxon@3.3.0:
+    resolution: {integrity: sha512-An0UCfG/rSiqtAIiBPO0Y9/zAnHUZxAMiCpTd5h2smgsj7GGmcenvrvww2cqNA8/4A5ZrD1gJpHN2mIHZQF+Mg==}
+    engines: {node: '>=12'}
+    dev: false
 
   /magic-bytes.js@1.0.15:
     resolution: {integrity: sha512-bpRmwbRHqongRhA+mXzbLWjVy7ylqmfMBYaQkSs6pac0z6hBTvsgrH0r4FBYd/UYVJBmS6Rp/O+oCCQVLzKV1g==}
