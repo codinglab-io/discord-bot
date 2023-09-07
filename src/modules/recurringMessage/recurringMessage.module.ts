@@ -72,4 +72,5 @@ export const recurringMessage: BotModule = {
     // relaunch recurring messages on bot restart
     ready: relaunchRecurringMessages,
   },
+  intents: ['Guilds'],
 };
