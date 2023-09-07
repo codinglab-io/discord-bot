@@ -139,11 +139,21 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
 export const relaunchRecurringMessages = async (client: Client<true>) => {
   const recurringMessages = await cache.get('recurringMessages', []);
 
-  recurringMessages.forEach(({ id, channelId, frequency, message }) => {
+  const channelsToClear = new Set<string>();
+  for (const { id, channelId, frequency, message } of recurringMessages) {
+    if (!client.channels.cache.get(channelId)) {
+      channelsToClear.add(channelId);
+      continue;
+    }
     const job = createRecurringMessage(client, channelId, frequency, message);
     job.start();
     inMemoryJobList.push({ id, job });
-  });
+  }
+
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ channelId }) => !channelsToClear.has(channelId)),
+  );
 };
 
 export const removeAllFromChannel = async (channel: DMChannel | NonThreadGuildBasedChannel) => {
