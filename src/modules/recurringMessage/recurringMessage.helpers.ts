@@ -1,5 +1,4 @@
 import { CronJob } from 'cron';
-import { randomUUID } from 'crypto';
 import type {
   ChatInputCommandInteraction,
   Client,
@@ -25,6 +24,8 @@ const frequencyDisplay = {
 };
 
 const inMemoryJobList: { id: string; job: CronJob }[] = [];
+
+const generateId = () => Math.random().toString(36).slice(2);
 
 export type Frequency = keyof typeof cronTime;
 
@@ -63,7 +64,7 @@ export const createRecurringMessage = (
 };
 
 export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
-  const jobId = randomUUID();
+  const jobId = generateId();
   const channelId = interaction.channelId;
   const frequency = interaction.options.getString('frequency', true);
   if (!isFrequency(frequency)) {
@@ -124,14 +125,35 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     return;
   }
 
-  const recurringMessagesList = recurringMessages
-    .map(
-      ({ id, frequency, message }) =>
-        `id: ${id} - frequency: ${frequency} - ${message.substring(0, 50)}${
-          message.length > 50 ? '...' : ''
+  const recurringMessageInCurrentGuild = recurringMessages.filter(
+    ({ channelId }) => interaction.guild?.channels.cache.has(channelId),
+  );
+
+  const messageByChannelName = recurringMessageInCurrentGuild.reduce(
+    (acc, { id, frequency, message, channelId }) => {
+      const channel = interaction.guild?.channels.cache.get(channelId);
+      const channelName = channel?.name ?? 'unknown';
+
+      if (!acc[channelName]) {
+        acc[channelName] = [];
+      }
+
+      acc[channelName]!.push(
+        `**·**    id: ${id} - frequency: ${frequency} - message: ${message.substring(0, 50)}${
+          message.length > 35 ? '...' : ''
         }`,
-    )
-    .join('\n');
+      );
+
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
+
+  const recurringMessagesList = Object.entries(messageByChannelName)
+    .map(([channelName, messages]) => {
+      return `**\#${channelName}**\n${messages.join('\n')}`;
+    })
+    .join('\n\n');
 
   await interaction.reply(recurringMessagesList);
 };
