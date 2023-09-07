@@ -1,4 +1,10 @@
-import { ChannelType, type ChatInputCommandInteraction, type Message } from 'discord.js';
+import {
+  ChannelType,
+  type ChatInputCommandInteraction,
+  DMChannel,
+  type Message,
+  type NonThreadGuildBasedChannel,
+} from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { removeEmoji, removePunctuation } from '../../helpers/regex.helper';
@@ -69,4 +75,17 @@ export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInt
     channels.filter((channelId) => channelId !== channel.id),
   );
   await interaction.reply('Quoi-feur disabled in this channel');
+};
+
+export const cleanCacheOnChannelDelete = async (
+  channel: DMChannel | NonThreadGuildBasedChannel,
+) => {
+  const { id } = channel;
+  const channels = await cache.get('quoiFeurChannels', []);
+  if (!channels.includes(id)) return;
+
+  await cache.set(
+    'quoiFeurChannels',
+    channels.filter((channelId) => channelId !== id),
+  );
 };
