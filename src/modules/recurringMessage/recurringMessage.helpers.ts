@@ -167,9 +167,9 @@ export const removeAllFromChannel = async (channel: DMChannel | NonThreadGuildBa
     recurringMessages.filter(({ channelId }) => id !== channelId),
   );
 
-  jobsToRemove.forEach(({ id }) => {
+  for (const { id } of jobsToRemove) {
     const job = inMemoryJobList.find(({ id: jobId }) => id === jobId)?.job;
-    if (!job) return;
+    if (!job) continue;
     job.stop();
-  });
+  }
 };
