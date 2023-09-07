@@ -3,6 +3,7 @@ import { SlashCommandBuilder } from 'discord.js';
 import type { BotModule } from '../../types/bot';
 import {
   addQuoiFeurToChannel,
+  cleanCacheOnChannelDelete,
   reactOnEndWithQuoi,
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
@@ -28,6 +29,7 @@ export const quoiFeur: BotModule = {
   ],
   eventHandlers: {
     messageCreate: reactOnEndWithQuoi,
+    channelDelete: cleanCacheOnChannelDelete,
   },
   intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
 };
