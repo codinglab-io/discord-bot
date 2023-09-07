@@ -1,6 +1,11 @@
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
-import type { ChatInputCommandInteraction, Client } from 'discord.js';
+import type {
+  ChatInputCommandInteraction,
+  Client,
+  DMChannel,
+  NonThreadGuildBasedChannel,
+} from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { isModo } from '../../helpers/roles';
@@ -138,5 +143,23 @@ export const relaunchRecurringMessages = async (client: Client<true>) => {
     const job = createRecurringMessage(client, channelId, frequency, message);
     job.start();
     inMemoryJobList.push({ id, job });
+  });
+};
+
+export const removeAllFromChannel = async (channel: DMChannel | NonThreadGuildBasedChannel) => {
+  const { id } = channel;
+
+  const recurringMessages = await cache.get('recurringMessages', []);
+  const jobsToRemove = recurringMessages.filter(({ channelId }) => id === channelId);
+
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ channelId }) => id !== channelId),
+  );
+
+  jobsToRemove.forEach(({ id }) => {
+    const job = inMemoryJobList.find(({ id: jobId }) => id === jobId)?.job;
+    if (!job) return;
+    job.stop();
   });
 };
