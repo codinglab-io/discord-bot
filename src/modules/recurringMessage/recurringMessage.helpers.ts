@@ -94,8 +94,6 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
 export const removeRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
   const jobId = interaction.options.getString('id', true);
 
-  console.log(jobId, inMemoryJobList);
-
   const recurringMessages = await cache.get('recurringMessages', []);
   await cache.set(
     'recurringMessages',
