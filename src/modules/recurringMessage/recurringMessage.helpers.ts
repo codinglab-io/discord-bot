@@ -125,11 +125,11 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     return;
   }
 
-  const recurringMessageInCurrentGuild = recurringMessages.filter(
+  const messagesInCurrentGuild = recurringMessages.filter(
     ({ channelId }) => interaction.guild?.channels.cache.has(channelId),
   );
 
-  const messageByChannelName = recurringMessageInCurrentGuild.reduce(
+  const messagesByChannelName = messagesInCurrentGuild.reduce(
     (acc, { id, frequency, message, channelId }) => {
       const channel = interaction.guild?.channels.cache.get(channelId);
       const channelName = channel?.name ?? 'unknown';
@@ -138,24 +138,30 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
         acc[channelName] = [];
       }
 
-      acc[channelName]!.push(
-        `**·**    id: ${id} - frequency: ${frequency} - message: ${message.substring(0, 50)}${
-          message.length > 35 ? '...' : ''
-        }`,
-      );
+      acc[channelName]!.push({ id, frequency, message });
 
       return acc;
     },
-    {} as Record<string, string[]>,
+    {} as Record<string, { id: string; frequency: string; message: string }[]>,
   );
 
-  const recurringMessagesList = Object.entries(messageByChannelName)
-    .map(([channelName, messages]) => {
-      return `**\#${channelName}**\n${messages.join('\n')}`;
-    })
-    .join('\n\n');
+  const embeds = Object.entries(messagesByChannelName).map(([channelName, messages]) => {
+    const fields = messages.map(({ id, frequency, message }) => ({
+      name: `⏰ - ${frequencyDisplay[frequency as Frequency]} (id: ${id})`,
+      value: message.substring(0, 1000) + (message.length > 1000 ? '...' : ''),
+    }));
 
-  await interaction.reply(recurringMessagesList);
+    return {
+      title: `# ${channelName}`,
+      color: 0x0099ff,
+      fields,
+      footer: {
+        text: '\u2800'.repeat(256), // hackish way have even width for all embeds
+      },
+    };
+  });
+
+  await interaction.reply({ embeds });
 };
 
 export const relaunchRecurringMessages = async (client: Client<true>) => {
