@@ -1,6 +1,11 @@
 import { CronJob } from 'cron';
 import { randomUUID } from 'crypto';
-import type { ChatInputCommandInteraction, Client } from 'discord.js';
+import type {
+  ChatInputCommandInteraction,
+  Client,
+  DMChannel,
+  NonThreadGuildBasedChannel,
+} from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { isModo } from '../../helpers/roles';
@@ -134,9 +139,37 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
 export const relaunchRecurringMessages = async (client: Client<true>) => {
   const recurringMessages = await cache.get('recurringMessages', []);
 
-  recurringMessages.forEach(({ id, channelId, frequency, message }) => {
+  const channelsToClear = new Set<string>();
+  for (const { id, channelId, frequency, message } of recurringMessages) {
+    if (!client.channels.cache.get(channelId)) {
+      channelsToClear.add(channelId);
+      continue;
+    }
     const job = createRecurringMessage(client, channelId, frequency, message);
     job.start();
     inMemoryJobList.push({ id, job });
-  });
+  }
+
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ channelId }) => !channelsToClear.has(channelId)),
+  );
+};
+
+export const removeAllFromChannel = async (channel: DMChannel | NonThreadGuildBasedChannel) => {
+  const { id } = channel;
+
+  const recurringMessages = await cache.get('recurringMessages', []);
+  const jobsToRemove = recurringMessages.filter(({ channelId }) => id === channelId);
+
+  await cache.set(
+    'recurringMessages',
+    recurringMessages.filter(({ channelId }) => id !== channelId),
+  );
+
+  for (const { id } of jobsToRemove) {
+    const job = inMemoryJobList.find(({ id: jobId }) => id === jobId)?.job;
+    if (!job) continue;
+    job.stop();
+  }
 };
