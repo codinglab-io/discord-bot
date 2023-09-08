@@ -1,4 +1,5 @@
 import { CronJob } from 'cron';
+import { randomUUID } from 'crypto';
 import type {
   ChatInputCommandInteraction,
   Client,
@@ -24,8 +25,6 @@ const frequencyDisplay = {
 };
 
 const inMemoryJobList: { id: string; job: CronJob }[] = [];
-
-const generateId = () => Math.random().toString(36).slice(2);
 
 export type Frequency = keyof typeof cronTime;
 
@@ -64,7 +63,7 @@ export const createRecurringMessage = (
 };
 
 export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
-  const jobId = generateId();
+  const jobId = randomUUID();
   const channelId = interaction.channelId;
   const frequency = interaction.options.getString('frequency', true);
   if (!isFrequency(frequency)) {
@@ -157,9 +156,6 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
       title: `# ${channelName}`,
       color: 0x0099ff,
       fields,
-      footer: {
-        text: '\u2800'.repeat(256), // hackish way have even width for all embeds
-      },
     };
   });
 
