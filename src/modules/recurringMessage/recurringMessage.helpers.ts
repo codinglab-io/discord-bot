@@ -129,21 +129,23 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     ({ channelId }) => interaction.guild?.channels.cache.has(channelId),
   );
 
-  const messagesByChannelName = messagesInCurrentGuild.reduce(
-    (acc, { id, frequency, message, channelId }) => {
-      const channel = interaction.guild?.channels.cache.get(channelId);
-      const channelName = channel?.name ?? 'unknown';
+  const messagesByChannelName = messagesInCurrentGuild.reduce<
+    Record<string, Array<{ id: string; frequency: string; message: string }>>
+  >((acc, { id, frequency, message, channelId }) => {
+    const channel = interaction.guild?.channels.cache.get(channelId);
+    if (channel === undefined) throw new Error('Channel not found');
 
-      if (!acc[channelName]) {
-        acc[channelName] = [];
-      }
+    const { name } = channel;
+    const currentMessages = acc[name];
 
-      acc[channelName]!.push({ id, frequency, message });
+    if (currentMessages === undefined) {
+      return { ...acc, [name]: [{ id, frequency, message }] };
+    }
 
-      return acc;
-    },
-    {} as Record<string, { id: string; frequency: string; message: string }[]>,
-  );
+    currentMessages.push({ id, frequency, message });
+
+    return acc;
+  }, {});
 
   const embeds = Object.entries(messagesByChannelName).map(([channelName, messages]) => {
     const fields = messages.map(({ id, frequency, message }) => ({
