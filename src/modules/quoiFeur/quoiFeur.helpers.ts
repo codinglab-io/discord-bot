@@ -32,7 +32,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
   if (!channelHasGame) return;
 
-  const probability = 1 / 20;
+  const probability = 1 / 6;
 
   if (Math.random() <= probability) {
     await reactWithCoubeh(message);
