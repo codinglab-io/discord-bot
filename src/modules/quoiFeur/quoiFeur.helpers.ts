@@ -32,7 +32,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
   if (!channelHasGame) return;
 
-  const probability = 1 / 20;
+  const probability = 1 / 6;
 
   if (Math.random() <= probability) {
     await reactWithCoubeh(message);
@@ -52,12 +52,15 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (channels.includes(channel.id)) {
-    await interaction.reply('Quoi-feur is already enabled in this channel');
+    await interaction.reply({
+      content: 'Quoi-feur is already enabled in this channel',
+      ephemeral: true,
+    });
     return;
   }
 
   await cache.set('quoiFeurChannels', [...channels, channel.id]);
-  await interaction.reply('Quoi-feur enabled in this channel');
+  await interaction.reply({ content: 'Quoi-feur enabled in this channel', ephemeral: true });
 };
 
 export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
@@ -66,7 +69,10 @@ export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInt
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (!channels.includes(channel.id)) {
-    await interaction.reply('Quoi-feur is not enabled in this channel');
+    await interaction.reply({
+      content: 'Quoi-feur is not enabled in this channel',
+      ephemeral: true,
+    });
     return;
   }
 
@@ -74,7 +80,7 @@ export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInt
     'quoiFeurChannels',
     channels.filter((channelId) => channelId !== channel.id),
   );
-  await interaction.reply('Quoi-feur disabled in this channel');
+  await interaction.reply({ content: 'Quoi-feur disabled in this channel', ephemeral: true });
 };
 
 export const cleanCacheOnChannelDelete = async (

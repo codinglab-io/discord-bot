@@ -15,10 +15,10 @@ export const quoiFeur: BotModule = {
         .setName('quoi-feur')
         .setDescription('Manage quoi-feur game in the channel')
         .addSubcommand((subcommand) =>
-          subcommand.setName('add').setDescription('Add the quoi-feur game to the channel'),
+          subcommand.setName('enable').setDescription('Enable the quoi-feur game in the channel'),
         )
         .addSubcommand((subcommand) =>
-          subcommand.setName('remove').setDescription('Remove the quoi-feur game from the channel'),
+          subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
         .toJSON(),
       handler: {
