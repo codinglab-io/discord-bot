@@ -34,7 +34,7 @@ export const isFrequency = (frequency: string): frequency is Frequency => {
 
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   if (!isModo(interaction.member)) {
-    void interaction.reply('You are not allowed to use this command');
+    void interaction.reply({ content: 'You are not allowed to use this command', ephemeral: true });
     return false;
   }
   return true;
@@ -67,22 +67,20 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
   const channelId = interaction.channelId;
   const frequency = interaction.options.getString('frequency', true);
   if (!isFrequency(frequency)) {
-    await interaction.reply(`${frequency} is not a valid frequency`);
+    await interaction.reply({ content: `${frequency} is not a valid frequency`, ephemeral: true });
     return;
   }
   const message = interaction.options.getString('message', true);
 
-  const displayIdInMessage = `\n (id: ${jobId})`;
-  const jobMessage = message + displayIdInMessage;
-
-  if (jobMessage.length > MAX_MESSAGE_LENGTH) {
-    await interaction.reply(
-      `Message is too long (max ${MAX_MESSAGE_LENGTH - displayIdInMessage.length} characters)`,
-    );
+  if (message.length > MAX_MESSAGE_LENGTH) {
+    await interaction.reply({
+      content: `Message is too long (max ${MAX_MESSAGE_LENGTH} characters)`,
+      ephemeral: true,
+    });
     return;
   }
 
-  const job = createRecurringMessage(interaction.client, channelId, frequency, jobMessage);
+  const job = createRecurringMessage(interaction.client, channelId, frequency, message);
   job.start();
 
   inMemoryJobList.push({ id: jobId, job });
@@ -93,7 +91,10 @@ export const addRecurringMessage = async (interaction: ChatInputCommandInteracti
     { id: jobId, channelId, frequency, message },
   ]);
 
-  await interaction.reply(`Recurring message added ${frequencyDisplay[frequency]}`);
+  await interaction.reply({
+    content: `Recurring message added ${frequencyDisplay[frequency]}`,
+    ephemeral: true,
+  });
 };
 
 export const removeRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
@@ -107,20 +108,20 @@ export const removeRecurringMessage = async (interaction: ChatInputCommandIntera
 
   const job = inMemoryJobList.find(({ id }) => id === jobId)?.job;
   if (!job) {
-    await interaction.reply('Recurring message not found');
+    await interaction.reply({ content: 'Recurring message not found', ephemeral: true });
     return;
   }
 
   job.stop();
 
-  await interaction.reply('Recurring message removed');
+  await interaction.reply({ content: 'Recurring message removed', ephemeral: true });
 };
 
 export const listRecurringMessages = async (interaction: ChatInputCommandInteraction) => {
   const recurringMessages = await cache.get('recurringMessages', []);
 
   if (recurringMessages.length === 0) {
-    await interaction.reply('No recurring message found');
+    await interaction.reply({ content: 'No recurring message found', ephemeral: true });
     return;
   }
 
@@ -159,7 +160,7 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     };
   });
 
-  await interaction.reply({ embeds });
+  await interaction.reply({ embeds, ephemeral: true });
 };
 
 export const relaunchRecurringMessages = async (client: Client<true>) => {
