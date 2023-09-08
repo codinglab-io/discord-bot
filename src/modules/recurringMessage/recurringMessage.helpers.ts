@@ -35,7 +35,7 @@ export const isFrequency = (frequency: string): frequency is Frequency => {
 
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   if (!isModo(interaction.member)) {
-    interaction.reply('You are not allowed to use this command').catch(console.error);
+    void interaction.reply('You are not allowed to use this command');
     return false;
   }
   return true;
