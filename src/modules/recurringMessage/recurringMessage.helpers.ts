@@ -1,5 +1,4 @@
 import { CronJob } from 'cron';
-import { randomUUID } from 'crypto';
 import type {
   ChatInputCommandInteraction,
   Client,
@@ -26,6 +25,8 @@ const frequencyDisplay = {
 
 const inMemoryJobList: { id: string; job: CronJob }[] = [];
 
+const generateId = () => Math.random().toString(36).slice(2);
+
 export type Frequency = keyof typeof cronTime;
 
 export const isFrequency = (frequency: string): frequency is Frequency => {
@@ -34,7 +35,7 @@ export const isFrequency = (frequency: string): frequency is Frequency => {
 
 export const hasPermission = (interaction: ChatInputCommandInteraction) => {
   if (!isModo(interaction.member)) {
-    interaction.reply('You are not allowed to use this command').catch(console.error);
+    void interaction.reply('You are not allowed to use this command');
     return false;
   }
   return true;
@@ -63,7 +64,7 @@ export const createRecurringMessage = (
 };
 
 export const addRecurringMessage = async (interaction: ChatInputCommandInteraction) => {
-  const jobId = randomUUID();
+  const jobId = generateId();
   const channelId = interaction.channelId;
   const frequency = interaction.options.getString('frequency', true);
   if (!isFrequency(frequency)) {
@@ -124,16 +125,45 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     return;
   }
 
-  const recurringMessagesList = recurringMessages
-    .map(
-      ({ id, frequency, message }) =>
-        `id: ${id} - frequency: ${frequency} - ${message.substring(0, 50)}${
-          message.length > 50 ? '...' : ''
-        }`,
-    )
-    .join('\n');
+  const messagesInCurrentGuild = recurringMessages.filter(
+    ({ channelId }) => interaction.guild?.channels.cache.has(channelId),
+  );
 
-  await interaction.reply(recurringMessagesList);
+  const messagesByChannelName = messagesInCurrentGuild.reduce<
+    Record<string, Array<{ id: string; frequency: string; message: string }>>
+  >((acc, { id, frequency, message, channelId }) => {
+    const channel = interaction.guild?.channels.cache.get(channelId);
+    if (channel === undefined) throw new Error('Channel not found');
+
+    const { name } = channel;
+    const currentMessages = acc[name];
+
+    if (currentMessages === undefined) {
+      return { ...acc, [name]: [{ id, frequency, message }] };
+    }
+
+    currentMessages.push({ id, frequency, message });
+
+    return acc;
+  }, {});
+
+  const embeds = Object.entries(messagesByChannelName).map(([channelName, messages]) => {
+    const fields = messages.map(({ id, frequency, message }) => ({
+      name: `⏰ - ${frequencyDisplay[frequency as Frequency]} (id: ${id})`,
+      value: message.substring(0, 1000) + (message.length > 1000 ? '...' : ''),
+    }));
+
+    return {
+      title: `# ${channelName}`,
+      color: 0x0099ff,
+      fields,
+      footer: {
+        text: '\u2800'.repeat(256), // hackish way have even width for all embeds
+      },
+    };
+  });
+
+  await interaction.reply({ embeds });
 };
 
 export const relaunchRecurringMessages = async (client: Client<true>) => {
