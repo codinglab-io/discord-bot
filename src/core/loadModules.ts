@@ -12,7 +12,18 @@ export const loadModules = async (
   const botCommands = Object.values(modulesToLoad).flatMap((module) => module.slashCommands ?? []);
   checkUniqueSlashCommandNames(botCommands);
   routeCommands(client, botCommands);
-  await pushCommands(botCommands.map((command) => command.schema));
 
+  const clientId = client.application?.id;
+  if (!clientId) throw new Error('Client id is not defined');
+
+  const { guilds } = client;
+
+  for (const guild of guilds.cache.values()) {
+    await pushCommands(
+      botCommands.map((command) => command.schema),
+      clientId,
+      guild.id,
+    );
+  }
   routeHandlers(client, modulesToLoad);
 };

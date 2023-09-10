@@ -11,10 +11,14 @@ import { deleteExistingCommands } from './deleteExistingCommands';
 
 const { discord } = config;
 
-export const pushCommands = async (commands: RESTPostAPIChatInputApplicationCommandsJSONBody[]) => {
+export const pushCommands = async (
+  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[],
+  clientId: string,
+  guildId: string,
+) => {
   const rest = new REST({ version: '10' }).setToken(discord.token);
-  await deleteExistingCommands(rest, discord);
-  await rest.put(Routes.applicationGuildCommands(discord.clientId, discord.guildId), {
+  await deleteExistingCommands(rest, clientId, guildId);
+  await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
     body: commands,
   });
 };
