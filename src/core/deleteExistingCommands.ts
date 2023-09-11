@@ -1,20 +1,17 @@
 import { REST, Routes } from 'discord.js';
 
-import { config } from '../config';
-
 export const deleteExistingCommands = async (
   rest: REST,
-  discord: typeof config.discord,
+  clientId: string,
+  guildId: string,
 ): Promise<void> => {
-  const guildCommands = (await rest.get(
-    Routes.applicationGuildCommands(discord.clientId, discord.guildId),
-  )) as { id: string }[];
+  const guildCommands = (await rest.get(Routes.applicationGuildCommands(clientId, guildId))) as {
+    id: string;
+  }[];
 
   await guildCommands.reduce<Promise<void>>(async (promise, guildCommand) => {
     await promise;
 
-    await rest.delete(
-      Routes.applicationGuildCommand(discord.clientId, discord.guildId, guildCommand.id),
-    );
+    await rest.delete(Routes.applicationGuildCommand(clientId, guildId, guildCommand.id));
   }, Promise.resolve());
 };
