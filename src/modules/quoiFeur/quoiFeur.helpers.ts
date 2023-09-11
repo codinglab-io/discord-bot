@@ -30,10 +30,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
 
   const channelIds = await cache.get('quoiFeurChannels', []);
 
-  let messageParentId = null;
-  if (message.channel.type === ChannelType.PublicThread) {
-    messageParentId = message.channel.parentId;
-  }
+  const messageParentId = message.channel.type === ChannelType.PublicThread ? message.channel.parentId : null
 
   const isMessageInQuoiFeurChannel = (
     channelIds.includes(message.channelId) || 
