@@ -12,7 +12,8 @@ import { removeEmoji, removePunctuation, removeMarkdown } from '../../helpers/re
 const ONE_MINUTE = 1 * 60 * 1000;
 
 const quoiDetectorRegex = /\bquoi\s*$/i;
-const endWithQuoi = (text: string) => quoiDetectorRegex.test(removeEmoji(removePunctuation(removeMarkdown(text))));
+const endWithQuoi = (text: string) =>
+  quoiDetectorRegex.test(removeEmoji(removePunctuation(removeMarkdown(text))));
 
 const reactWith = async (message: Message, reactions: string[]) => {
   for (const reaction of reactions) {
