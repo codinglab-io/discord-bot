@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
-import { removeEmoji, removePunctuation, removeMarkdown } from '../../helpers/regex.helper';
+import { removeEmoji, removeMarkdown,removePunctuation } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
 
@@ -29,8 +29,18 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
 
   const channelIds = await cache.get('quoiFeurChannels', []);
-  const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
-  if (!channelHasGame) return;
+
+  let messageParentId = null;
+  if (message.channel.type === ChannelType.PublicThread) {
+    messageParentId = message.channel.parentId;
+  }
+
+  const isMessageInQuoiFeurChannel = (
+    channelIds.includes(message.channelId) || 
+    (messageParentId && channelIds.includes(messageParentId))
+  );
+
+  if (!isMessageInQuoiFeurChannel) return;
 
   const probability = 1 / 6;
 
