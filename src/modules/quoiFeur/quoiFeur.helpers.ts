@@ -35,11 +35,16 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   const probability = 1 / 6;
 
   if (Math.random() <= probability) {
-    await message.member?.timeout(
-      ONE_MINUTE * 5,
-      `${message.member.displayName} have the cramptés`,
-    );
-    await reactWithCoubeh(message);
+    try {
+      await reactWithCoubeh(message);
+    } catch (error) {
+      console.log(error)
+    } finally {
+      await message.member?.timeout(
+        ONE_MINUTE * 5,
+        `${message.member.displayName} have the cramptés`,
+      );
+    }
     return;
   }
 
