@@ -8,7 +8,7 @@ import { modules } from './modules/modules';
 const { discord } = config;
 
 const client = new Client({
-  intents: getIntentsFromModules(modules),
+  intents: ['Guilds', ...getIntentsFromModules(modules)],
 });
 
 await client.login(discord.token);
