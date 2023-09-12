@@ -18,11 +18,7 @@ export const isJoinState = (newState: VoiceState): newState is CheckedVoiceState
 export const isLeaveState = (oldDate: VoiceState): oldDate is CheckedVoiceState =>
   oldDate.channel !== null && oldDate.channelId !== null && oldDate.member !== null;
 
-export const handleJoin = async (state: CheckedVoiceState, lobbyId: string): Promise<void> => {
-  if (state.channelId !== lobbyId) {
-    return;
-  }
-
+export const handleJoin = async (state: CheckedVoiceState): Promise<void> => {
   const channel = await createUserVoiceChannel(state.channel.parent, state.member);
   await state.member.voice.setChannel(channel);
 };
