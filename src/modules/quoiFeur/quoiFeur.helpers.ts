@@ -7,7 +7,7 @@ import {
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
-import { removeEmoji, removeMarkdown,removePunctuation } from '../../helpers/regex.helper';
+import { removeEmoji, removeMarkdown, removePunctuation } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;
 
