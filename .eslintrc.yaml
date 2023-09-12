@@ -8,12 +8,16 @@ extends:
   - plugin:@typescript-eslint/recommended
   - plugin:@typescript-eslint/recommended-requiring-type-checking
   - plugin:sonarjs/recommended
+  - plugin:import/typescript
 
 plugins:
   - simple-import-sort
   - import
   - only-error
   - unused-imports
+
+settings:
+  import/resolver:
 
 rules:
   import/exports-last: error
@@ -25,3 +29,15 @@ rules:
   simple-import-sort/exports: error
 
   unused-imports/no-unused-imports: error
+
+  import/no-extraneous-dependencies:
+    - error
+    - devDependencies: false
+
+overrides:
+  - files:
+      - '*.spec.ts'
+    rules:
+      import/no-extraneous-dependencies:
+        - error
+        - devDependencies: true
