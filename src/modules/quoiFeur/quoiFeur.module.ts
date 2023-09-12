@@ -22,8 +22,8 @@ export const quoiFeur: BotModule = {
         )
         .toJSON(),
       handler: {
-        add: addQuoiFeurToChannel,
-        remove: removeQuoiFeurFromChannel,
+        enable: addQuoiFeurToChannel,
+        disable: removeQuoiFeurFromChannel,
       },
     },
   ],
