@@ -29,8 +29,15 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
 
   const channelIds = await cache.get('quoiFeurChannels', []);
-  const channelHasGame = channelIds.find((channelId) => channelId === message.channelId);
-  if (!channelHasGame) return;
+
+  const messageParentId =
+    message.channel.type === ChannelType.PublicThread ? message.channel.parentId : null;
+
+  const isMessageInQuoiFeurChannel =
+    channelIds.includes(message.channelId) ||
+    (messageParentId && channelIds.includes(messageParentId));
+
+  if (!isMessageInQuoiFeurChannel) return;
 
   const probability = 1 / 6;
 
