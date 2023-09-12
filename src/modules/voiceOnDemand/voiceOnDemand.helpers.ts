@@ -15,8 +15,8 @@ type CheckedVoiceState = SetNonNullable<VoiceState, 'channel' | 'channelId' | 'm
 export const isJoinState = (newState: VoiceState): newState is CheckedVoiceState =>
   newState.channel !== null && newState.channelId !== null && newState.member !== null;
 
-export const isLeaveState = (oldDate: VoiceState): oldDate is CheckedVoiceState =>
-  oldDate.channel !== null && oldDate.channelId !== null && oldDate.member !== null;
+export const isLeaveState = (oldState: VoiceState): oldState is CheckedVoiceState =>
+  oldState.channel !== null && oldState.channelId !== null && oldState.member !== null;
 
 export const handleJoin = async (state: CheckedVoiceState): Promise<void> => {
   const channel = await createUserVoiceChannel(state.channel.parent, state.member);
