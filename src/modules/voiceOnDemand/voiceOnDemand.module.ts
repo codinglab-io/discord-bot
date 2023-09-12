@@ -85,7 +85,7 @@ export const voiceOnDemand: BotModule = {
         lobbyIds.filter((lobbyId) => lobbyId !== id),
       );
 
-      const channels = await cache.get('channels', []);
+      const channels = await cache.get('onDemandChannels', []);
 
       await Promise.all(
         channels.map(async (id) => {

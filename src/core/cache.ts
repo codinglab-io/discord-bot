@@ -22,7 +22,7 @@ interface Cache<Entries extends Record<string, any>> {
 
 interface CacheEntries {
   lobbyIds: string[];
-  channels: string[];
+  onDemandChannels: string[];
   quoiFeurChannels: string[];
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }

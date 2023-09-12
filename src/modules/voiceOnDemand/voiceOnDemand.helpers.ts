@@ -24,7 +24,7 @@ export const handleJoin = async (state: CheckedVoiceState): Promise<void> => {
 };
 
 export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
-  const channels = await cache.get('channels', []);
+  const channels = await cache.get('onDemandChannels', []);
 
   const { channel } = state;
   const { id, members, guild } = channel;
@@ -34,7 +34,7 @@ export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
     guild.channels.cache.delete(id);
 
     const filtered = channels.filter((channelId) => channelId !== id);
-    await cache.set('channels', filtered);
+    await cache.set('onDemandChannels', filtered);
   }
 };
 
@@ -56,9 +56,9 @@ export const createUserVoiceChannel = async (
 
   const channel = await guild.channels.create(parent === null ? options : { ...options, parent });
 
-  const channels = await cache.get('channels', []);
+  const channels = await cache.get('onDemandChannels', []);
 
-  await cache.set('channels', [...channels, channel.id]);
+  await cache.set('onDemandChannels', [...channels, channel.id]);
 
   return channel.id;
 };
