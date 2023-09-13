@@ -64,7 +64,7 @@ export const voiceOnDemand: BotModule = {
       const onDemandChannels = await cache.get('onDemandChannels', []);
 
       const isLobbyChannel = lobbyIds.includes(newState.channelId ?? '');
-      const isOnDemandChannel = onDemandChannels.includes(newState.channelId ?? '');
+      const isOnDemandChannel = onDemandChannels.includes(oldState.channelId ?? '');
 
       if (!isOnDemandChannel && !isLobbyChannel) {
         return;
