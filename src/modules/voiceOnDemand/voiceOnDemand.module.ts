@@ -17,23 +17,24 @@ export const voiceOnDemand = createModule({
         .toJSON(),
       handler: {
         create: async (interaction): Promise<void> => {
-          const guild = interaction.guild as Guild;
+          const { guild } = interaction;
 
-          const lobbyId = await cache.get('lobbyId');
+          if (!(guild instanceof Guild)) {
+            await interaction.reply({
+              content: 'This command is only available in guilds',
+              ephemeral: true,
+            });
 
-          if (lobbyId !== undefined && guild.channels.cache.has(lobbyId)) {
-            guild.channels.cache.delete(lobbyId);
+            return;
           }
+          const lobbyIds = await cache.get('lobbyIds', []);
+          const lobbyId = lobbyIds.find((lobbyId) => guild.channels.cache.has(lobbyId));
 
-          const channel =
-            lobbyId === undefined ? null : await guild.channels.fetch(lobbyId).catch(() => null);
-
-          if (channel !== null) {
+          if (lobbyId !== undefined) {
             await interaction.reply({
               content: 'Voice on demand voice lobby already exists.',
               ephemeral: true,
             });
-
             return;
           }
 
@@ -42,7 +43,8 @@ export const voiceOnDemand = createModule({
             type: ChannelType.GuildVoice,
           });
 
-          await cache.set('lobbyId', id);
+          //NOTES: this is a potential race condition.
+          await cache.set('lobbyIds', [...lobbyIds, id]);
 
           await interaction.reply({
             content: 'Created voice on demand voice channel.',
@@ -54,7 +56,9 @@ export const voiceOnDemand = createModule({
   ],
   eventHandlers: () => ({
     voiceStateUpdate: async (oldState, newState) => {
-      const lobbyId = await cache.get('lobbyId');
+      const lobbyIds = await cache.get('lobbyIds', []);
+      const lobbyId = lobbyIds.find((lobbyId) => newState.channelId === lobbyId);
+
       if (lobbyId === undefined) {
         return;
       }
@@ -64,7 +68,7 @@ export const voiceOnDemand = createModule({
       }
 
       if (isJoinState(newState)) {
-        await handleJoin(newState, lobbyId);
+        await handleJoin(newState);
       }
     },
     channelDelete: async (channel) => {
@@ -72,26 +76,27 @@ export const voiceOnDemand = createModule({
         return;
       }
 
-      const lobbyId = await cache.get('lobbyId');
-
+      const lobbyIds = await cache.get('lobbyIds', []);
       const { guild, id } = channel;
 
-      if (id === lobbyId) {
-        await cache.delete('lobbyId');
-        guild.channels.cache.delete(lobbyId);
+      if (lobbyIds.includes(id)) return;
 
-        const channels = await cache.get('channels', []);
+      await cache.set(
+        'lobbyIds',
+        lobbyIds.filter((lobbyId) => lobbyId !== id),
+      );
 
-        await Promise.all(
-          channels.map(async (id) => {
-            const channel = await guild.channels.fetch(id).catch(() => null);
-            if (channel !== null) {
-              await guild.channels.delete(id);
-              guild.channels.cache.delete(id);
-            }
-          }),
-        );
-      }
+      const channels = await cache.get('channels', []);
+
+      await Promise.all(
+        channels.map(async (id) => {
+          const channel = await guild.channels.fetch(id).catch(() => null);
+          if (channel !== null) {
+            await guild.channels.delete(id);
+            guild.channels.cache.delete(id);
+          }
+        }),
+      );
     },
   }),
   intents: ['GuildVoiceStates', 'GuildMembers'],

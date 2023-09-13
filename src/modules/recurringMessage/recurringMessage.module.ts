@@ -6,6 +6,7 @@ import {
   hasPermission,
   listRecurringMessages,
   relaunchRecurringMessages,
+  removeAllFromChannel,
   removeRecurringMessage,
 } from './recurringMessage.helpers';
 
@@ -70,8 +71,8 @@ export const recurringMessage = createModule({
     },
   ],
   eventHandlers: () => ({
-    // relaunch recurring messages on bot restart
     ready: relaunchRecurringMessages,
+    channelDelete: removeAllFromChannel,
   }),
   intents: ['Guilds'],
 });
