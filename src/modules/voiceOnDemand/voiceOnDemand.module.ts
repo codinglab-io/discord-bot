@@ -2,7 +2,12 @@ import { ChannelType, Guild, SlashCommandBuilder } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import type { BotModule } from '../../types/bot';
-import { handleJoin, handleLeave, isJoinState, isLeaveState } from './voiceOnDemand.helpers';
+import {
+  handleJoinLobby,
+  handleLeaveOnDemand,
+  isJoinState,
+  isLeaveState,
+} from './voiceOnDemand.helpers';
 
 export const voiceOnDemand: BotModule = {
   slashCommands: [
@@ -65,12 +70,12 @@ export const voiceOnDemand: BotModule = {
         return;
       }
 
-      if (isLeaveState(oldState)) {
-        await handleLeave(oldState);
+      if (isOnDemandChannel && isLeaveState(oldState)) {
+        await handleLeaveOnDemand(oldState);
       }
 
-      if (isJoinState(newState)) {
-        await handleJoin(newState);
+      if (isLobbyChannel && isJoinState(newState)) {
+        await handleJoinLobby(newState);
       }
     },
     channelDelete: async (channel) => {
