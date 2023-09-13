@@ -2,7 +2,12 @@ import { ChannelType, Guild, SlashCommandBuilder } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { createModule } from '../../core/createModule';
-import { handleJoin, handleLeave, isJoinState, isLeaveState } from './voiceOnDemand.helpers';
+import {
+  handleJoinLobby,
+  handleLeaveOnDemand,
+  isJoinState,
+  isLeaveState,
+} from './voiceOnDemand.helpers';
 
 export const voiceOnDemand = createModule({
   slashCommands: () => [
@@ -56,18 +61,21 @@ export const voiceOnDemand = createModule({
   eventHandlers: () => ({
     voiceStateUpdate: async (oldState, newState) => {
       const lobbyIds = await cache.get('lobbyIds', []);
-      const lobbyId = lobbyIds.find((lobbyId) => newState.channelId === lobbyId);
+      const onDemandChannels = await cache.get('onDemandChannels', []);
 
-      if (lobbyId === undefined) {
+      const isLobbyChannel = lobbyIds.includes(newState.channelId ?? '');
+      const isOnDemandChannel = onDemandChannels.includes(newState.channelId ?? '');
+
+      if (!isOnDemandChannel && !isLobbyChannel) {
         return;
       }
 
-      if (isLeaveState(oldState)) {
-        await handleLeave(oldState);
+      if (isOnDemandChannel && isLeaveState(oldState)) {
+        await handleLeaveOnDemand(oldState);
       }
 
-      if (isJoinState(newState)) {
-        await handleJoin(newState);
+      if (isLobbyChannel && isJoinState(newState)) {
+        await handleJoinLobby(newState);
       }
     },
     channelDelete: async (channel) => {
@@ -76,23 +84,26 @@ export const voiceOnDemand = createModule({
       }
 
       const lobbyIds = await cache.get('lobbyIds', []);
-      const { guild, id } = channel;
+      const onDemandChannels = await cache.get('onDemandChannels', []);
 
-      if (lobbyIds.includes(id)) return;
+      const isLobbyChannel = lobbyIds.includes(channel.id);
+      const isOnDemandChannel = onDemandChannels.includes(channel.id);
+
+      if (!isOnDemandChannel && !isLobbyChannel) {
+        return;
+      }
 
       await cache.set(
         'lobbyIds',
-        lobbyIds.filter((lobbyId) => lobbyId !== id),
+        lobbyIds.filter((lobbyId) => lobbyId !== channel.id),
       );
 
-      const channels = await cache.get('channels', []);
-
       await Promise.all(
-        channels.map(async (id) => {
-          const channel = await guild.channels.fetch(id).catch(() => null);
-          if (channel !== null) {
-            await guild.channels.delete(id);
-            guild.channels.cache.delete(id);
+        onDemandChannels.map(async (id) => {
+          const updatedChannel = await channel.guild.channels.fetch(id).catch(() => null);
+          if (updatedChannel !== null) {
+            await channel.guild.channels.delete(id);
+            channel.guild.channels.cache.delete(id);
           }
         }),
       );
