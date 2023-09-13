@@ -31,6 +31,12 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.4.0
 
@@ -55,5 +61,9 @@ jobs:
       - name: Test project
         run: pnpm test
 
-      - name: Build project
-        run: pnpm build
+      - name: Build Docker image for project
+        uses: docker/build-push-action@v4
+        with:
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
