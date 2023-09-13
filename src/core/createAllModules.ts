@@ -24,9 +24,7 @@ export const createAllModules = async (
         return acc;
       }, {});
 
-    console.log({ moduleEnv, name });
-
-    const module = await factory({ env: moduleEnv });
+     const module = await factory({ env: moduleEnv });
 
     createdModules.push(module);
   }
