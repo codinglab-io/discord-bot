@@ -1,14 +1,14 @@
 import { Client } from 'discord.js';
 
 import { config } from './config';
-import { createModules } from './core/createModules';
+import { createAllModules } from './core/createAllModules';
 import { getIntentsFromModules } from './core/getIntentsFromModules';
 import { loadModules } from './core/loadModules';
 import { modules } from './modules/modules';
 
 const { discord } = config;
 
-const createdModules = await createModules(modules);
+const createdModules = await createAllModules(modules);
 
 const client = new Client({
   intents: ['Guilds', ...getIntentsFromModules(createdModules)],

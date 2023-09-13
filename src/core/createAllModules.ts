@@ -2,7 +2,7 @@ import { constantCase } from 'constant-case';
 
 import type { CreatedModule, ModuleFactory } from './createModule';
 
-export const createModules = async (
+export const createAllModules = async (
   modules: Record<string, ModuleFactory>,
 ): Promise<CreatedModule[]> => {
   const createdModules: CreatedModule[] = [];
@@ -13,7 +13,7 @@ export const createModules = async (
     const moduleEnv = Object.entries(process.env)
       .filter(([key]) => key.startsWith(constantName))
       .reduce<Record<string, string>>((acc, [key, value]) => {
-        const envKey = key.replace(constantName, '');
+        const envKey = key.replace(`${constantName}_`, '');
 
         if (value === undefined) {
           return acc;
@@ -23,6 +23,8 @@ export const createModules = async (
 
         return acc;
       }, {});
+
+    console.log({ moduleEnv, name });
 
     const module = await factory({ env: moduleEnv });
 
