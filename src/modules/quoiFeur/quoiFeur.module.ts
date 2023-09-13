@@ -9,7 +9,6 @@ import {
 } from './quoiFeur.helpers';
 
 export const quoiFeur = createModule({
-  name: 'quoiFeur',
   slashCommands: () => [
     {
       schema: new SlashCommandBuilder()

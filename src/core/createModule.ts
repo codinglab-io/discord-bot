@@ -21,27 +21,27 @@ type EventHandlers = {
 };
 
 type BotModule<Env extends Record<string, ZodTypeAny>> = {
-  name: string;
   env?: Env;
   intents?: ClientOptions['intents'];
   slashCommands?: ModuleFunction<Env, Array<BotCommand>>;
   eventHandlers?: ModuleFunction<Env, EventHandlers>;
 };
 
-interface CreatedModule {
+interface CreatedModuleInput {
+  env: unknown;
+}
+
+export interface CreatedModule {
   intents: ClientOptions['intents'];
   slashCommands: Array<BotCommand>;
   eventHandlers: EventHandlers;
 }
 
-interface CreatedModuleInput {
-  env: unknown;
-  cache: unknown;
-}
+export type ModuleFactory = (input: CreatedModuleInput) => Promise<CreatedModule>;
 
 export const createModule = <Env extends Record<string, ZodTypeAny>>(
   module: BotModule<Env>,
-): ((input: CreatedModuleInput) => Promise<CreatedModule>) => {
+): ModuleFactory => {
   return async (input) => {
     const env = await z.object(module.env ?? ({} as Env)).parseAsync(input.env);
 

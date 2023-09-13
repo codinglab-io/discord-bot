@@ -33,7 +33,6 @@ const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> =
 const youtubeUrlRegex = new RegExp('^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))');
 
 export const coolLinksManagement = createModule({
-  name: 'coolLinksManagement',
   env: {
     CHANNEL_ID: z.string().nonempty(),
     PAGE_SUMMARIZER_BASE_URL: z.string().url(),

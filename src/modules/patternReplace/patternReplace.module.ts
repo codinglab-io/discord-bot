@@ -11,7 +11,6 @@ const urlMappings = [
 ];
 
 export const patternReplace = createModule({
-  name: 'patternReplace',
   env: {
     EXCLUDED_CHANNEL_ID: z.string().nonempty(),
   },

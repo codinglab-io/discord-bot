@@ -5,7 +5,6 @@ import { createModule } from '../../core/createModule';
 import { handleJoin, handleLeave, isJoinState, isLeaveState } from './voiceOnDemand.helpers';
 
 export const voiceOnDemand = createModule({
-  name: 'voiceOnDemand',
   slashCommands: () => [
     {
       schema: new SlashCommandBuilder()

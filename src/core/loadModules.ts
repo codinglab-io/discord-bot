@@ -1,15 +1,16 @@
 import { type Client } from 'discord.js';
 
-import type { BotModule } from '../types/bot';
 import { checkUniqueSlashCommandNames } from './checkUniqueSlashCommandNames';
+import type { CreatedModule } from './createModule';
 import { pushCommands, routeCommands } from './loaderCommands';
 import { routeHandlers } from './routeHandlers';
 
 export const loadModules = async (
   client: Client<true>,
-  modulesToLoad: Record<string, BotModule>,
+  modules: CreatedModule[],
 ): Promise<void> => {
-  const botCommands = Object.values(modulesToLoad).flatMap((module) => module.slashCommands ?? []);
+  const botCommands = modules.flatMap((module) => module.slashCommands ?? []);
+
   checkUniqueSlashCommandNames(botCommands);
   routeCommands(client, botCommands);
 
@@ -25,5 +26,6 @@ export const loadModules = async (
       guild.id,
     );
   }
-  routeHandlers(client, modulesToLoad);
+
+  routeHandlers(client, modules);
 };
