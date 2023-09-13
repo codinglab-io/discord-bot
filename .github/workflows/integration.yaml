@@ -1,3 +1,5 @@
+name: Check Integration
+
 on:
   pull_request:
     branches:
@@ -11,8 +13,16 @@ on:
       - '**deployment.yaml'
 
 jobs:
+  validate-pr-title:
+    name: Validate PR title
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   integration:
-    name: Continuous integration
+    name: Continuous integration checks
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
@@ -23,12 +33,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2.4.0
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -53,10 +57,3 @@ jobs:
 
       - name: Build project
         run: pnpm build
-
-      - name: Build Docker image for project
-        uses: docker/build-push-action@v4
-        with:
-          push: false
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
