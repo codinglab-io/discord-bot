@@ -1,14 +1,15 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 import {
   addQuoiFeurToChannel,
   reactOnEndWithQuoi,
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
 
-export const quoiFeur: BotModule = {
-  slashCommands: [
+export const quoiFeur = createModule({
+  name: 'quoiFeur',
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('quoi-feur')
@@ -26,8 +27,8 @@ export const quoiFeur: BotModule = {
       },
     },
   ],
-  eventHandlers: {
+  eventHandlers: () => ({
     messageCreate: reactOnEndWithQuoi,
-  },
+  }),
   intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
-};
+});
