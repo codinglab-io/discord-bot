@@ -1,5 +1,16 @@
 <h1 align="center">Contributing to our Discord bot</h1>
 
+## Table of contents
+
+- [Table of contents](#table-of-contents)
+- [Installation](#installation)
+- [Running](#running)
+  - [Minimal setup](#minimal-setup)
+  - [Persistence](#persistence)
+  - [Custom test discord server](#custom-test-discord-server)
+- [Tooling](#tooling)
+- [Making Pull Requests](#making-pull-requests)
+
 ## Installation
 
 We use [pnpm](https://pnpm.io) to manage our dependencies.  
