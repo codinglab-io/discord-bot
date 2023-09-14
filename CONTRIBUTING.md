@@ -1,4 +1,4 @@
-<h1 align="center">Contributing our Discord bot</h1>
+<h1 align="center">Contributing to our Discord bot</h1>
 
 ## Installation
 
