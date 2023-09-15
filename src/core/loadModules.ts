@@ -2,6 +2,7 @@ import { type Client } from 'discord.js';
 
 import { checkUniqueSlashCommandNames } from './checkUniqueSlashCommandNames';
 import type { CreatedModule } from './createModule';
+import { env } from './env';
 import { pushCommands, routeCommands } from './loaderCommands';
 import { routeHandlers } from './routeHandlers';
 
@@ -26,6 +27,7 @@ export const loadModules = async (
       commands: botCommands.map((command) => command.schema),
       clientId: clientId,
       guildId: guild.id,
+      discordToken: env.discordToken,
     });
   }
 
