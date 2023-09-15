@@ -25,9 +25,9 @@
     "zod": "3.22.2"
   },
   "devDependencies": {
-    "@types/node": "20.6.0",
-    "@typescript-eslint/eslint-plugin": "6.6.0",
-    "@typescript-eslint/parser": "6.6.0",
+    "@types/node": "20.6.1",
+    "@typescript-eslint/eslint-plugin": "6.7.0",
+    "@typescript-eslint/parser": "6.7.0",
     "dotenv": "16.3.1",
     "eslint": "8.49.0",
     "eslint-import-resolver-typescript": "3.6.0",
@@ -42,7 +42,7 @@
     "typescript": "5.2.2",
     "vitest": "0.34.4"
   },
-  "packageManager": "pnpm@8.7.4",
+  "packageManager": "pnpm@8.7.5",
   "engines": {
     "node": "20.6.1"
   }
