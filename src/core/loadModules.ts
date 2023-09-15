@@ -9,6 +9,8 @@ export const loadModules = async (
   client: Client<true>,
   modules: CreatedModule[],
 ): Promise<void> => {
+  await Promise.allSettled(modules.map((module) => module.eventHandlers?.ready?.(client)));
+
   const botCommands = modules.flatMap((module) => module.slashCommands ?? []);
 
   checkUniqueSlashCommandNames(botCommands);
