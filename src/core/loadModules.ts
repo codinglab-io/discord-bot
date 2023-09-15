@@ -23,9 +23,7 @@ export const loadModules = async (
 
   for (const guild of guilds.cache.values()) {
     await pushCommands(
-      botCommands.map((command) => command.schema),
-      clientId,
-      guild.id,
+      {commands : botCommands.map((command) => command.schema), clientId : clientId, guildId : guild.id},
     );
   }
 
