@@ -1,6 +1,6 @@
 import { Client } from 'discord.js';
 
-import { createAllModules } from './core/createAllModules';
+import { createAllModules } from './core/createEnvForModule';
 import { env } from './core/env';
 import { getIntentsFromModules } from './core/getIntentsFromModules';
 import { loadModules } from './core/loadModules';
