@@ -22,9 +22,11 @@ export const loadModules = async (
   const { guilds } = client;
 
   for (const guild of guilds.cache.values()) {
-    await pushCommands(
-      {commands : botCommands.map((command) => command.schema), clientId : clientId, guildId : guild.id},
-    );
+    await pushCommands({
+      commands: botCommands.map((command) => command.schema),
+      clientId: clientId,
+      guildId: guild.id,
+    });
   }
 
   routeHandlers(client, modules);
