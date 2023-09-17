@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 import {
   addRecurringMessage,
   hasPermission,
@@ -10,8 +10,8 @@ import {
   removeRecurringMessage,
 } from './recurringMessage.helpers';
 
-export const recurringMessage: BotModule = {
-  slashCommands: [
+export const recurringMessage = createModule({
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('recurrent')
@@ -69,9 +69,9 @@ export const recurringMessage: BotModule = {
       },
     },
   ],
-  eventHandlers: {
+  eventHandlers: () => ({
     ready: relaunchRecurringMessages,
     channelDelete: removeAllFromChannel,
-  },
+  }),
   intents: ['Guilds'],
-};
+});

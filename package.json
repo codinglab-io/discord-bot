@@ -16,12 +16,13 @@
   "dependencies": {
     "@keyv/redis": "2.7.0",
     "cheerio": "1.0.0-rc.12",
+    "constant-case": "3.0.4",
     "cron": "2.4.3",
     "discord.js": "14.13.0",
-    "env-var": "7.4.1",
     "keyv": "4.5.3",
     "open-graph-scraper": "6.2.2",
-    "param-case": "3.0.4"
+    "param-case": "3.0.4",
+    "zod": "3.22.2"
   },
   "devDependencies": {
     "@types/node": "20.6.2",
