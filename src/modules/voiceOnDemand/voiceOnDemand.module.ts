@@ -1,7 +1,7 @@
 import { ChannelType, Guild, SlashCommandBuilder } from 'discord.js';
 
 import { cache } from '../../core/cache';
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 import {
   handleJoinLobby,
   handleLeaveOnDemand,
@@ -9,8 +9,8 @@ import {
   isLeaveState,
 } from './voiceOnDemand.helpers';
 
-export const voiceOnDemand: BotModule = {
-  slashCommands: [
+export const voiceOnDemand = createModule({
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('voice-on-demand')
@@ -58,7 +58,7 @@ export const voiceOnDemand: BotModule = {
       },
     },
   ],
-  eventHandlers: {
+  eventHandlers: () => ({
     voiceStateUpdate: async (oldState, newState) => {
       const lobbyIds = await cache.get('lobbyIds', []);
       const onDemandChannels = await cache.get('onDemandChannels', []);
@@ -108,6 +108,6 @@ export const voiceOnDemand: BotModule = {
         }),
       );
     },
-  },
+  }),
   intents: ['GuildVoiceStates', 'GuildMembers'],
-};
+});

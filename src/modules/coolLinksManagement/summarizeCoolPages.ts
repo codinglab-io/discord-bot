@@ -1,9 +1,6 @@
 import { load } from 'cheerio';
 
-import { config } from '../../config';
 import { resolveCatch } from '../../helpers/resolveCatch.helper';
-// langfrom can't be changed to another language, this result in a translation of the summary that throw an HTTP error because we are in "FREE PLAN"
-const parseBaseUrl = `${config.thirdParties.pageSummarizerBaseUrl}/convert.php?type=expand&lang=en&langfrom=user&url=`;
 
 type PageSummary = {
   title: string;
@@ -80,9 +77,7 @@ export const getPageSummaryDiscordView = (pageSummary: PageSummary) => {
 };
 
 export const getPageSummary = async (pageUrl: string) => {
-  const [responseError, response] = await resolveCatch(
-    fetch(`${parseBaseUrl}${pageUrl}`, { method: 'GET' }),
-  );
+  const [responseError, response] = await resolveCatch(fetch(pageUrl, { method: 'GET' }));
   if (responseError) {
     throw responseError;
   }

@@ -1,9 +1,9 @@
 import { SlashCommandBuilder } from 'discord.js';
 
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 
-export const fart: BotModule = {
-  slashCommands: [
+export const fart = createModule({
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('fart')
@@ -14,4 +14,4 @@ export const fart: BotModule = {
       },
     },
   ],
-};
+});

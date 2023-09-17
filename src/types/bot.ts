@@ -1,7 +1,6 @@
 import type {
   ChatInputCommandInteraction,
   ClientEvents,
-  ClientOptions,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from 'discord.js';
 
@@ -16,12 +15,4 @@ export type EventHandler<T extends keyof ClientEvents = keyof ClientEvents> = (
 export type BotCommand = {
   schema: RESTPostAPIChatInputApplicationCommandsJSONBody;
   handler: slashCommandHandler | Record<string, slashCommandHandler>;
-};
-
-export type BotModule = {
-  slashCommands?: Array<BotCommand>;
-  eventHandlers?: {
-    [key in keyof ClientEvents]?: EventHandler<key>;
-  };
-  intents?: ClientOptions['intents'];
 };

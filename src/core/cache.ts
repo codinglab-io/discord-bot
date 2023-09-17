@@ -2,8 +2,8 @@ import '@keyv/redis';
 
 import Keyv from 'keyv';
 
-import { config } from '../config';
 import type { Frequency } from '../modules/recurringMessage/recurringMessage.helpers';
+import { env } from './env';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface CacheGet<Entries extends Record<string, any>> {
@@ -28,7 +28,7 @@ interface CacheEntries {
 }
 
 class CacheImpl implements Cache<CacheEntries> {
-  private readonly backend = new Keyv(config.redis.url);
+  private readonly backend = new Keyv(env.redisUrl);
 
   public get<Key extends keyof CacheEntries>(key: Key): Promise<CacheEntries[Key] | undefined>;
   public get<Key extends keyof CacheEntries>(

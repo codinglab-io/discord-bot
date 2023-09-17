@@ -1,15 +1,16 @@
 import type { Client, ClientEvents } from 'discord.js';
 
-import type { BotModule, EventHandler } from '../types/bot';
+import type { EventHandler } from '../types/bot';
+import type { CreatedModule } from './createModule';
 
-export const routeHandlers = (client: Client<true>, modulesToLoad: Record<string, BotModule>) => {
-  const eventNames = Object.values(modulesToLoad).flatMap(
+export const routeHandlers = (client: Client<true>, modules: CreatedModule[]) => {
+  const eventNames = modules.flatMap(
     (module) => Object.keys(module.eventHandlers ?? {}) as (keyof ClientEvents)[],
   );
   const uniqueEventNames = [...new Set(eventNames)];
 
   uniqueEventNames.forEach((eventName) => {
-    const eventHandlersToCall = Object.values(modulesToLoad)
+    const eventHandlersToCall = modules
       .map((module) => module.eventHandlers?.[eventName])
       .filter((e): e is EventHandler => Boolean(e));
 

@@ -1,7 +1,7 @@
 import { MessageType } from 'discord.js';
+import { z } from 'zod';
 
-import { config } from '../../config';
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 
 const urlMappings = [
   {
@@ -10,13 +10,16 @@ const urlMappings = [
   },
 ];
 
-export const patternReplace: BotModule = {
-  eventHandlers: {
+export const patternReplace = createModule({
+  env: {
+    EXCLUDED_CHANNEL_ID: z.string().nonempty(),
+  },
+  eventHandlers: ({ env }) => ({
     messageCreate: async (message) => {
       if (
         message.author.bot ||
         message.type !== MessageType.Default ||
-        message.channelId === config.discord.coolLinksChannelId
+        message.channelId === env.EXCLUDED_CHANNEL_ID
       ) {
         return;
       }
@@ -37,6 +40,6 @@ export const patternReplace: BotModule = {
       await message.channel.send(newMessage);
       await message.delete();
     },
-  },
+  }),
   intents: ['GuildMessages', 'MessageContent'],
-};
+});

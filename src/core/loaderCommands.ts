@@ -5,18 +5,23 @@ import {
   Routes,
 } from 'discord.js';
 
-import { config } from '../config';
 import type { BotCommand } from '../types/bot';
 import { deleteExistingCommands } from './deleteExistingCommands';
 
-const { discord } = config;
+interface PushCommandsOptions {
+  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[];
+  clientId: string;
+  guildId: string;
+  discordToken: string;
+}
 
-export const pushCommands = async (
-  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[],
-  clientId: string,
-  guildId: string,
-) => {
-  const rest = new REST({ version: '10' }).setToken(discord.token);
+export const pushCommands = async ({
+  commands,
+  clientId,
+  guildId,
+  discordToken,
+}: PushCommandsOptions) => {
+  const rest = new REST({ version: '10' }).setToken(discordToken);
   await deleteExistingCommands(rest, clientId, guildId);
   await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
     body: commands,

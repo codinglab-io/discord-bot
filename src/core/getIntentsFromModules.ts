@@ -1,6 +1,6 @@
-import type { BotModule } from '../types/bot';
+import type { CreatedModule } from './createModule';
 
-export const getIntentsFromModules = (modules: Record<string, BotModule>) => {
-  const intents = Object.values(modules).flatMap((module) => module.intents ?? []);
+export const getIntentsFromModules = (modules: CreatedModule[]) => {
+  const intents = modules.flatMap((module) => module.intents ?? []);
   return [...new Set(intents)] as const;
 };
