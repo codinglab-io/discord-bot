@@ -10,8 +10,8 @@ import { cache } from '../../core/cache';
 import {
   removeEmoji,
   removeMarkdown,
+  removeNonASCII,
   removePunctuation,
-  removeNonASCII
 } from '../../helpers/regex.helper';
 
 const ONE_MINUTE = 1 * 60 * 1000;

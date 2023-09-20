@@ -4,7 +4,7 @@ const socialNetworksUrlRegex = new RegExp(
 const punctuationRegex = /[.,!?]/g;
 const markdownRegex = /(\*\*|__|\*|_|`|~)(.*?)\1/g;
 const emojiRegex = /<a?:.+?:\d{10,30}>|\p{Extended_Pictographic}/gu;
-const nonASCIIRegex = /[\u{007F}-\u{FFFF}]/gu; 
+const nonASCIIRegex = /[\u{007F}-\u{FFFF}]/gu;
 
 export const isASocialNetworkUrl = (url: string): boolean => {
   return socialNetworksUrlRegex.test(url);
