@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageType } from 'discord.js';
 
-import { config } from '../../config';
 import { resolveCatch } from '../../helpers/resolveCatch.helper';
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
+import { z } from 'zod';
 
 interface FXTwitterResponse {
   code: number;
@@ -44,13 +44,16 @@ const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
   return video ? video.type === 'video' : false;
 };
 
-export const fixEmbedTwitterVideo: BotModule = {
-  eventHandlers: {
+export const fixEmbedTwitterVideo = createModule({
+  env: {
+    CHANNEL_ID: z.string().nonempty(),
+  },
+  eventHandlers: ({ env }) => ({
     messageCreate: async (message) => {
       if (
         message.author.bot ||
         message.type !== MessageType.Default ||
-        message.channelId === config.discord.coolLinksChannelId
+        message.channelId === env.CHANNEL_ID
       ) {
         return;
       }
@@ -128,6 +131,6 @@ export const fixEmbedTwitterVideo: BotModule = {
         await reference.suppressEmbeds(false);
       }
     },
-  },
+  }),
   intents: ['GuildMessages', 'MessageContent', 'GuildMessageReactions'],
-};
+});
