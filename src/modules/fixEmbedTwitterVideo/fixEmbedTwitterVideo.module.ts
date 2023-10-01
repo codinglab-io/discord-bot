@@ -1,8 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageType } from 'discord.js';
-
-import { resolveCatch } from '../../helpers/resolveCatch.helper';
-import { createModule } from '../../core/createModule';
 import { z } from 'zod';
+
+import { createModule } from '../../core/createModule';
+import { resolveCatch } from '../../helpers/resolveCatch.helper';
 
 interface FXTwitterResponse {
   code: number;
@@ -46,14 +46,14 @@ const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
 
 export const fixEmbedTwitterVideo = createModule({
   env: {
-    CHANNEL_ID: z.string().nonempty(),
+    EXCLUDED_CHANNEL_ID: z.string().nonempty(),
   },
   eventHandlers: ({ env }) => ({
     messageCreate: async (message) => {
       if (
         message.author.bot ||
         message.type !== MessageType.Default ||
-        message.channelId === env.CHANNEL_ID
+        message.channelId === env.EXCLUDED_CHANNEL_ID
       ) {
         return;
       }
