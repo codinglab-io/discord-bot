@@ -4,42 +4,82 @@ import { z } from 'zod';
 import { createModule } from '../../core/createModule';
 import { resolveCatch } from '../../helpers/resolveCatch.helper';
 
-interface FXTwitterResponse {
-  code: number;
-  message: string;
-  tweet: {
-    media?: {
-      videos?: {
-        type: 'gif' | 'video';
-        url: string;
-      }[];
-    };
-  };
-}
+const FXTwitterResponseSchema = z.object({
+  code: z.number(),
+  message: z.string(),
+  tweet: z.object({
+    media: z
+      .object({
+        videos: z
+          .array(
+            z
+              .object({
+                type: z.enum(['gif', 'video']),
+                url: z.string(),
+              })
+              .optional(),
+          )
+          .optional(),
+      })
+      .optional(),
+  }),
+});
 
-const modulePrefixButtonId = 'removetwittervideo-';
+type URLMapping = {
+  pattern: RegExp;
+  replacement: string;
+};
+
+const modulePrefixButtonId = 'fixEmbedTwitterVideo-';
 const deleteBotAnswerPrefixButtonId = modulePrefixButtonId + 'deleteBotAnswer-';
 const deleteBotAnswerButtonId = deleteBotAnswerPrefixButtonId + '$authorIdMessage';
 const ignoreConfirmationButtonId = modulePrefixButtonId + 'ignoreBotButtons';
 
-const tweetRegex = /https?:\/\/(mobile\.)?twitter\.com\/(\S+)\/status\/(\d+)/g;
+const twitterUrlMappings: URLMapping[] = [
+  {
+    pattern: /https?:\/\/(mobile\.)?(twitter|x)\.com\/(\S+)\/status\/(\d+)/g,
+    replacement: 'https://fxtwitter.com/$3/status/$4',
+  },
+];
+
+const FXTwitterUrlMappings: URLMapping[] = [
+  {
+    pattern: /https?:\/\/fxtwitter\.com\/(\S+)\/status\/(\d+)/g,
+    replacement: 'https://api.fxtwitter.com/$1/status/$2',
+  },
+];
+
+const matchAndReplaceTweetLink = (message: string, urlMappings: URLMapping[]) => {
+  let tweetLink = '';
+
+  for (const urlMapping of urlMappings) {
+    const twitterLinks = message.match(urlMapping.pattern);
+
+    if (twitterLinks && twitterLinks.length > 0) {
+      tweetLink = twitterLinks[0].replace(urlMapping.pattern, urlMapping.replacement);
+
+      break;
+    }
+  }
+
+  return tweetLink;
+};
 
 const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
   const twitterId = tweetURL.split('/').pop();
   if (!twitterId) return false;
 
-  const apiFxTweetURL = tweetURL.replace('twitter.com', 'api.fxtwitter.com');
-  const [tweetInfoError, tweetInfo] = await resolveCatch(fetch(apiFxTweetURL));
+  const apiFxTweetURL = matchAndReplaceTweetLink(tweetURL, FXTwitterUrlMappings);
+  const [tweetInfoError, tweetInfo] = await resolveCatch(fetch(apiFxTweetURL, { method: 'GET' }));
 
   if (tweetInfoError) return false;
 
-  const [tweetInfoJsonError, tweetInfoJson] = await resolveCatch(
-    tweetInfo.json() as Promise<FXTwitterResponse>,
-  );
+  const tweetInfoJson = FXTwitterResponseSchema.safeParse(await tweetInfo.json());
+  if (!tweetInfoJson.success) return false;
 
-  if (tweetInfoJsonError || tweetInfoJson.code !== 200) return false;
+  if (tweetInfoJson.data.code !== 200) return false;
 
-  const video = tweetInfoJson.tweet.media?.videos?.at(0);
+  const video = tweetInfoJson.data.tweet.media?.videos?.at(0);
 
   return video ? video.type === 'video' : false;
 };
@@ -58,14 +98,11 @@ export const fixEmbedTwitterVideo = createModule({
         return;
       }
 
-      const twitterLinks = message.content.match(tweetRegex);
+      const tweetLink = matchAndReplaceTweetLink(message.content, twitterUrlMappings);
+      if (tweetLink === '') return;
 
-      if (!twitterLinks || twitterLinks.length === 0) return;
-
-      const isTwitterVideoLink = await isTwitterVideo(twitterLinks[0]);
+      const isTwitterVideoLink = await isTwitterVideo(tweetLink);
       if (!isTwitterVideoLink) return;
-
-      const twitterVideoLink = twitterLinks[0].replace('twitter.com', 'fxtwitter.com');
 
       const cancel = new ButtonBuilder()
         .setCustomId(deleteBotAnswerButtonId.replace('$authorIdMessage', message.id))
@@ -83,7 +120,7 @@ export const fixEmbedTwitterVideo = createModule({
 
       await message.suppressEmbeds(true);
       await message.reply({
-        content: twitterVideoLink,
+        content: tweetLink,
         components: [row],
       });
     },
