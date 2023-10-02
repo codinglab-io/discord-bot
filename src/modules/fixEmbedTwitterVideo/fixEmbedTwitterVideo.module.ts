@@ -81,7 +81,7 @@ const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
 
   const video = tweetInfoJson.data.tweet.media?.videos?.at(0);
 
-  return video ? video.type === 'video' : false;
+  return video?.type === 'video';
 };
 
 export const fixEmbedTwitterVideo = createModule({
