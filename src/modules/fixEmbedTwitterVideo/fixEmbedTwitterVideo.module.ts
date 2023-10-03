@@ -144,9 +144,10 @@ export const fixEmbedTwitterVideo = createModule({
         return;
       }
 
-      if (interaction.customId === deleteBotAnswerButtonId) await interaction.message.delete();
-
-      await authorMessage.suppressEmbeds(false);
+      if (interaction.customId === deleteBotAnswerButtonId) {
+        await interaction.message.delete();
+        await authorMessage.suppressEmbeds(false);
+      }
     },
     // Added this handler in case if the user has ignored the bot buttons and still wants to delete the bot answer
     messageReactionAdd: async (reaction, user) => {
