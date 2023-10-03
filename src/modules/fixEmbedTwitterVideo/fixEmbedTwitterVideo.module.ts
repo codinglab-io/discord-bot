@@ -66,20 +66,22 @@ const matchAndReplaceTweetLink = (message: string, urlMappings: URLMapping[]) =>
 };
 
 const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
-  const twitterId = tweetURL.split('/').pop();
-  if (!twitterId) return false;
-
   const apiFxTweetURL = matchAndReplaceTweetLink(tweetURL, FXTwitterUrlMappings);
-  const [tweetInfoError, tweetInfo] = await resolveCatch(fetch(apiFxTweetURL, { method: 'GET' }));
 
-  if (tweetInfoError) return false;
+  const [tweetInfoResponseError, tweetInfoResponse] = await resolveCatch(
+    fetch(apiFxTweetURL, { method: 'GET' }),
+  );
+  if (tweetInfoResponseError) return false;
 
-  const tweetInfoJson = FXTwitterResponseSchema.safeParse(await tweetInfo.json());
-  if (!tweetInfoJson.success) return false;
+  const [tweetInfoJsonError, tweetInfoJson] = await resolveCatch(tweetInfoResponse.json());
+  if (tweetInfoJsonError) return false;
 
-  if (tweetInfoJson.data.code !== 200) return false;
+  const tweetInfo = FXTwitterResponseSchema.safeParse(tweetInfoJson);
+  if (!tweetInfo.success) return false;
 
-  const video = tweetInfoJson.data.tweet.media?.videos?.at(0);
+  if (tweetInfo.data.code !== 200) return false;
+
+  const video = tweetInfo.data.tweet.media?.videos?.at(0);
 
   return video?.type === 'video';
 };
