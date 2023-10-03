@@ -31,9 +31,9 @@ type URLMapping = {
 };
 
 const modulePrefixButtonId = 'fixEmbedTwitterVideo-';
-const deleteBotAnswerPrefixButtonId = modulePrefixButtonId + 'deleteBotAnswer-';
-const deleteBotAnswerButtonId = deleteBotAnswerPrefixButtonId + '$authorIdMessage';
-const ignoreConfirmationButtonId = modulePrefixButtonId + 'ignoreBotButtons';
+
+const deleteBotAnswerButtonId = modulePrefixButtonId + 'deleteBotAnswer';
+const ignoreBotButtonsButtonId = modulePrefixButtonId + 'ignoreBotButtons';
 
 const twitterUrlMappings: URLMapping[] = [
   {
@@ -107,13 +107,13 @@ export const fixEmbedTwitterVideo = createModule({
       if (!isTwitterVideoLink) return;
 
       const cancel = new ButtonBuilder()
-        .setCustomId(deleteBotAnswerButtonId.replace('$authorIdMessage', message.id))
+        .setCustomId(deleteBotAnswerButtonId)
         .setLabel('Remove bot answer')
         .setEmoji('🚮')
         .setStyle(ButtonStyle.Primary);
 
       const ignore = new ButtonBuilder()
-        .setCustomId(ignoreConfirmationButtonId)
+        .setCustomId(ignoreBotButtonsButtonId)
         .setLabel('Ignore bot buttons')
         .setEmoji('💨')
         .setStyle(ButtonStyle.Primary);
@@ -131,22 +131,23 @@ export const fixEmbedTwitterVideo = createModule({
       if (!interaction.customId.startsWith(modulePrefixButtonId)) return;
       if (!interaction.message.author?.bot) return;
 
-      if (interaction.customId === ignoreConfirmationButtonId) {
+      const authorMessage = await interaction.channel?.messages.fetch(
+        interaction.message.reference?.messageId ?? '',
+      );
+      if (!authorMessage) return;
+
+      if (authorMessage.author.id !== interaction.user.id) return;
+
+      if (interaction.customId === ignoreBotButtonsButtonId) {
         await interaction.update({ components: [] });
 
         return;
       }
 
-      if (interaction.customId.startsWith(deleteBotAnswerPrefixButtonId))
+      if (interaction.customId === deleteBotAnswerButtonId) {
         await interaction.message.delete();
-
-      const authorMessageId = interaction.customId.split('-')[2];
-      if (!authorMessageId) return;
-
-      const authorMessage = await interaction.channel?.messages.fetch(authorMessageId);
-      if (!authorMessage) return;
-
-      await authorMessage.suppressEmbeds(false);
+        await authorMessage.suppressEmbeds(false);
+      }
     },
     // Added this handler in case if the user has ignored the bot buttons and still wants to delete the bot answer
     messageReactionAdd: async (reaction, user) => {
