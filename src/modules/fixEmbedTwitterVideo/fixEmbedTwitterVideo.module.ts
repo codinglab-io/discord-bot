@@ -32,13 +32,8 @@ type URLMapping = {
 
 const modulePrefixButtonId = 'fixEmbedTwitterVideo-';
 
-const authorIdMessagePlaceholder = '$authorIdMessage';
-
-const deleteBotAnswerPrefixButtonId = modulePrefixButtonId + 'deleteBotAnswer-';
-const deleteBotAnswerButtonId = deleteBotAnswerPrefixButtonId + authorIdMessagePlaceholder;
-
-const ignoreBotButtonsPrefixButtonId = modulePrefixButtonId + 'ignoreBotButtons-';
-const ignoreBotButtonsButtonId = ignoreBotButtonsPrefixButtonId + authorIdMessagePlaceholder;
+const deleteBotAnswerButtonId = modulePrefixButtonId + 'deleteBotAnswer';
+const ignoreBotButtonsButtonId = modulePrefixButtonId + 'ignoreBotButtons';
 
 const twitterUrlMappings: URLMapping[] = [
   {
@@ -112,13 +107,13 @@ export const fixEmbedTwitterVideo = createModule({
       if (!isTwitterVideoLink) return;
 
       const cancel = new ButtonBuilder()
-        .setCustomId(deleteBotAnswerButtonId.replace(authorIdMessagePlaceholder, message.id))
+        .setCustomId(deleteBotAnswerButtonId)
         .setLabel('Remove bot answer')
         .setEmoji('🚮')
         .setStyle(ButtonStyle.Primary);
 
       const ignore = new ButtonBuilder()
-        .setCustomId(ignoreBotButtonsButtonId.replace(authorIdMessagePlaceholder, message.id))
+        .setCustomId(ignoreBotButtonsButtonId)
         .setLabel('Ignore bot buttons')
         .setEmoji('💨')
         .setStyle(ButtonStyle.Primary);
@@ -136,22 +131,20 @@ export const fixEmbedTwitterVideo = createModule({
       if (!interaction.customId.startsWith(modulePrefixButtonId)) return;
       if (!interaction.message.author?.bot) return;
 
-      const authorMessageId = interaction.customId.split('-')[2];
-      if (!authorMessageId) return;
-
-      const authorMessage = await interaction.channel?.messages.fetch(authorMessageId);
+      const authorMessage = await interaction.channel?.messages.fetch(
+        interaction.message.reference?.messageId ?? '',
+      );
       if (!authorMessage) return;
 
       if (authorMessage.author.id !== interaction.user.id) return;
 
-      if (interaction.customId.startsWith(ignoreBotButtonsPrefixButtonId)) {
+      if (interaction.customId === ignoreBotButtonsButtonId) {
         await interaction.update({ components: [] });
 
         return;
       }
 
-      if (interaction.customId.startsWith(deleteBotAnswerPrefixButtonId))
-        await interaction.message.delete();
+      if (interaction.customId === deleteBotAnswerButtonId) await interaction.message.delete();
 
       await authorMessage.suppressEmbeds(false);
     },
