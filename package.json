@@ -22,7 +22,7 @@
     "keyv": "4.5.3",
     "open-graph-scraper": "6.2.2",
     "param-case": "3.0.4",
-    "zod": "3.22.2"
+    "zod": "3.22.3"
   },
   "devDependencies": {
     "@types/node": "20.8.0",
