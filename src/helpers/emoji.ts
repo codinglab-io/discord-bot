@@ -1,4 +1,4 @@
-export const EMOJIS = {
+export const EMOJI = {
   A: '🇦',
   B: '🇧',
   C: '🇨',
@@ -32,3 +32,5 @@ export const EMOJIS = {
   OK: '✅',
   NOK: '❌',
 } as const;
+
+export type Emoji = (typeof EMOJI)[keyof typeof EMOJI];

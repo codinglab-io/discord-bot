@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { EMOJIS } from '../helpers/emojis';
+import { EMOJI } from '../helpers/emoji';
 import { isASocialNetworkUrl, removeEmoji, removeMarkdown } from '../helpers/regex.helper';
 
 describe('Helpers: Regex', () => {
@@ -18,7 +18,7 @@ describe('Helpers: Regex', () => {
   });
   describe('Rule: removeEmoji should remove all emojis from a string', () => {
     it('removeEmoji() should remove all emojis from a string', () => {
-      const text = `${EMOJIS.WAVE} Hello, World!<:SpongebobMock:1136008737669259407>`;
+      const text = `${EMOJI.WAVE} Hello, World!<:SpongebobMock:1136008737669259407>`;
       const result = removeEmoji(text);
       expect(result).toBe(' Hello, World!');
     });
