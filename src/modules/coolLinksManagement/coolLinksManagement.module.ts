@@ -56,7 +56,7 @@ export const coolLinksManagement = createModule({
       }
 
       await message.react(EMOJI.OK);
-      await message.react(EMOJI.NOK);
+      await message.react(EMOJI.NOT_OK);
 
       const url = detectedURLs[0];
       const threadName = await getThreadNameFromOpenGraph(url);

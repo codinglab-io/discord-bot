@@ -30,7 +30,7 @@ export const EMOJI = {
   DASH: '💨',
   WAVE: '👋',
   OK: '✅',
-  NOK: '❌',
+  NOT_OK: '❌',
 } as const;
 
 export type Emoji = (typeof EMOJI)[keyof typeof EMOJI];
