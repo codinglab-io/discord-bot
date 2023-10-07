@@ -136,6 +136,25 @@ export const fixEmbedTwitterVideo = createModule({
       );
       if (!authorMessage) return;
 
+      if (authorMessage.author.id !== interaction.user.id) {
+        await interaction.reply({
+          content: 'You are not the author of the message',
+          ephemeral: true,
+        });
+
+        return;
+      }
+
+      if (interaction.customId === ignoreBotButtonsButtonId) {
+        await interaction.update({ components: [] });
+        await interaction.followUp({
+          content:
+            'Buttons ignored, you can still react with :put_litter_in_its_place: to delete the bot answer',
+          ephemeral: true,
+        });
+
+        return;
+      }
       if (authorMessage.author.id !== interaction.user.id) return;
 
       if (interaction.customId === ignoreBotButtonsButtonId) {
