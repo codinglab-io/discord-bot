@@ -28,7 +28,7 @@ const reactWith = async (message: Message, reactions: string[]) => {
 };
 
 const reactWithCoubeh = async (message: Message) =>
-  reactWith(message, [EMOJIS.C, EMOJIS.O, EMOJIS.U, EMOJIS.B, EMOJIS.E, EMOJIS.H, EMOJIS.muted]);
+  reactWith(message, [EMOJIS.C, EMOJIS.O, EMOJIS.U, EMOJIS.B, EMOJIS.E, EMOJIS.H, EMOJIS.MUTED]);
 
 const reactWithFeur = async (message: Message) =>
   reactWith(message, [EMOJIS.F, EMOJIS.E, EMOJIS.U, EMOJIS.R]);

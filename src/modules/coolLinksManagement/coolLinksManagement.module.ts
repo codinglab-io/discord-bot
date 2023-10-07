@@ -6,6 +6,7 @@ import { createModule } from '../../core/createModule';
 import { isASocialNetworkUrl } from '../../helpers/regex.helper';
 import { getPageSummary } from './summarizeCoolPages';
 import { getVideoSummary } from './summarizeCoolVideos';
+import { EMOJIS } from '../../helpers/emojis';
 
 const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> => {
   try {
@@ -54,8 +55,8 @@ export const coolLinksManagement = createModule({
         return;
       }
 
-      await message.react('✅');
-      await message.react('❌');
+      await message.react(EMOJIS.OK);
+      await message.react(EMOJIS.NOK);
 
       const url = detectedURLs[0];
       const threadName = await getThreadNameFromOpenGraph(url);

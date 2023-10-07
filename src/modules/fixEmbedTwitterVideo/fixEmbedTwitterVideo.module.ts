@@ -110,13 +110,13 @@ export const fixEmbedTwitterVideo = createModule({
       const cancel = new ButtonBuilder()
         .setCustomId(deleteBotAnswerButtonId)
         .setLabel('Remove bot answer')
-        .setEmoji(EMOJIS.putLitterInItsPlace)
+        .setEmoji(EMOJIS.PUT_LITTER_IN_ITS_PLACE)
         .setStyle(ButtonStyle.Primary);
 
       const ignore = new ButtonBuilder()
         .setCustomId(ignoreBotButtonsButtonId)
         .setLabel('Ignore bot buttons')
-        .setEmoji(EMOJIS.dash)
+        .setEmoji(EMOJIS.DASH)
         .setStyle(ButtonStyle.Primary);
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(cancel, ignore);
