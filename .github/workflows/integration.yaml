@@ -1,4 +1,4 @@
-name: Check Integration
+name: Check integration
 
 on:
   pull_request:
@@ -49,14 +49,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Format project
-        run: pnpm format
+      - name: Check code formatting
+        run: pnpm check:format
 
-      - name: Type-check project
-        run: pnpm typecheck
+      - name: Check code typing
+        run: pnpm check:types
 
-      - name: Lint project
-        run: pnpm lint
+      - name: Check code linting
+        run: pnpm check:lint
 
       - name: Test project
         run: pnpm test
