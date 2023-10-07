@@ -1,3 +1,5 @@
+name: Deploy application
+
 on:
   push:
     branches:
@@ -16,6 +18,7 @@ concurrency:
 
 jobs:
   deployment:
+    name: Perform deployment
     runs-on: ubuntu-22.04
     permissions: read-all
 
@@ -46,7 +49,7 @@ jobs:
       - name: Login to Heroku Container Registry
         run: heroku container:login
 
-      - name: Build Docker image for the bot
+      - name: Build Docker image
         uses: docker/build-push-action@v5
         with:
           push: true
@@ -55,5 +58,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Deploy the bot
+      - name: Deploy Docker image
         run: heroku container:release worker --app codinglab-discord-bot
