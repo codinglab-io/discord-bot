@@ -3,10 +3,10 @@ import ogs from 'open-graph-scraper';
 import { z } from 'zod';
 
 import { createModule } from '../../core/createModule';
+import { EMOJIS } from '../../helpers/emojis';
 import { isASocialNetworkUrl } from '../../helpers/regex.helper';
 import { getPageSummary } from './summarizeCoolPages';
 import { getVideoSummary } from './summarizeCoolVideos';
-import { EMOJIS } from '../../helpers/emojis';
 
 const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> => {
   try {
