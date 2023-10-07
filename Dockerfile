@@ -5,15 +5,16 @@ WORKDIR /app
 RUN corepack enable
 RUN apk add --no-cache python3 make g++
 
-COPY pnpm-lock.yaml package.json ./
+COPY pnpm-lock.yaml ./
 
-RUN pnpm fetch
+RUN pnpm config set virtual-store-dir /app/.pnpm-store && \
+    pnpm fetch
 
 FROM base as build
 
 WORKDIR /app
 
-COPY tsup.config.ts ./
+COPY tsup.config.ts package.json  ./
 COPY src ./src
 
 RUN pnpm install --frozen-lockfile --offline && \
@@ -23,6 +24,7 @@ FROM base as production-dependencies
 
 WORKDIR /app
 
+COPY package.json  ./
 RUN pnpm install --production --frozen-lockfile --offline
 
 FROM node:20.8.0-alpine as application
