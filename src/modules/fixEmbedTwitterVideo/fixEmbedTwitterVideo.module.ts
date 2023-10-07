@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageType } from 'disco
 import { z } from 'zod';
 
 import { createModule } from '../../core/createModule';
-import {EMOJIS} from "../../helpers/emojis";
+import { EMOJIS } from '../../helpers/emojis';
 import { resolveCatch } from '../../helpers/resolveCatch.helper';
 
 const FXTwitterResponseSchema = z.object({
