@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@keyv/redis':
-    specifier: 2.7.1
-    version: 2.7.1
+    specifier: 2.8.0
+    version: 2.8.0
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
@@ -21,8 +21,8 @@ dependencies:
     specifier: 14.13.0
     version: 14.13.0
   keyv:
-    specifier: 4.5.3
-    version: 4.5.3
+    specifier: 4.5.4
+    version: 4.5.4
   open-graph-scraper:
     specifier: 6.3.0
     version: 6.3.0
@@ -659,8 +659,8 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@keyv/redis@2.7.1:
-    resolution: {integrity: sha512-yZOFGQ7/PVLF8K1vTrztHUgCqDz7W0zfryX3+3nMOxe6j948s9VyQN/cCxftesYQEiTPAMp1NQXyqlWO0w5qEQ==}
+  /@keyv/redis@2.8.0:
+    resolution: {integrity: sha512-6k7wG/KKSIGpruKlsEB4sFjECJEyQsuJbWoWdoq9Uv2L6Mm/SEqEidekRZI/QljE1A4WQkFsIE8hHl1Oc3UNGg==}
     engines: {node: '>= 14'}
     dependencies:
       ioredis: 5.3.2
@@ -2392,8 +2392,8 @@ packages:
     resolution: {integrity: sha512-gfFQZrcTc8CnKXp6Y4/CBT3fTc0OVuDofpre4aEeEpSBPV5X5v4+Vmx+8snU7RLPrNHPKSgLxGo9YuQzz20o+w==}
     dev: true
 
-  /keyv@4.5.3:
-    resolution: {integrity: sha512-QCiSav9WaX1PgETJ+SpNnx2PRRapJ/oRSXM4VO5OGYGSjrxbKPVFVhB3l2OCbLCk329N8qyAtsJjSjvVBWzEug==}
+  /keyv@4.5.4:
+    resolution: {integrity: sha512-oxVHkHR/EJf2CNXnWxRLW6mg7JyCCUcG0DtEGmL2ctUo1PNTin1PUil+r/+4r5MpVgC/fn1kjsx7mjSujKqIpw==}
     dependencies:
       json-buffer: 3.0.1
     dev: false
