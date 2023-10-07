@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageType } from 'disco
 import { z } from 'zod';
 
 import { createModule } from '../../core/createModule';
+import { EMOJI } from '../../helpers/emoji';
 import { resolveCatch } from '../../helpers/resolveCatch.helper';
 
 const FXTwitterResponseSchema = z.object({
@@ -109,13 +110,13 @@ export const fixEmbedTwitterVideo = createModule({
       const cancel = new ButtonBuilder()
         .setCustomId(deleteBotAnswerButtonId)
         .setLabel('Remove bot answer')
-        .setEmoji('🚮')
+        .setEmoji(EMOJI.PUT_LITTER_IN_ITS_PLACE)
         .setStyle(ButtonStyle.Primary);
 
       const ignore = new ButtonBuilder()
         .setCustomId(ignoreBotButtonsButtonId)
         .setLabel('Ignore bot buttons')
-        .setEmoji('💨')
+        .setEmoji(EMOJI.DASH)
         .setStyle(ButtonStyle.Primary);
 
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(cancel, ignore);
