@@ -8,10 +8,10 @@
   "scripts": {
     "build": "tsup-node src/main.ts",
     "dev": "tsup-node src/main.ts --watch --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
-    "lint": "eslint src --report-unused-disable-directives",
-    "format": "prettier -c src",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest"
+    "test": "vitest",
+    "check:lint": "eslint src --report-unused-disable-directives",
+    "check:format": "prettier -c src",
+    "check:types": "tsc --noEmit"
   },
   "dependencies": {
     "@keyv/redis": "2.7.1",
