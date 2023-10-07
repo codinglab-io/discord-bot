@@ -3,6 +3,7 @@ import ogs from 'open-graph-scraper';
 import { z } from 'zod';
 
 import { createModule } from '../../core/createModule';
+import { EMOJI } from '../../helpers/emoji';
 import { isASocialNetworkUrl } from '../../helpers/regex.helper';
 import { getPageSummary } from './summarizeCoolPages';
 import { getVideoSummary } from './summarizeCoolVideos';
@@ -54,8 +55,8 @@ export const coolLinksManagement = createModule({
         return;
       }
 
-      await message.react('✅');
-      await message.react('❌');
+      await message.react(EMOJI.OK);
+      await message.react(EMOJI.NOT_OK);
 
       const url = detectedURLs[0];
       const threadName = await getThreadNameFromOpenGraph(url);

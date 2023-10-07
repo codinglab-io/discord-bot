@@ -7,6 +7,8 @@ import {
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
+import type { Emoji } from '../../helpers/emoji';
+import { EMOJI } from '../../helpers/emoji';
 import {
   removeEmoji,
   removeMarkdown,
@@ -20,16 +22,17 @@ const quoiDetectorRegex = /\bquoi\s*$/i;
 const endWithQuoi = (text: string) =>
   quoiDetectorRegex.test(removeNonASCII(removeEmoji(removePunctuation(removeMarkdown(text)))));
 
-const reactWith = async (message: Message, reactions: string[]) => {
+const reactWith = async (message: Message, reactions: Emoji[]) => {
   for (const reaction of reactions) {
     await message.react(reaction);
   }
 };
 
 const reactWithCoubeh = async (message: Message) =>
-  reactWith(message, ['🇨', '🇴', '🇺', '🇧', '🇪', '🇭', '🔇']);
+  reactWith(message, [EMOJI.C, EMOJI.O, EMOJI.U, EMOJI.B, EMOJI.E, EMOJI.H, EMOJI.MUTED]);
 
-const reactWithFeur = async (message: Message) => reactWith(message, ['🇫', '🇪', '🇺', '🇷']);
+const reactWithFeur = async (message: Message) =>
+  reactWith(message, [EMOJI.F, EMOJI.E, EMOJI.U, EMOJI.R]);
 
 export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
