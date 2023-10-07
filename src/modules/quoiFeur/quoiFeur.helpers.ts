@@ -7,6 +7,7 @@ import {
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
+import { EMOJIS } from '../../helpers/emojis';
 import {
   removeEmoji,
   removeMarkdown,
@@ -27,9 +28,10 @@ const reactWith = async (message: Message, reactions: string[]) => {
 };
 
 const reactWithCoubeh = async (message: Message) =>
-  reactWith(message, ['🇨', '🇴', '🇺', '🇧', '🇪', '🇭', '🔇']);
+  reactWith(message, [EMOJIS.C, EMOJIS.O, EMOJIS.U, EMOJIS.B, EMOJIS.E, EMOJIS.H, EMOJIS.muted]);
 
-const reactWithFeur = async (message: Message) => reactWith(message, ['🇫', '🇪', '🇺', '🇷']);
+const reactWithFeur = async (message: Message) =>
+  reactWith(message, [EMOJIS.F, EMOJIS.E, EMOJIS.U, EMOJIS.R]);
 
 export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
