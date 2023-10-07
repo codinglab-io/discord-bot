@@ -15,12 +15,12 @@
     "check": "run-s check:*"
   },
   "dependencies": {
-    "@keyv/redis": "2.7.1",
+    "@keyv/redis": "2.8.0",
     "cheerio": "1.0.0-rc.12",
     "constant-case": "3.0.4",
     "cron": "2.4.4",
     "discord.js": "14.13.0",
-    "keyv": "4.5.3",
+    "keyv": "4.5.4",
     "open-graph-scraper": "6.3.0",
     "param-case": "3.0.4",
     "zod": "3.22.4"
