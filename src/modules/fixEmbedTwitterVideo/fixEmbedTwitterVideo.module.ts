@@ -155,7 +155,6 @@ export const fixEmbedTwitterVideo = createModule({
 
         return;
       }
-      if (authorMessage.author.id !== interaction.user.id) return;
 
       if (interaction.customId === ignoreBotButtonsButtonId) {
         await interaction.update({ components: [] });
