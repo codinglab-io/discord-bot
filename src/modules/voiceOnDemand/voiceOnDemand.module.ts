@@ -84,28 +84,15 @@ export const voiceOnDemand = createModule({
       }
 
       const lobbyIds = await cache.get('lobbyIds', []);
-      const onDemandChannels = await cache.get('onDemandChannels', []);
-
       const isLobbyChannel = lobbyIds.includes(channel.id);
-      const isOnDemandChannel = onDemandChannels.includes(channel.id);
 
-      if (!isOnDemandChannel && !isLobbyChannel) {
+      if (!isLobbyChannel) {
         return;
       }
 
       await cache.set(
         'lobbyIds',
         lobbyIds.filter((lobbyId) => lobbyId !== channel.id),
-      );
-
-      await Promise.all(
-        onDemandChannels.map(async (id) => {
-          const updatedChannel = await channel.guild.channels.fetch(id).catch(() => null);
-          if (updatedChannel !== null) {
-            await channel.guild.channels.delete(id);
-            channel.guild.channels.cache.delete(id);
-          }
-        }),
       );
     },
   }),
