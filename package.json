@@ -18,7 +18,7 @@
     "@keyv/redis": "2.8.0",
     "cheerio": "1.0.0-rc.12",
     "constant-case": "3.0.4",
-    "cron": "2.4.4",
+    "cron": "3.1.1",
     "discord.js": "14.13.0",
     "keyv": "4.5.4",
     "open-graph-scraper": "6.3.0",
