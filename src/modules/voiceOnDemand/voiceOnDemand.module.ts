@@ -1,4 +1,4 @@
-import { ChannelType, Guild, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, Guild, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import { createModule } from '../../core/createModule';
@@ -18,6 +18,7 @@ export const voiceOnDemand = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('create').setDescription('Creates the voice lobby'),
         )
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .toJSON(),
       handler: {
         create: async (interaction): Promise<void> => {

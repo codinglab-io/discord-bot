@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 import { createModule } from '../../core/createModule';
 import {
@@ -49,6 +49,7 @@ export const recurringMessage = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('list').setDescription('List recurring messages'),
         )
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .toJSON(),
       handler: {
         add: async (interaction) => {
