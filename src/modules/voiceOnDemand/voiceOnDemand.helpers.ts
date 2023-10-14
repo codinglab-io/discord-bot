@@ -15,20 +15,16 @@ type CheckedVoiceState = SetNonNullable<VoiceState, 'channel' | 'channelId' | 'm
 export const isJoinState = (newState: VoiceState): newState is CheckedVoiceState =>
   newState.channel !== null && newState.channelId !== null && newState.member !== null;
 
-export const isLeaveState = (oldDate: VoiceState): oldDate is CheckedVoiceState =>
-  oldDate.channel !== null && oldDate.channelId !== null && oldDate.member !== null;
+export const isLeaveState = (oldState: VoiceState): oldState is CheckedVoiceState =>
+  oldState.channel !== null && oldState.channelId !== null && oldState.member !== null;
 
-export const handleJoin = async (state: CheckedVoiceState, lobbyId: string): Promise<void> => {
-  if (state.channelId !== lobbyId) {
-    return;
-  }
-
+export const handleJoinLobby = async (state: CheckedVoiceState): Promise<void> => {
   const channel = await createUserVoiceChannel(state.channel.parent, state.member);
   await state.member.voice.setChannel(channel);
 };
 
-export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
-  const channels = await cache.get('channels', []);
+export const handleLeaveOnDemand = async (state: CheckedVoiceState): Promise<void> => {
+  const channels = await cache.get('onDemandChannels', []);
 
   const { channel } = state;
   const { id, members, guild } = channel;
@@ -38,7 +34,7 @@ export const handleLeave = async (state: CheckedVoiceState): Promise<void> => {
     guild.channels.cache.delete(id);
 
     const filtered = channels.filter((channelId) => channelId !== id);
-    await cache.set('channels', filtered);
+    await cache.set('onDemandChannels', filtered);
   }
 };
 
@@ -60,9 +56,9 @@ export const createUserVoiceChannel = async (
 
   const channel = await guild.channels.create(parent === null ? options : { ...options, parent });
 
-  const channels = await cache.get('channels', []);
+  const channels = await cache.get('onDemandChannels', []);
 
-  await cache.set('channels', [...channels, channel.id]);
+  await cache.set('onDemandChannels', [...channels, channel.id]);
 
   return channel.id;
 };

@@ -1,11 +1,11 @@
-FROM node:20.6.0-alpine as base
+FROM node:20.8.0-alpine as base
 
 WORKDIR /app
 
 RUN corepack enable
 RUN apk add --no-cache python3 make g++
 
-COPY pnpm-lock.yaml package.json ./
+COPY pnpm-lock.yaml ./
 
 RUN pnpm fetch
 
@@ -13,7 +13,7 @@ FROM base as build
 
 WORKDIR /app
 
-COPY tsup.config.ts ./
+COPY tsup.config.ts package.json  ./
 COPY src ./src
 
 RUN pnpm install --frozen-lockfile --offline && \
@@ -23,9 +23,12 @@ FROM base as production-dependencies
 
 WORKDIR /app
 
-RUN pnpm install --production --frozen-lockfile --offline
+COPY package.json  ./
+RUN pnpm prune --prod && \
+    pnpm install --production --frozen-lockfile --offline && \
+    pnpm store prune
 
-FROM node:20.6.0-alpine as application
+FROM node:20.8.0-alpine as application
 
 WORKDIR /app
 

@@ -1,9 +1,10 @@
 import { MessageType, ThreadAutoArchiveDuration } from 'discord.js';
 import ogs from 'open-graph-scraper';
+import { z } from 'zod';
 
-import { config } from '../../config';
+import { createModule } from '../../core/createModule';
+import { EMOJI } from '../../helpers/emoji';
 import { isASocialNetworkUrl } from '../../helpers/regex.helper';
-import type { BotModule } from '../../types/bot';
 import { getPageSummary } from './summarizeCoolPages';
 import { getVideoSummary } from './summarizeCoolVideos';
 
@@ -32,13 +33,17 @@ const getThreadNameFromOpenGraph = async (url: string): Promise<string | null> =
 
 const youtubeUrlRegex = new RegExp('^(https?)?(://)?(www.)?(m.)?((youtube.com)|(youtu.be))');
 
-export const coolLinksManagement: BotModule = {
-  eventHandlers: {
+export const coolLinksManagement = createModule({
+  env: {
+    CHANNEL_ID: z.string().nonempty(),
+    PAGE_SUMMARIZER_BASE_URL: z.string().url(),
+  },
+  eventHandlers: ({ env }) => ({
     messageCreate: async (message) => {
       if (
         message.author.bot ||
         message.type !== MessageType.Default ||
-        message.channelId !== config.discord.coolLinksChannelId
+        message.channelId !== env.CHANNEL_ID
       ) {
         return;
       }
@@ -50,8 +55,8 @@ export const coolLinksManagement: BotModule = {
         return;
       }
 
-      await message.react('✅');
-      await message.react('❌');
+      await message.react(EMOJI.OK);
+      await message.react(EMOJI.NOT_OK);
 
       const url = detectedURLs[0];
       const threadName = await getThreadNameFromOpenGraph(url);
@@ -69,13 +74,24 @@ export const coolLinksManagement: BotModule = {
       }
       if (!youtubeUrlRegex.test(url) && !isASocialNetworkUrl(url)) {
         try {
-          const pageSummaryDiscordView = await getPageSummary(url);
+          // const parseBaseUrl = `${env.PAGE_SUMMARIZER_BASE_URL}/convert.php?type=expand&lang=en&langfrom=user&url=`;
+          const fullUrl = new URL('/convert.php', env.PAGE_SUMMARIZER_BASE_URL);
+          const searchParams = new URLSearchParams([
+            ['type', 'expand'],
+            ['lang', 'en'],
+            ['langfrom', 'user'],
+            ['url', url],
+          ]);
+
+          fullUrl.search = searchParams.toString();
+
+          const pageSummaryDiscordView = await getPageSummary(fullUrl.toString());
           await thread.send(pageSummaryDiscordView);
         } catch (error) {
           console.error(error);
         }
       }
     },
-  },
+  }),
   intents: ['GuildMessages', 'MessageContent', 'GuildMessageReactions'],
-};
+});

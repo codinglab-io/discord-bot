@@ -1,3 +1,5 @@
+name: Deploy application
+
 on:
   push:
     branches:
@@ -16,6 +18,7 @@ concurrency:
 
 jobs:
   deployment:
+    name: Perform deployment
     runs-on: ubuntu-22.04
     permissions: read-all
 
@@ -30,10 +33,10 @@ jobs:
           fetch-depth: 0
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Heroku
         uses: akhileshns/heroku-deploy@v3.12.14
@@ -46,8 +49,8 @@ jobs:
       - name: Login to Heroku Container Registry
         run: heroku container:login
 
-      - name: Build Docker image for the bot
-        uses: docker/build-push-action@v4
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
         with:
           push: true
           provenance: false
@@ -55,5 +58,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Deploy the bot
+      - name: Deploy Docker image
         run: heroku container:release worker --app codinglab-discord-bot

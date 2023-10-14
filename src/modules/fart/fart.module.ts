@@ -1,17 +1,18 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 
-export const fart: BotModule = {
-  slashCommands: [
+export const fart = createModule({
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('fart')
         .setDescription('Replies with https://prout.dev')
+        .setDefaultMemberPermissions(PermissionFlagsBits.SendMessages)
         .toJSON(),
       handler: async (interaction) => {
         await interaction.reply('https://prout.dev');
       },
     },
   ],
-};
+});

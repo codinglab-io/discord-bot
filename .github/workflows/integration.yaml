@@ -1,3 +1,5 @@
+name: Check integration
+
 on:
   pull_request:
     branches:
@@ -11,8 +13,16 @@ on:
       - '**deployment.yaml'
 
 jobs:
+  validate-pr-title:
+    name: Validate PR title
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   integration:
-    name: Continuous integration
+    name: Continuous integration checks
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
@@ -21,14 +31,14 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2.4.0
-
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.4.0
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -39,23 +49,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Format project
-        run: pnpm format
+      - name: Check code formatting
+        run: pnpm check:format
 
-      - name: Type-check project
-        run: pnpm typecheck
+      - name: Check code typing
+        run: pnpm check:types
 
-      - name: Lint project
-        run: pnpm lint
+      - name: Check code linting
+        run: pnpm check:lint
 
       - name: Test project
         run: pnpm test
 
-      - name: Build project
-        run: pnpm build
-
       - name: Build Docker image for project
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           push: false
           cache-from: type=gha

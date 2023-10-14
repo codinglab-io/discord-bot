@@ -1,6 +1,6 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
-import type { BotModule } from '../../types/bot';
+import { createModule } from '../../core/createModule';
 import {
   addQuoiFeurToChannel,
   cleanCacheOnChannelDelete,
@@ -8,8 +8,8 @@ import {
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
 
-export const quoiFeur: BotModule = {
-  slashCommands: [
+export const quoiFeur = createModule({
+  slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
         .setName('quoi-feur')
@@ -20,6 +20,7 @@ export const quoiFeur: BotModule = {
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .toJSON(),
       handler: {
         enable: addQuoiFeurToChannel,
@@ -27,9 +28,9 @@ export const quoiFeur: BotModule = {
       },
     },
   ],
-  eventHandlers: {
+  eventHandlers: () => ({
     messageCreate: reactOnEndWithQuoi,
     channelDelete: cleanCacheOnChannelDelete,
-  },
+  }),
   intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
-};
+});
