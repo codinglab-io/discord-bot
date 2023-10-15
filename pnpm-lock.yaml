@@ -11,6 +11,9 @@ dependencies:
   cheerio:
     specifier: 1.0.0-rc.12
     version: 1.0.0-rc.12
+  colorette:
+    specifier: 2.0.20
+    version: 2.0.20
   constant-case:
     specifier: 3.0.4
     version: 3.0.4

@@ -6,8 +6,8 @@
   "author": "Codinglab <codinglabio@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build": "tsup-node src/main.ts",
-    "dev": "tsup-node src/main.ts --watch --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
+    "build": "tsup-node",
+    "dev": "tsup-node --watch --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
     "test": "vitest",
     "check:lint": "eslint src --report-unused-disable-directives",
     "check:format": "prettier -c src",
@@ -17,6 +17,7 @@
   "dependencies": {
     "@keyv/redis": "2.8.0",
     "cheerio": "1.0.0-rc.12",
+    "colorette": "2.0.20",
     "constant-case": "3.0.4",
     "cron": "3.1.1",
     "discord.js": "14.13.0",
