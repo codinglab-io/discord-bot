@@ -1,16 +1,8 @@
 import createLogger, { type LoggerOptions } from 'pino';
-import type { PrettyOptions } from 'pino-pretty';
 
-type BotLoggerOptions = LoggerOptions & {
-  transport?: { target: 'pino-pretty'; options: PrettyOptions };
-};
-
-const developmentOptionsOverride: BotLoggerOptions = {
+const developmentOptionsOverride: LoggerOptions = {
   transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-    },
+    target: './pinoTransportModule',
   },
   level: process.env['LOGLEVEL'] ?? 'debug',
 };
