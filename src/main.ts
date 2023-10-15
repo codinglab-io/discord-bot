@@ -4,6 +4,7 @@ import { createAllModules } from './core/createEnvForModule';
 import { env } from './core/env';
 import { getIntentsFromModules } from './core/getIntentsFromModules';
 import { loadModules } from './core/loadModules';
+import { coreLogger } from './core/logger';
 import { modules } from './modules/modules';
 
 const createdModules = await createAllModules(modules);
@@ -16,6 +17,7 @@ await client.login(env.discordToken);
 
 await new Promise<void>((resolve) => {
   client.on('ready', () => {
+    coreLogger.info(`Client is ready - ${client.user?.tag}!`);
     createdModules.map((module) => module.eventHandlers?.ready?.(client));
     resolve();
   });
@@ -27,4 +29,4 @@ if (!client.isReady()) {
 
 await loadModules(client, createdModules);
 
-console.log('Bot started.');
+coreLogger.info('Bot fully started.');

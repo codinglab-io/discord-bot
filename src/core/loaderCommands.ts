@@ -7,6 +7,7 @@ import {
 
 import type { BotCommand } from '../types/bot';
 import { deleteExistingCommands } from './deleteExistingCommands';
+import { coreLogger } from './logger';
 
 interface PushCommandsOptions {
   commands: RESTPostAPIChatInputApplicationCommandsJSONBody[];
@@ -26,6 +27,7 @@ export const pushCommands = async ({
   await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
     body: commands,
   });
+  coreLogger.info('All commands are pushed.');
 };
 
 export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =>
@@ -33,7 +35,9 @@ export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =
     if (!interaction.inGuild() || !interaction.isChatInputCommand()) {
       return;
     }
-
+    coreLogger.debug(
+      `${interaction.commandName} command received by ${interaction.user.tag} - routing...`,
+    );
     const command = botCommands.find((command) => command.schema.name === interaction.commandName);
 
     if (!command) {
@@ -41,10 +45,11 @@ export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =
         content: `Command not found ${interaction.commandName}`,
         ephemeral: true,
       });
-      return;
+      throw new Error(`Command not found ${interaction.commandName}`);
     }
 
     if (typeof command.handler === 'function') {
+      coreLogger.debug(`${interaction.commandName} command found - running handler.`);
       await command.handler(interaction);
       return;
     }
@@ -58,8 +63,15 @@ export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =
         } ${interaction.options.getSubcommand()}`,
         ephemeral: true,
       });
-      return;
+      throw new Error(
+        `Subcommand not found ${interaction.commandName} ${interaction.options.getSubcommand()}`,
+      );
     }
 
+    coreLogger.debug(
+      `${
+        interaction.commandName
+      } ${interaction.options.getSubcommand()} subcommand found - running handler.`,
+    );
     await subCommand(interaction);
   });
