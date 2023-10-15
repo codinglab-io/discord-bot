@@ -21,6 +21,10 @@ settings:
   import/resolver:
 
 rules:
+  no-restricted-syntax:
+    - error
+    - selector: CallExpression[callee.object.name='console'][callee.property.name!=/^(log|warn|error|info|trace)$/]
+      message: Use logger instead of console
   import/exports-last: error
   import/first: error
   import/no-duplicates: error

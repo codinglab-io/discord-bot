@@ -8,6 +8,7 @@ import {
 
 import type { BotCommand } from '../types/bot';
 import { deleteExistingCommands } from './deleteExistingCommands';
+import { coreLogger } from './logger';
 
 interface PushCommandsOptions {
   commands: RESTPostAPIChatInputApplicationCommandsJSONBody[];
@@ -62,6 +63,7 @@ export const pushCommands = async ({
   await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
     body: commands,
   });
+  coreLogger.info('All commands are pushed.');
 };
 
 export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =>
