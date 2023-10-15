@@ -10,7 +10,7 @@ import {
 } from './voiceOnDemand.helpers';
 
 export const voiceOnDemand = createModule({
-  slashCommands: () => [
+  slashCommands: ({ logger }) => [
     {
       schema: new SlashCommandBuilder()
         .setName('voice-on-demand')
@@ -51,6 +51,7 @@ export const voiceOnDemand = createModule({
           //NOTES: this is a potential race condition.
           await cache.set('lobbyIds', [...lobbyIds, id]);
 
+          logger.info(`Created voice on demand voice channel ${id}`);
           await interaction.reply({
             content: 'Created voice on demand voice channel.',
             ephemeral: true,
@@ -59,7 +60,7 @@ export const voiceOnDemand = createModule({
       },
     },
   ],
-  eventHandlers: () => ({
+  eventHandlers: ({ logger }) => ({
     voiceStateUpdate: async (oldState, newState) => {
       const lobbyIds = await cache.get('lobbyIds', []);
       const onDemandChannels = await cache.get('onDemandChannels', []);
@@ -72,10 +73,18 @@ export const voiceOnDemand = createModule({
       }
 
       if (isOnDemandChannel && isLeaveState(oldState)) {
+        logger.debug(
+          { guild: newState.guild.id },
+          `User ${oldState.member.displayName} left the on-demand channel`,
+        );
         await handleLeaveOnDemand(oldState);
       }
 
       if (isLobbyChannel && isJoinState(newState)) {
+        logger.debug(
+          { guild: newState.guild.id },
+          `User ${newState.member.displayName} joined the lobby`,
+        );
         await handleJoinLobby(newState);
       }
     },
@@ -90,6 +99,11 @@ export const voiceOnDemand = createModule({
       if (!isLobbyChannel) {
         return;
       }
+
+      logger.info(
+        { guild: channel.guild.id },
+        `Voice on demand voice channel ${channel.id} was deleted`,
+      );
 
       await cache.set(
         'lobbyIds',
