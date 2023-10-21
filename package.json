@@ -21,8 +21,11 @@
     "cron": "2.4.4",
     "discord.js": "14.13.0",
     "keyv": "4.5.4",
+    "langchain": "0.0.165",
     "open-graph-scraper": "6.3.0",
+    "openai": "4.11.1",
     "param-case": "3.0.4",
+    "tiktoken": "1.0.10",
     "zod": "3.22.4"
   },
   "devDependencies": {
