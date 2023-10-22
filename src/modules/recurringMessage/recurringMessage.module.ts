@@ -11,7 +11,7 @@ import {
 } from './recurringMessage.helpers';
 
 export const recurringMessage = createModule({
-    name: 'recurringMessage',
+  name: 'recurringMessage',
   slashCommands: () => [
     {
       schema: new SlashCommandBuilder()

@@ -25,7 +25,7 @@ export const createAllModules = async (
   for (const { name, factory } of Object.values(modules)) {
     const moduleConstantName = constantCase(name);
     const env = createEnvForModule(moduleConstantName);
-    const module = await factory({env});
+    const module = await factory({ env });
 
     createdModules.push(module);
   }
