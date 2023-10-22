@@ -1,6 +1,6 @@
 import { constantCase } from 'constant-case';
 
-import type { CreatedModule, ModuleFactory } from './createModule';
+import type { CreatedModule, ModuleCreator } from './createModule';
 
 const createEnvForModule = (constantName: string) =>
   Object.entries(process.env)
@@ -18,14 +18,14 @@ const createEnvForModule = (constantName: string) =>
     }, {});
 
 export const createAllModules = async (
-  modules: Record<string, ModuleFactory>,
+  modules: Record<string, ModuleCreator>,
 ): Promise<CreatedModule[]> => {
   const createdModules: CreatedModule[] = [];
 
-  for (const [name, factory] of Object.entries(modules)) {
+  for (const { name, factory } of Object.values(modules)) {
     const moduleConstantName = constantCase(name);
-    const moduleEnv = createEnvForModule(moduleConstantName);
-    const module = await factory({ env: moduleEnv });
+    const env = createEnvForModule(moduleConstantName);
+    const module = await factory({env});
 
     createdModules.push(module);
   }

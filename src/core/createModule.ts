@@ -1,3 +1,4 @@
+import { constantCase } from 'constant-case';
 import type { ClientEvents, ClientOptions } from 'discord.js';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
@@ -21,6 +22,7 @@ type EventHandlers = {
 };
 
 type BotModule<Env extends Record<string, ZodTypeAny>> = {
+  name: string;
   env?: Env;
   intents?: ClientOptions['intents'];
   slashCommands?: ModuleFunction<Env, Array<BotCommand>>;
@@ -31,22 +33,50 @@ interface CreatedModuleInput {
   env: unknown;
 }
 
+type ModuleFactory = (input: CreatedModuleInput) => Promise<CreatedModule>;
+
 export interface CreatedModule {
   intents: ClientOptions['intents'];
   slashCommands: Array<BotCommand>;
   eventHandlers: EventHandlers;
 }
 
-export type ModuleFactory = (input: CreatedModuleInput) => Promise<CreatedModule>;
+export interface ModuleCreator {
+  name: string;
+  factory: ModuleFactory;
+}
 
 export const createModule = <Env extends Record<string, ZodTypeAny>>(
   module: BotModule<Env>,
-): ModuleFactory => {
-  return async (input) => {
-    const env = await z.object(module.env ?? ({} as Env)).parseAsync(input.env);
+): ModuleCreator => ({
+  name: module.name,
+  factory: async (input) => {
+    const result = await z.object(module.env ?? ({} as Env)).safeParseAsync(input.env);
+
+    if (!result.success) {
+      const constantName = constantCase(module.name);
+      const zodErrors = result.error.flatten().fieldErrors;
+
+      const errors = Object.entries(zodErrors).reduce<Record<string, string[]>>(
+        (acc, [key, value]) => ({
+          ...acc,
+          ...(Array.isArray(value) ? { [`${constantName}_${key}`]: value } : {}),
+        }),
+        {},
+      );
+
+      const formattedErrors = Object.entries(errors).reduce(
+        (acc, [key, values]) => values.reduce((acc, value) => `${acc}\n\t- ${key}: ${value}`, acc),
+        '',
+      );
+
+      throw new Error(
+        `Encountered errors while validating environment variables for module ${module.name}:${formattedErrors}`,
+      );
+    }
 
     const context = {
-      env,
+      env: result.data,
     };
 
     return {
@@ -54,5 +84,7 @@ export const createModule = <Env extends Record<string, ZodTypeAny>>(
       slashCommands: module.slashCommands?.(context) ?? [],
       eventHandlers: module.eventHandlers?.(context) ?? {},
     };
-  };
-};
+  },
+});
+
+
