@@ -2,6 +2,7 @@ import type { Client, ClientEvents } from 'discord.js';
 
 import type { EventHandler } from '../types/bot';
 import type { CreatedModule } from './createModule';
+import { coreLogger } from './logger';
 
 export const routeHandlers = (client: Client<true>, modules: CreatedModule[]) => {
   const eventNames = modules.flatMap(
@@ -14,6 +15,9 @@ export const routeHandlers = (client: Client<true>, modules: CreatedModule[]) =>
       .map((module) => module.eventHandlers?.[eventName])
       .filter((e): e is EventHandler => Boolean(e));
 
+    coreLogger.info(
+      `Registering ${eventHandlersToCall.length} event handlers for ${eventName} event`,
+    );
     client.on(eventName, async (...args) => {
       const handlersPromises = eventHandlersToCall.map(async (handler) => handler(...args));
       await Promise.allSettled(handlersPromises);

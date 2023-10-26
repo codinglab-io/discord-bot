@@ -1,4 +1,5 @@
 import type { ClientEvents, ClientOptions } from 'discord.js';
+import type { Logger } from 'pino';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
 
@@ -10,6 +11,7 @@ type InferredZodShape<Shape extends Record<string, ZodTypeAny>> = {
 
 interface Context<Env extends Record<string, ZodTypeAny>> {
   env: InferredZodShape<Env>;
+  logger: Logger;
 }
 
 type ModuleFunction<Env extends Record<string, ZodTypeAny>, ReturnType> = (
@@ -29,6 +31,7 @@ type BotModule<Env extends Record<string, ZodTypeAny>> = {
 
 interface CreatedModuleInput {
   env: unknown;
+  logger: Logger;
 }
 
 export interface CreatedModule {
@@ -47,6 +50,7 @@ export const createModule = <Env extends Record<string, ZodTypeAny>>(
 
     const context = {
       env,
+      logger: input.logger,
     };
 
     return {

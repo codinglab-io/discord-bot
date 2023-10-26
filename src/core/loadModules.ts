@@ -4,6 +4,7 @@ import { checkUniqueSlashCommandNames } from './checkUniqueSlashCommandNames';
 import type { CreatedModule } from './createModule';
 import { env } from './env';
 import { pushCommands, routeCommands } from './loaderCommands';
+import { coreLogger } from './logger';
 import { routeHandlers } from './routeHandlers';
 
 export const loadModules = async (
@@ -15,6 +16,7 @@ export const loadModules = async (
   const botCommands = modules.flatMap((module) => module.slashCommands ?? []);
 
   checkUniqueSlashCommandNames(botCommands);
+  coreLogger.info('Routing slashcommands to interactionCreate event.');
   routeCommands(client, botCommands);
 
   const clientId = client.application?.id;
