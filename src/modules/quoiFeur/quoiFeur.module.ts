@@ -20,11 +20,18 @@ export const quoiFeur = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
+        .addSubcommand((subcommand) => subcommand.setName('score').setDescription('Scoreoubeh'))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .toJSON(),
       handler: {
         enable: addQuoiFeurToChannel,
         disable: removeQuoiFeurFromChannel,
+        score: async (interaction) => {
+          await interaction.reply({
+            content: 'https://prout.dev',
+            ephemeral: true,
+          });
+        },
       },
     },
   ],
