@@ -88,6 +88,7 @@ const isTwitterVideo = async (tweetURL: string): Promise<boolean> => {
 };
 
 export const fixEmbedTwitterVideo = createModule({
+  name: 'fixEmbedTwitterVideo',
   env: {
     EXCLUDED_CHANNEL_ID: z.string().nonempty(),
   },

@@ -10,6 +10,7 @@ import {
 } from './voiceOnDemand.helpers';
 
 export const voiceOnDemand = createModule({
+  name: 'voiceOnDemand',
   slashCommands: () => [
     {
       schema: new SlashCommandBuilder()
