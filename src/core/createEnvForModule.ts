@@ -17,12 +17,15 @@ const createEnvForModule = (constantName: string) =>
       return acc;
     }, {});
 
-export const createAllModules = async (
-  modules: Record<string, ModuleCreator>,
-): Promise<CreatedModule[]> => {
+export const createAllModules = async (modules: ModuleCreator[]): Promise<CreatedModule[]> => {
+  const uniqueModuleNames = new Set(modules.map((module) => module.name));
+  if (uniqueModuleNames.size !== modules.length) {
+    throw new Error('Found duplicate module names');
+  }
+
   const createdModules: CreatedModule[] = [];
 
-  for (const { name, factory } of Object.values(modules)) {
+  for (const { name, factory } of modules) {
     const moduleConstantName = constantCase(name);
     const env = createEnvForModule(moduleConstantName);
     const module = await factory({ env });
