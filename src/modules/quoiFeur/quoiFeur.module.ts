@@ -7,6 +7,7 @@ import {
   reactOnEndWithQuoi,
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
+import { showScoreboardQuoi } from './quoiFeurScoreboard.helpers';
 
 export const quoiFeur = createModule({
   slashCommands: () => [
@@ -20,12 +21,15 @@ export const quoiFeur = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
-        .addSubcommand((subcommand) => subcommand.setName('score').setDescription('Scoreoubeh'))
+        .addSubcommand((subcommand) =>
+          subcommand.setName('scoreboard').setDescription('Scoreoubeh'),
+        )
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .toJSON(),
       handler: {
         enable: addQuoiFeurToChannel,
         disable: removeQuoiFeurFromChannel,
+        scoreboard: showScoreboardQuoi,
       },
     },
   ],

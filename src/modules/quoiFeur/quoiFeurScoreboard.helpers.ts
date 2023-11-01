@@ -1,4 +1,4 @@
-// import { type ChatInputCommandInteraction } from 'discord.js';
+import { type ChatInputCommandInteraction } from 'discord.js';
 
 import { cache } from '../../core/cache';
 
@@ -20,9 +20,13 @@ export const addUserMutedInDB = async (
   console.log(allUsersMutedinDB);
 };
 
-export const showScoreboardQuoi = async () => {
+export const showScoreboardQuoi = async (interaction: ChatInputCommandInteraction) => {
   const allUsersMuted = await cache.get('score', []);
-  // const sortedUsers = allUsers.sort((a, b) => b.score - a.score);
-  console.log(allUsersMuted);
-  // await interaction.reply();
+  const sortedUsers = allUsersMuted.sort((a, b) => b.score - a.score);
+  const getOnlyTop3 = sortedUsers.slice(0, 3);
+  await interaction.reply(
+    '### Top 3 Coubeh' +
+      '\n' +
+      getOnlyTop3.map((user) => `${user.username} : ${user.score} fois coubehed.`).join('\n'),
+  );
 };
