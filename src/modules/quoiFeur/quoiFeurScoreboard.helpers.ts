@@ -1,3 +1,5 @@
+// import { type ChatInputCommandInteraction } from 'discord.js';
+
 import { cache } from '../../core/cache';
 
 export const addUserMutedInDB = async (
@@ -6,10 +8,21 @@ export const addUserMutedInDB = async (
 ) => {
   if (!id || !username) return;
   const allUsersMutedinDB = await cache.get('score', []);
-  const ifUserExistInDB = allUsersMutedinDB.find((user) => user.id === id);
-  if (ifUserExistInDB) {
-    await cache.set('score', [{ ...ifUserExistInDB, score: ifUserExistInDB.score + 1 }]);
+  const foundUserInDB = allUsersMutedinDB.find((user) => user.id === id);
+
+  if (foundUserInDB) {
+    foundUserInDB.score++;
   } else {
-    await cache.set('score', [{ id, username, score: 1 }]);
+    allUsersMutedinDB.push({ id, username, score: 1 });
   }
+
+  await cache.set('score', allUsersMutedinDB);
+  console.log(allUsersMutedinDB);
+};
+
+export const showScoreboardQuoi = async () => {
+  const allUsersMuted = await cache.get('score', []);
+  // const sortedUsers = allUsers.sort((a, b) => b.score - a.score);
+  console.log(allUsersMuted);
+  // await interaction.reply();
 };
