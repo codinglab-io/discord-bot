@@ -26,12 +26,6 @@ export const quoiFeur = createModule({
       handler: {
         enable: addQuoiFeurToChannel,
         disable: removeQuoiFeurFromChannel,
-        score: async (interaction) => {
-          await interaction.reply({
-            content: 'https://prout.dev',
-            ephemeral: true,
-          });
-        },
       },
     },
   ],

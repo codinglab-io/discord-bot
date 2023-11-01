@@ -15,6 +15,7 @@ import {
   removeNonASCII,
   removePunctuation,
 } from '../../helpers/regex.helper';
+import { addUserMutedInDB } from './quoiFeurScoreboard.helpers';
 
 const ONE_MINUTE = 1 * 60 * 1000;
 
@@ -48,12 +49,14 @@ export const reactOnEndWithQuoi = async (message: Message) => {
 
   if (!isMessageInQuoiFeurChannel) return;
 
-  const probability = 1 / 6;
-
-  if (Math.random() <= probability) {
+  //const probability = 1 / 6;
+  const probability = 1;
+  //Math.random() <= probability
+  if (probability == 1) {
     await reactWithCoubeh(message);
+    await addUserMutedInDB(message.member?.user.id, message.member?.user.globalName);
     await message.member?.timeout(
-      ONE_MINUTE * 5,
+      ONE_MINUTE * 1,
       `${message.member.displayName} have the cramptés`,
     );
     return;

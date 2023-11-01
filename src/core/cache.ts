@@ -25,6 +25,7 @@ interface CacheEntries {
   onDemandChannels: string[];
   quoiFeurChannels: string[];
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
+  score: { id: string; username: string; score: number }[];
 }
 
 class CacheImpl implements Cache<CacheEntries> {
