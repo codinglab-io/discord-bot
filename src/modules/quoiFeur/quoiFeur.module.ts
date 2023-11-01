@@ -10,6 +10,7 @@ import {
 import { showScoreboardQuoi } from './quoiFeurScoreboard.helpers';
 
 export const quoiFeur = createModule({
+  name: 'quoiFeur',
   slashCommands: () => [
     {
       schema: new SlashCommandBuilder()

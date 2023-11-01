@@ -1,6 +1,6 @@
 import { constantCase } from 'constant-case';
 
-import type { CreatedModule, ModuleFactory } from './createModule';
+import type { CreatedModule, ModuleCreator } from './createModule';
 
 const createEnvForModule = (constantName: string) =>
   Object.entries(process.env)
@@ -17,15 +17,18 @@ const createEnvForModule = (constantName: string) =>
       return acc;
     }, {});
 
-export const createAllModules = async (
-  modules: Record<string, ModuleFactory>,
-): Promise<CreatedModule[]> => {
+export const createAllModules = async (modules: ModuleCreator[]): Promise<CreatedModule[]> => {
+  const uniqueModuleNames = new Set(modules.map((module) => module.name));
+  if (uniqueModuleNames.size !== modules.length) {
+    throw new Error('Found duplicate module names');
+  }
+
   const createdModules: CreatedModule[] = [];
 
-  for (const [name, factory] of Object.entries(modules)) {
+  for (const { name, factory } of modules) {
     const moduleConstantName = constantCase(name);
-    const moduleEnv = createEnvForModule(moduleConstantName);
-    const module = await factory({ env: moduleEnv });
+    const env = createEnvForModule(moduleConstantName);
+    const module = await factory({ env });
 
     createdModules.push(module);
   }
