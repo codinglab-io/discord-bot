@@ -29,8 +29,8 @@ const client = new Client({
 await client.login(env.discordToken);
 
 await new Promise<void>((resolve) => {
-  client.on('ready', () => {
-    createdModules.map((module) => module.eventHandlers?.ready?.(client));
+  client.on('ready', (client) => {
+    void createdModules.map((module) => module.eventHandlers?.ready?.(client));
     resolve();
   });
 });
