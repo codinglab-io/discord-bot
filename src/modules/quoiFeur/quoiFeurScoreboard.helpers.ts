@@ -17,7 +17,6 @@ export const addUserMutedInDB = async (
   }
 
   await cache.set('score', allUsersMutedinDB);
-  console.log(allUsersMutedinDB);
 };
 
 export const showScoreboardQuoi = async (interaction: ChatInputCommandInteraction) => {
