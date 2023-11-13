@@ -7,7 +7,7 @@ export const addUserMutedInDB = async (
   username: string | undefined | null,
 ) => {
   if (!id || !username) return;
-  const allUsersMutedinDB = await cache.get('score', []);
+  const allUsersMutedinDB = await cache.get('scoreQuoiFeur', []);
   const foundUserInDB = allUsersMutedinDB.find((user) => user.id === id);
 
   if (foundUserInDB) {
@@ -16,12 +16,11 @@ export const addUserMutedInDB = async (
     allUsersMutedinDB.push({ id, username, score: 1 });
   }
 
-  await cache.set('score', allUsersMutedinDB);
-  console.log(allUsersMutedinDB);
+  await cache.set('scoreQuoiFeur', allUsersMutedinDB);
 };
 
 export const showScoreboardQuoi = async (interaction: ChatInputCommandInteraction) => {
-  const allUsersMuted = await cache.get('score', []);
+  const allUsersMuted = await cache.get('scoreQuoiFeur', []);
   const sortedUsers = allUsersMuted.sort((a, b) => b.score - a.score);
   const getOnlyTop3 = sortedUsers.slice(0, 3);
   await interaction.reply(
