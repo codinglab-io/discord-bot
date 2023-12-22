@@ -7,6 +7,7 @@ import {
 
 import type { BotCommand } from '../types/bot';
 import { deleteExistingCommands } from './deleteExistingCommands';
+import { isDiffBetweenLocalCommandsAndRemoteCommands } from './isDiffBetweenLocalCommandsAndRemoteCommands';
 
 interface PushCommandsOptions {
   commands: RESTPostAPIChatInputApplicationCommandsJSONBody[];
@@ -15,17 +16,36 @@ interface PushCommandsOptions {
   discordToken: string;
 }
 
+const pushOnlyNewCommands = async (
+  discordToken: string,
+  clientId: string,
+  guildId: string,
+  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[],
+) => {
+  const rest = new REST({ version: '10' }).setToken(discordToken);
+  const remoteCommands = await rest.get(Routes.applicationGuildCommands(clientId, guildId));
+  const getLocalCommands = commands;
+  const isDiff = isDiffBetweenLocalCommandsAndRemoteCommands(
+    getLocalCommands,
+    remoteCommands as RESTPostAPIChatInputApplicationCommandsJSONBody[],
+  );
+  if (isDiff) {
+    console.log('DIFFERENCE EVIDENTE');
+    await deleteExistingCommands(rest, clientId, guildId);
+    await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+      body: commands,
+    });
+  }
+  console.log('PAS DE DIFF');
+};
+
 export const pushCommands = async ({
   commands,
   clientId,
   guildId,
   discordToken,
 }: PushCommandsOptions) => {
-  const rest = new REST({ version: '10' }).setToken(discordToken);
-  await deleteExistingCommands(rest, clientId, guildId);
-  await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-    body: commands,
-  });
+  await pushOnlyNewCommands(discordToken, clientId, guildId, commands);
 };
 
 export const routeCommands = (client: Client<true>, botCommands: BotCommand[]) =>
