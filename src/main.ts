@@ -30,7 +30,7 @@ await client.login(env.discordToken);
 
 await new Promise<void>((resolve) => {
   client.on('ready', (client) => {
-    createdModules.map((module) => module.eventHandlers?.ready?.(client));
+    void createdModules.map((module) => module.eventHandlers?.ready?.(client));
     resolve();
   });
 });
