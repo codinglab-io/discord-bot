@@ -125,8 +125,8 @@ export const listRecurringMessages = async (interaction: ChatInputCommandInterac
     return;
   }
 
-  const messagesInCurrentGuild = recurringMessages.filter(
-    ({ channelId }) => interaction.guild?.channels.cache.has(channelId),
+  const messagesInCurrentGuild = recurringMessages.filter(({ channelId }) =>
+    interaction.guild?.channels.cache.has(channelId),
   );
 
   const messagesByChannelName = messagesInCurrentGuild.reduce<
