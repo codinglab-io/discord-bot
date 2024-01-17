@@ -1,4 +1,4 @@
-FROM node:21.5.0-alpine as base
+FROM node:21.6.0-alpine as base
 
 WORKDIR /app
 
@@ -28,7 +28,7 @@ RUN pnpm prune --prod && \
     pnpm install --production --frozen-lockfile --offline && \
     pnpm store prune
 
-FROM node:21.5.0-alpine as application
+FROM node:21.6.0-alpine as application
 
 WORKDIR /app
 
