@@ -1,7 +1,10 @@
 import {
+  PermissionFlagsBits,
   ChannelType,
   type ChatInputCommandInteraction,
   DMChannel,
+  type Channel,
+  type User,
   type Message,
   type NonThreadGuildBasedChannel,
 } from 'discord.js';
@@ -62,10 +65,23 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   await reactWithFeur(message);
 };
 
-export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
+const isOwner = (channel : Channel, user : User) => {
+  if(channel.type == ChannelType.PublicThread){
+    if(user.id == channel.ownerId) return true;       
+  }
+  console.log("lol");
+  return;  
+}
 
+export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
+  const { channel, memberPermissions, user } = interaction;  
+  
+  if (!memberPermissions || !channel || !channel.isTextBased() || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.PublicThread)) return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isOwner(channel, user) ){
+    await interaction.reply({ content: 'You don\'t have permissions to enable Quoi-feur in this channel', ephemeral: true });
+    return;
+  }
+  
   const channels = await cache.get('quoiFeurChannels', []);
   if (channels.includes(channel.id)) {
     await interaction.reply({
@@ -80,9 +96,14 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
 };
 
 export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
+  const { channel, memberPermissions, user } = interaction;
 
+  if (!memberPermissions || !channel || !channel.isTextBased() || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.PublicThread)) return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isOwner(channel, user) ){
+    await interaction.reply({ content: 'You don\'t have permissions to disable Quoi-feur in this channel', ephemeral: true });
+    return;
+  }
+  
   const channels = await cache.get('quoiFeurChannels', []);
   if (!channels.includes(channel.id)) {
     await interaction.reply({
