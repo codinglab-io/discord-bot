@@ -1,4 +1,4 @@
-import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 
 import { createModule } from '../../core/createModule';
 import {
@@ -21,7 +21,7 @@ export const quoiFeur = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
-        .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
+
         .toJSON(),
       handler: {
         enable: addQuoiFeurToChannel,

@@ -1,4 +1,5 @@
 import {
+  PermissionFlagsBits,
   ChannelType,
   type ChatInputCommandInteraction,
   DMChannel,
@@ -6,6 +7,7 @@ import {
   type NonThreadGuildBasedChannel,
 } from 'discord.js';
 
+import { isThreadOwner } from '../../helpers/roles';
 import { cache } from '../../core/cache';
 import type { Emoji } from '../../helpers/emoji';
 import { EMOJI } from '../../helpers/emoji';
@@ -63,8 +65,22 @@ export const reactOnEndWithQuoi = async (message: Message) => {
 };
 
 export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
+  const { channel, memberPermissions, user } = interaction;
+
+  if (
+    !memberPermissions ||
+    !channel ||
+    !channel.isTextBased() ||
+    ![ChannelType.GuildText, ChannelType.PublicThread].includes(channel.type)
+  )
+    return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isThreadOwner(channel, user)) {
+    await interaction.reply({
+      content: "You don't have permissions to enable Quoi-feur in this channel",
+      ephemeral: true,
+    });
+    return;
+  }
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (channels.includes(channel.id)) {
@@ -80,8 +96,22 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
 };
 
 export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
+  const { channel, memberPermissions, user } = interaction;
+
+  if (
+    !memberPermissions ||
+    !channel ||
+    !channel.isTextBased() ||
+    ![ChannelType.GuildText, ChannelType.PublicThread].includes(channel.type)
+  )
+    return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isThreadOwner(channel, user)) {
+    await interaction.reply({
+      content: "You don't have permissions to disable Quoi-feur in this channel",
+      ephemeral: true,
+    });
+    return;
+  }
 
   const channels = await cache.get('quoiFeurChannels', []);
   if (!channels.includes(channel.id)) {
