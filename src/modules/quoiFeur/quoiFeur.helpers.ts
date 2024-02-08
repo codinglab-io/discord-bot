@@ -3,12 +3,11 @@ import {
   ChannelType,
   type ChatInputCommandInteraction,
   DMChannel,
-  type Channel,
-  type User,
   type Message,
   type NonThreadGuildBasedChannel,
 } from 'discord.js';
 
+import { isThreadOwner } from '../../helpers/roles';
 import { cache } from '../../core/cache';
 import type { Emoji } from '../../helpers/emoji';
 import { EMOJI } from '../../helpers/emoji';
@@ -65,23 +64,24 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   await reactWithFeur(message);
 };
 
-const isOwner = (channel : Channel, user : User) => {
-  if(channel.type == ChannelType.PublicThread){
-    if(user.id == channel.ownerId) return true;       
-  }
-  console.log("lol");
-  return;  
-}
-
 export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel, memberPermissions, user } = interaction;  
-  
-  if (!memberPermissions || !channel || !channel.isTextBased() || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.PublicThread)) return;
-  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isOwner(channel, user) ){
-    await interaction.reply({ content: 'You don\'t have permissions to enable Quoi-feur in this channel', ephemeral: true });
+  const { channel, memberPermissions, user } = interaction;
+
+  if (
+    !memberPermissions ||
+    !channel ||
+    !channel.isTextBased() ||
+    ![ChannelType.GuildText, ChannelType.PublicThread].includes(channel.type)
+  )
+    return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isThreadOwner(channel, user)) {
+    await interaction.reply({
+      content: "You don't have permissions to enable Quoi-feur in this channel",
+      ephemeral: true,
+    });
     return;
   }
-  
+
   const channels = await cache.get('quoiFeurChannels', []);
   if (channels.includes(channel.id)) {
     await interaction.reply({
@@ -98,12 +98,21 @@ export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteract
 export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
   const { channel, memberPermissions, user } = interaction;
 
-  if (!memberPermissions || !channel || !channel.isTextBased() || (channel.type !== ChannelType.GuildText && channel.type !== ChannelType.PublicThread)) return;
-  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isOwner(channel, user) ){
-    await interaction.reply({ content: 'You don\'t have permissions to disable Quoi-feur in this channel', ephemeral: true });
+  if (
+    !memberPermissions ||
+    !channel ||
+    !channel.isTextBased() ||
+    ![ChannelType.GuildText, ChannelType.PublicThread].includes(channel.type)
+  )
+    return;
+  if (!memberPermissions.has(PermissionFlagsBits.ManageChannels) && !isThreadOwner(channel, user)) {
+    await interaction.reply({
+      content: "You don't have permissions to disable Quoi-feur in this channel",
+      ephemeral: true,
+    });
     return;
   }
-  
+
   const channels = await cache.get('quoiFeurChannels', []);
   if (!channels.includes(channel.id)) {
     await interaction.reply({

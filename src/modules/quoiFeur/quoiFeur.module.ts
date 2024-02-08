@@ -21,7 +21,7 @@ export const quoiFeur = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the quoi-feur game in the channel'),
         )
-        
+
         .toJSON(),
       handler: {
         enable: addQuoiFeurToChannel,
