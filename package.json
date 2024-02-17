@@ -37,7 +37,7 @@
     "eslint-plugin-simple-import-sort": "12.0.0",
     "eslint-plugin-sonarjs": "0.24.0",
     "eslint-plugin-unused-imports": "3.1.0",
-    "npm-run-all2": "5.0.0",
+    "npm-run-all2": "6.1.2",
     "prettier": "3.2.5",
     "tsup": "8.0.2",
     "type-fest": "4.10.2",
