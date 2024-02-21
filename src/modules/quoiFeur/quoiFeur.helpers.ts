@@ -38,6 +38,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   if (!endWithQuoi(message.content)) return;
 
   const channelIds = await cache.get('quoiFeurChannels', []);
+  const accumulation = await cache.get('quoiAccumulation', 1);
 
   const messageParentId =
     message.channel.type === ChannelType.PublicThread ? message.channel.parentId : null;
@@ -51,14 +52,17 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   const probability = 1 / 6;
 
   if (Math.random() <= probability) {
-    await reactWithCoubeh(message);
     await message.member?.timeout(
-      ONE_MINUTE * 5,
+      ONE_MINUTE * accumulation,
       `${message.member.displayName} have the cramptés`,
     );
+    await cache.set('quoiAccumulation', 1);
+    await reactWithCoubeh(message);
+    
     return;
   }
 
+  await cache.set('quoiAccumulation', accumulation + 1);
   await reactWithFeur(message);
 };
 
