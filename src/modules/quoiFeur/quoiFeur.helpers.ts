@@ -68,6 +68,17 @@ export const reactOnEndWithQuoiUpdated = async (
   newMessage: Message | PartialMessage,
 ) => {
   if (!(newMessage instanceof Message)) return;
+
+  // Both E and U are in feur and coubeh, that should be sufficient to detect if the bot has already reacted
+  const feurCoubeh = new Set<string>([EMOJI.E, EMOJI.U]);
+
+  // Check if the old message already has a reaction
+  const selfReactions = newMessage.reactions.cache.some((reaction) => {
+    return reaction.me && reaction.emoji.name && feurCoubeh.has(reaction.emoji.name);
+  });
+
+  if (selfReactions) return;
+
   await reactOnEndWithQuoi(newMessage);
 };
 
