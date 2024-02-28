@@ -62,7 +62,7 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   await reactWithFeur(message);
 };
 
-export const reactOnEndWithQuoiUpdated = async (oldMessage: Message, newMessage: Message) =>
+export const reactOnEndWithQuoiUpdated = async (_oldMessage: Message, newMessage: Message) =>
   reactOnEndWithQuoi(newMessage);
 
 export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
