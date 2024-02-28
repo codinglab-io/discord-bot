@@ -2,8 +2,9 @@ import {
   ChannelType,
   type ChatInputCommandInteraction,
   DMChannel,
-  type Message,
+  Message,
   type NonThreadGuildBasedChannel,
+  type PartialMessage,
 } from 'discord.js';
 
 import { cache } from '../../core/cache';
@@ -62,8 +63,13 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   await reactWithFeur(message);
 };
 
-export const reactOnEndWithQuoiUpdated = async (_oldMessage: Message, newMessage: Message) =>
-  reactOnEndWithQuoi(newMessage);
+export const reactOnEndWithQuoiUpdated = async (
+  _oldMessage: Message | PartialMessage,
+  newMessage: Message | PartialMessage,
+) => {
+  if (!(newMessage instanceof Message)) return;
+  await reactOnEndWithQuoi(newMessage);
+};
 
 export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
   const { channel } = interaction;
