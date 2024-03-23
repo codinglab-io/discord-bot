@@ -16,6 +16,9 @@ export const cookieHunter = createModule({
         .setName('cookie-hunter')
         .setDescription('Cookie hunting game for the server')
         .addSubcommand((subcommand) =>
+          subcommand.setName('start').setDescription('Start the cookie hunt'),
+        )
+        .addSubcommand((subcommand) =>
           subcommand.setName('enable').setDescription('Enable the cookie hunt in the channel'),
         )
         .addSubcommand((subcommand) =>
@@ -24,6 +27,7 @@ export const cookieHunter = createModule({
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .toJSON(),
       handler: {
+        start: (interaction) => startHunting(interaction.client),
         enable: (interaction) =>
           addChannelInCache(interaction, 'Cookie Hunter', 'cookieHunterChannels'),
         disable: (interaction) =>
