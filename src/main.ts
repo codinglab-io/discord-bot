@@ -10,6 +10,7 @@ import { fixEmbedTwitterVideo } from './modules/fixEmbedTwitterVideo/fixEmbedTwi
 import { quoiFeur } from './modules/quoiFeur/quoiFeur.module';
 import { recurringMessage } from './modules/recurringMessage/recurringMessage.module';
 import { voiceOnDemand } from './modules/voiceOnDemand/voiceOnDemand.module';
+import { cookieHunter } from './modules/cookieHunter/cookieHunter.module';
 
 const modules = [
   fart,
@@ -18,6 +19,7 @@ const modules = [
   quoiFeur,
   recurringMessage,
   fixEmbedTwitterVideo,
+  cookieHunter,
 ];
 
 const createdModules = await createAllModules(modules);

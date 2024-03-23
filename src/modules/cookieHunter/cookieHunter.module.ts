@@ -6,6 +6,7 @@ import {
   cleanCacheOnChannelDelete,
   removeChannelFromChache,
 } from '../../helpers/channels';
+import { startHunting } from './cookieHunter.helpers';
 
 export const cookieHunter = createModule({
   name: 'cookieHunter',
@@ -31,7 +32,7 @@ export const cookieHunter = createModule({
     },
   ],
   eventHandlers: () => ({
-    // ready: startHunt,
+    ready: startHunting,
     channelDelete: (channel) => cleanCacheOnChannelDelete(channel, 'cookieHunterChannels'),
   }),
   intents: ['Guilds'],

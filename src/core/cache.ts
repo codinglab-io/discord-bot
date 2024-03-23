@@ -25,6 +25,7 @@ interface CacheEntries {
   onDemandChannels: string[];
   quoiFeurChannels: string[];
   cookieHunterChannels: string[];
+  currentHuntMessageId: string;
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
