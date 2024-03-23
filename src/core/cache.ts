@@ -24,6 +24,7 @@ interface CacheEntries {
   lobbyIds: string[];
   onDemandChannels: string[];
   quoiFeurChannels: string[];
+  cookieHunterChannels: string[];
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
