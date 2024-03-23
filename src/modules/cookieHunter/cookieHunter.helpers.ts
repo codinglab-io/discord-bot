@@ -31,7 +31,6 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
   await cache.set('cookieHunterDailyCount', {});
   await cookieMessage.react('🥛');
   await cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
-
   setTimeout(() => void dailyHuntEnd(client, cookieMessage), ONE_MINUTE);
 };
 
@@ -106,11 +105,11 @@ const getHuntersFoundGrandmaMessage = (
 
   const totalEaten = `Nombre de cookies total mangés : ${cookieEatenCount}\n`;
   const ranking = `**Classement des chasseurs de cookies du jour**\n`;
-  const usersRanking = dailyRank.map(([userId, count]) => `<@${userId}>: ${count}\n`).join('\n');
+  const usersRanking = dailyRank.map(([userId, count]) => `<@${userId}>: ${count}`).join('\n');
   const milkJoker = milkJokerUserId
-    ? `<@${milkJokerUserId}> a accompagné ses cookies d'un grand verre de lait 🥛\n`
+    ? `\n<@${milkJokerUserId}> a accompagné ses cookies d'un grand verre de lait 🥛`
     : '';
-  const lastWords = `Sacré bande de gourmands !`;
+  const lastWords = `\nSacré bande de gourmands !`;
 
   return `${baseMessage}${totalEaten}${ranking}${usersRanking}${milkJoker}${lastWords}`;
 };
@@ -164,7 +163,7 @@ export const countCookies = async (
 
   const isMilkJokerAlreadyFound = Boolean(await cache.get('milkJokerUserId'));
 
-  if (reaction.emoji.name === '🥛') {
+  if (reaction.emoji.name === '🥛' && !user.bot) {
     await handleMilkReaction(reaction, user, isMilkJokerAlreadyFound);
   }
 
