@@ -34,6 +34,16 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
   setTimeout(() => void dailyHuntEnd(client, cookieMessage), ONE_MINUTE);
 };
 
+const applyMilkJoker = async () => {
+  const milkJokerUserId = await cache.get('milkJokerUserId');
+  if (!milkJokerUserId) return;
+
+  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
+  const userDailyCount = cookieHunterDailyCount[milkJokerUserId] || 0;
+  const newDailyCount = { ...cookieHunterDailyCount, [milkJokerUserId]: userDailyCount * 2 };
+  await cache.set('cookieHunterDailyCount', newDailyCount);
+};
+
 const logDailyCount = async (client: Client<true>) => {
   const dailyLogChannels = await cache.get('cookieHunterDailyLogChannels', []);
   if (!dailyLogChannels.length) return;
@@ -45,13 +55,15 @@ const logDailyCount = async (client: Client<true>) => {
   const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
   const hunterCount = Object.keys(cookieHunterDailyCount).length - 1; // grandma is not a hunter
 
+  const milkJokerUserId = await cache.get('milkJokerUserId');
+
   const resume = `**🍪 Résumé de la chasse aux cookies du jour**\n`;
   const where = `Mamie a servi des cookies dans <#${currentHuntMessageId}>\n`;
   const baseMessage = `${resume}${where}`;
 
   const message =
     hunterCount > 0
-      ? getHuntersFoundGrandmaMessage(baseMessage, cookieHunterDailyCount)
+      ? getHuntersFoundGrandmaMessage(baseMessage, cookieHunterDailyCount, milkJokerUserId)
       : `${baseMessage}**🍪 Personne n'a trouvé Mamie !**\nFaut dire qu'elle se cache bien (et que vous êtes nazes) !`;
 
   for (const channelId of dailyLogChannels) {
@@ -64,6 +76,7 @@ const logDailyCount = async (client: Client<true>) => {
 const getHuntersFoundGrandmaMessage = (
   baseMessage: string,
   cookieHunterDailyCount: Record<string, number>,
+  milkJokerUserId: string | undefined,
 ) => {
   const cookieEatenCount = Object.values(cookieHunterDailyCount).reduce(
     (acc, count) => acc + count,
@@ -74,9 +87,12 @@ const getHuntersFoundGrandmaMessage = (
   const totalEaten = `Nombre de cookies total mangés : ${cookieEatenCount}\n`;
   const ranking = `**Classement des chasseurs de cookies du jour**\n`;
   const usersRanking = dailyRank.map(([userId, count]) => `<@${userId}>: ${count}\n`).join('\n');
+  const milkJoker = milkJokerUserId
+    ? `<@${milkJokerUserId}> a accompagné ses cookies d'un grand verre de lait 🥛\n`
+    : '';
   const lastWords = `Sacré bande de gourmands !`;
 
-  return `${baseMessage}${totalEaten}${ranking}${usersRanking}${lastWords}`;
+  return `${baseMessage}${totalEaten}${ranking}${usersRanking}${milkJoker}${lastWords}`;
 };
 
 const updateGlobalScoreboard = async () => {
@@ -90,8 +106,10 @@ const updateGlobalScoreboard = async () => {
 
 const dailyHuntEnd = async (client: Client<true>, cookieMessage: Message) => {
   await cookieMessage.delete();
+  await applyMilkJoker();
   await logDailyCount(client);
   await updateGlobalScoreboard();
+  await cache.delete('milkJokerUserId');
   await cache.delete('currentHuntMessageId');
   await cache.delete('cookieHunterDailyCount');
 };
@@ -104,9 +122,27 @@ export const countCookies = async (
   if (
     !currentHuntMessageId ||
     reaction.message.id !== currentHuntMessageId ||
-    reaction.emoji.name !== '🍪'
+    reaction.emoji.name === null ||
+    !['🍪', '🥛'].includes(reaction.emoji.name)
   )
     return;
+
+  const isMilkJokerAlreadyFound = await cache.get('milkJokerUserId');
+
+  if (reaction.emoji.name === '🥛') {
+    if (isMilkJokerAlreadyFound) {
+      reaction.message.reply({
+        content: `Il est lent ce lait... 🥛`,
+        options: { ephemeral: true },
+      });
+    } else {
+      await cache.set('milkJokerUserId', user.id);
+      reaction.message.reply({
+        content: `Premier arrivé, premier servit. Cul sec 🥛 !`,
+        options: { ephemeral: true },
+      });
+    }
+  }
 
   const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
   const userDailyCount = cookieHunterDailyCount[user.id] || 0;

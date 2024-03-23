@@ -29,6 +29,7 @@ interface CacheEntries {
   cookieHunterDailyCount: Record<string, number>;
   cookieHunterDailyLogChannels: string[];
   cookieHunterScoreboard: Record<string, number>;
+  milkJokerUserId: string;
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
