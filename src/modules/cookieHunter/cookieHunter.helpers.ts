@@ -1,32 +1,19 @@
 import { CronJob } from 'cron';
-import { cache } from '../../core/cache';
 import type {
   Client,
+  Message,
   MessageReaction,
   PartialMessageReaction,
   PartialUser,
   User,
 } from 'discord.js';
+
+import { cache } from '../../core/cache';
 import { ONE_MINUTE } from '../../helpers/timeConstants';
 
 const IT_IS_SNACK_TIME = '0 30 16 * * *'; // 4:30pm every day
 
 let jobCurrentlyRunning: CronJob | null = null;
-
-export const startHunting = async (client: Client<true>) => {
-  console.log('Cookie hunter started');
-  if (jobCurrentlyRunning !== null) {
-    // needed in case that the bot fire multiple ready event
-    jobCurrentlyRunning.stop();
-  }
-  jobCurrentlyRunning = new CronJob(
-    IT_IS_SNACK_TIME,
-    () => sendMessageInRandomChannel(client),
-    null,
-    true,
-    'Europe/Paris',
-  );
-};
 
 const sendMessageInRandomChannel = async (client: Client<true>) => {
   const channel = await cache.get('cookieHunterChannels', []);
@@ -41,34 +28,10 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
   const cookieMessage = await channelToSend.send('**👵 Qui veut des cookies ?**');
   await cache.set('currentHuntMessageId', cookieMessage.id);
   await cache.set('cookieHunterDailyCount', {});
-  cookieMessage.react('🥛');
-  cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
+  await cookieMessage.react('🥛');
+  await cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
 
-  setTimeout(async () => {
-    cookieMessage.delete();
-    await logDailyCount(client);
-    await updateGlobalScoreboard();
-    await cache.delete('currentHuntMessageId');
-    await cache.delete('cookieHunterDailyCount');
-  }, ONE_MINUTE);
-};
-
-export const countCookies = async (
-  reaction: MessageReaction | PartialMessageReaction,
-  user: User | PartialUser,
-) => {
-  const currentHuntMessageId = await cache.get('currentHuntMessageId');
-  if (
-    !currentHuntMessageId ||
-    reaction.message.id !== currentHuntMessageId ||
-    reaction.emoji.name !== '🍪'
-  )
-    return;
-
-  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
-  const userDailyCount = cookieHunterDailyCount[user.id] || 0;
-  const newDailyCount = { ...cookieHunterDailyCount, [user.id]: userDailyCount + 1 };
-  await cache.set('cookieHunterDailyCount', newDailyCount);
+  setTimeout(() => void dailyHuntEnd(client, cookieMessage), ONE_MINUTE);
 };
 
 const logDailyCount = async (client: Client<true>) => {
@@ -123,4 +86,45 @@ const updateGlobalScoreboard = async () => {
     coockieHunterScoreboard[userId] = (coockieHunterScoreboard[userId] || 0) + count;
   }
   await cache.set('cookieHunterScoreboard', coockieHunterScoreboard);
+};
+
+const dailyHuntEnd = async (client: Client<true>, cookieMessage: Message) => {
+  await cookieMessage.delete();
+  await logDailyCount(client);
+  await updateGlobalScoreboard();
+  await cache.delete('currentHuntMessageId');
+  await cache.delete('cookieHunterDailyCount');
+};
+
+export const countCookies = async (
+  reaction: MessageReaction | PartialMessageReaction,
+  user: User | PartialUser,
+) => {
+  const currentHuntMessageId = await cache.get('currentHuntMessageId');
+  if (
+    !currentHuntMessageId ||
+    reaction.message.id !== currentHuntMessageId ||
+    reaction.emoji.name !== '🍪'
+  )
+    return;
+
+  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
+  const userDailyCount = cookieHunterDailyCount[user.id] || 0;
+  const newDailyCount = { ...cookieHunterDailyCount, [user.id]: userDailyCount + 1 };
+  await cache.set('cookieHunterDailyCount', newDailyCount);
+};
+
+export const startHunting = (client: Client<true>) => {
+  console.log('Cookie hunter started');
+  if (jobCurrentlyRunning !== null) {
+    // needed in case that the bot fire multiple ready event
+    jobCurrentlyRunning.stop();
+  }
+  jobCurrentlyRunning = new CronJob(
+    IT_IS_SNACK_TIME,
+    () => sendMessageInRandomChannel(client),
+    null,
+    true,
+    'Europe/Paris',
+  );
 };

@@ -33,7 +33,8 @@ export const cookieHunter = createModule({
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .toJSON(),
       handler: {
-        'start': (interaction) => startHunting(interaction.client),
+        // eslint-disable-next-line @typescript-eslint/require-await
+        'start': async (interaction) => startHunting(interaction.client),
         'enable': (interaction) =>
           addChannelInCache(interaction, 'Cookie Hunter', 'cookieHunterChannels'),
         'disable': (interaction) =>
@@ -54,11 +55,12 @@ export const cookieHunter = createModule({
     },
   ],
   eventHandlers: () => ({
-    ready: startHunting,
+    // eslint-disable-next-line @typescript-eslint/require-await
+    ready: async (client) => startHunting(client),
     messageReactionAdd: countCookies,
     channelDelete: async (channel) => {
-      cleanCacheOnChannelDelete(channel, 'cookieHunterChannels');
-      cleanCacheOnChannelDelete(channel, 'cookieHunterDailyLogChannels');
+      await cleanCacheOnChannelDelete(channel, 'cookieHunterChannels');
+      await cleanCacheOnChannelDelete(channel, 'cookieHunterDailyLogChannels');
     },
   }),
   intents: ['Guilds'],

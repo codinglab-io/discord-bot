@@ -4,13 +4,13 @@ import { createAllModules } from './core/createEnvForModule';
 import { env } from './core/env';
 import { getIntentsFromModules } from './core/getIntentsFromModules';
 import { loadModules } from './core/loadModules';
+import { cookieHunter } from './modules/cookieHunter/cookieHunter.module';
 import { coolLinksManagement } from './modules/coolLinksManagement/coolLinksManagement.module';
 import { fart } from './modules/fart/fart.module';
 import { fixEmbedTwitterVideo } from './modules/fixEmbedTwitterVideo/fixEmbedTwitterVideo.module';
 import { quoiFeur } from './modules/quoiFeur/quoiFeur.module';
 import { recurringMessage } from './modules/recurringMessage/recurringMessage.module';
 import { voiceOnDemand } from './modules/voiceOnDemand/voiceOnDemand.module';
-import { cookieHunter } from './modules/cookieHunter/cookieHunter.module';
 
 const modules = [
   fart,

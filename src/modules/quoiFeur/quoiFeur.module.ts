@@ -1,12 +1,12 @@
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 import { createModule } from '../../core/createModule';
-import { reactOnEndWithQuoi } from './quoiFeur.helpers';
 import {
   addChannelInCache,
   cleanCacheOnChannelDelete,
   removeChannelFromChache,
 } from '../../helpers/channels';
+import { reactOnEndWithQuoi } from './quoiFeur.helpers';
 
 export const quoiFeur = createModule({
   name: 'quoiFeur',

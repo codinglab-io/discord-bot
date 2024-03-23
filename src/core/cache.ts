@@ -20,7 +20,7 @@ interface Cache<Entries extends Record<string, any>> {
   clear: () => Promise<void>;
 }
 
-export interface CacheEntries {
+interface CacheEntries {
   lobbyIds: string[];
   onDemandChannels: string[];
   quoiFeurChannels: string[];
@@ -70,3 +70,4 @@ class CacheImpl implements Cache<CacheEntries> {
 }
 
 export const cache = new CacheImpl();
+export type { CacheEntries };

@@ -4,6 +4,7 @@ import {
   type DMChannel,
   type NonThreadGuildBasedChannel,
 } from 'discord.js';
+
 import { cache, type CacheEntries } from '../core/cache';
 
 type ChannelArrayCacheKey = Pick<
