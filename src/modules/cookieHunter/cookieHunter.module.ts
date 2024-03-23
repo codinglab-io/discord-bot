@@ -24,21 +24,42 @@ export const cookieHunter = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('disable').setDescription('Disable the cookie hunt in the channel'),
         )
+        .addSubcommand((subcommand) =>
+          subcommand.setName('add-daily-log').setDescription('Add daily log to the channel'),
+        )
+        .addSubcommand((subcommand) =>
+          subcommand.setName('remove-daily-log').setDescription('Add daily log to the channel'),
+        )
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .toJSON(),
       handler: {
-        start: (interaction) => startHunting(interaction.client),
-        enable: (interaction) =>
+        'start': (interaction) => startHunting(interaction.client),
+        'enable': (interaction) =>
           addChannelInCache(interaction, 'Cookie Hunter', 'cookieHunterChannels'),
-        disable: (interaction) =>
+        'disable': (interaction) =>
           removeChannelFromChache(interaction, 'Cookie Hunter', 'cookieHunterChannels'),
+        'add-daily-log': (interaction) =>
+          addChannelInCache(
+            interaction,
+            'Cookie Hunter Daily logs',
+            'cookieHunterDailyLogChannels',
+          ),
+        'remove-daily-log': (interaction) =>
+          removeChannelFromChache(
+            interaction,
+            'Cookie Hunter Daily logs',
+            'cookieHunterDailyLogChannels',
+          ),
       },
     },
   ],
   eventHandlers: () => ({
     ready: startHunting,
     messageReactionAdd: countCookies,
-    channelDelete: (channel) => cleanCacheOnChannelDelete(channel, 'cookieHunterChannels'),
+    channelDelete: async (channel) => {
+      cleanCacheOnChannelDelete(channel, 'cookieHunterChannels');
+      cleanCacheOnChannelDelete(channel, 'cookieHunterDailyLogChannels');
+    },
   }),
   intents: ['Guilds'],
 });

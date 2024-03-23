@@ -4,12 +4,17 @@ import {
   type DMChannel,
   type NonThreadGuildBasedChannel,
 } from 'discord.js';
-import { cache } from '../core/cache';
+import { cache, type CacheEntries } from '../core/cache';
+
+type ChannelArrayCacheKey = Pick<
+  CacheEntries,
+  'quoiFeurChannels' | 'cookieHunterChannels' | 'cookieHunterDailyLogChannels'
+>;
 
 export const addChannelInCache = async (
   interaction: ChatInputCommandInteraction,
   featureName: string,
-  cacheKey: 'quoiFeurChannels' | 'cookieHunterChannels',
+  cacheKey: keyof ChannelArrayCacheKey,
 ) => {
   const { channel } = interaction;
   if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
@@ -30,7 +35,7 @@ export const addChannelInCache = async (
 export const removeChannelFromChache = async (
   interaction: ChatInputCommandInteraction,
   featureName: string,
-  cacheKey: 'quoiFeurChannels' | 'cookieHunterChannels',
+  cacheKey: keyof ChannelArrayCacheKey,
 ) => {
   const { channel } = interaction;
   if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
@@ -53,7 +58,7 @@ export const removeChannelFromChache = async (
 
 export const cleanCacheOnChannelDelete = async (
   channel: DMChannel | NonThreadGuildBasedChannel,
-  cacheKey: 'quoiFeurChannels' | 'cookieHunterChannels',
+  cacheKey: keyof ChannelArrayCacheKey,
 ) => {
   const { id } = channel;
   const channels = await cache.get(cacheKey, []);

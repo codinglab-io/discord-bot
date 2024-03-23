@@ -46,7 +46,7 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
 
   setTimeout(() => {
     cookieMessage.delete();
-    logDailyCount();
+    logDailyCount(client);
     // TODO : add the daily count into the global scoreboard
   }, ONE_MINUTE);
 };
@@ -69,9 +69,47 @@ export const countCookies = async (
   await cache.set('cookieHunterDailyCount', newDailyCount);
 };
 
-const logDailyCount = async () => {
+const logDailyCount = async (client: Client<true>) => {
+  const dailyLogChannels = await cache.get('cookieHunterDailyLogChannels', []);
+  if (!dailyLogChannels.length) return;
+
+  const currentHuntMessageId = await cache.get('currentHuntMessageId');
+  if (!currentHuntMessageId)
+    throw new Error('Lost the hunt message id before logging the daily count');
+
   const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
-  console.log(cookieHunterDailyCount);
-  // TODO : command to log the daily count in a channel in order to keep track of
-  // where and when the message is sent, and who reacted to it
+  const hunterCount = Object.keys(cookieHunterDailyCount).length - 1; // grandma is not a hunter
+
+  const resume = `**🍪 Résumé de la chasse aux cookies du jour**\n`;
+  const where = `Mamie a servi des cookies dans <#${currentHuntMessageId}>\n`;
+  const baseMessage = `${resume}${where}`;
+
+  const message =
+    hunterCount > 0
+      ? getHuntersFoundGrandmaMessage(baseMessage, cookieHunterDailyCount)
+      : `${baseMessage}**🍪 Personne n'a trouvé Mamie !**\nFaut dire qu'elle se cache bien (et que vous êtes nazes) !`;
+
+  for (const channelId of dailyLogChannels) {
+    const channel = await client.channels.fetch(channelId);
+    if (!channel || !channel.isTextBased()) return;
+    await channel.send(message);
+  }
+};
+
+const getHuntersFoundGrandmaMessage = (
+  baseMessage: string,
+  cookieHunterDailyCount: Record<string, number>,
+) => {
+  const cookieEatenCount = Object.values(cookieHunterDailyCount).reduce(
+    (acc, count) => acc + count,
+    0,
+  );
+  const dailyRank = Object.entries(cookieHunterDailyCount).sort((a, b) => b[1] - a[1]);
+
+  const totalEaten = `Nombre de cookies total mangés : ${cookieEatenCount}\n`;
+  const ranking = `**Classement des chasseurs de cookies du jour**\n`;
+  const usersRanking = dailyRank.map(([userId, count]) => `<@${userId}>: ${count}\n`).join('\n');
+  const lastWords = `Sacré bande de gourmands !`;
+
+  return `${baseMessage}${totalEaten}${ranking}${usersRanking}${lastWords}`;
 };

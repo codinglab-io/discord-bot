@@ -20,13 +20,14 @@ interface Cache<Entries extends Record<string, any>> {
   clear: () => Promise<void>;
 }
 
-interface CacheEntries {
+export interface CacheEntries {
   lobbyIds: string[];
   onDemandChannels: string[];
   quoiFeurChannels: string[];
   cookieHunterChannels: string[];
   currentHuntMessageId: string;
   cookieHunterDailyCount: Record<string, number>;
+  cookieHunterDailyLogChannels: string[];
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
