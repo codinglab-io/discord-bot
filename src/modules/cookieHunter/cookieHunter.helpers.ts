@@ -1,5 +1,6 @@
 import { CronJob } from 'cron';
 import type {
+  ChatInputCommandInteraction,
   Client,
   Message,
   MessageReaction,
@@ -32,6 +33,25 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
   await cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
 
   setTimeout(() => void dailyHuntEnd(client, cookieMessage), ONE_MINUTE);
+};
+
+const handleMilkReaction = async (
+  reaction: MessageReaction | PartialMessageReaction,
+  user: User | PartialUser,
+  isMilkJokerAlreadyFound: boolean,
+) => {
+  if (isMilkJokerAlreadyFound) {
+    await reaction.message.reply({
+      content: `Il est lent ce lait... 🥛`,
+      options: { ephemeral: true },
+    });
+  } else {
+    await cache.set('milkJokerUserId', user.id);
+    await reaction.message.reply({
+      content: `Premier arrivé, premier servit. Cul sec 🥛 !`,
+      options: { ephemeral: true },
+    });
+  }
 };
 
 const applyMilkJoker = async () => {
@@ -114,42 +134,6 @@ const dailyHuntEnd = async (client: Client<true>, cookieMessage: Message) => {
   await cache.delete('cookieHunterDailyCount');
 };
 
-export const countCookies = async (
-  reaction: MessageReaction | PartialMessageReaction,
-  user: User | PartialUser,
-) => {
-  const currentHuntMessageId = await cache.get('currentHuntMessageId');
-  if (
-    !currentHuntMessageId ||
-    reaction.message.id !== currentHuntMessageId ||
-    reaction.emoji.name === null ||
-    !['🍪', '🥛'].includes(reaction.emoji.name)
-  )
-    return;
-
-  const isMilkJokerAlreadyFound = await cache.get('milkJokerUserId');
-
-  if (reaction.emoji.name === '🥛') {
-    if (isMilkJokerAlreadyFound) {
-      reaction.message.reply({
-        content: `Il est lent ce lait... 🥛`,
-        options: { ephemeral: true },
-      });
-    } else {
-      await cache.set('milkJokerUserId', user.id);
-      reaction.message.reply({
-        content: `Premier arrivé, premier servit. Cul sec 🥛 !`,
-        options: { ephemeral: true },
-      });
-    }
-  }
-
-  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
-  const userDailyCount = cookieHunterDailyCount[user.id] || 0;
-  const newDailyCount = { ...cookieHunterDailyCount, [user.id]: userDailyCount + 1 };
-  await cache.set('cookieHunterDailyCount', newDailyCount);
-};
-
 export const startHunting = (client: Client<true>) => {
   console.log('Cookie hunter started');
   if (jobCurrentlyRunning !== null) {
@@ -163,4 +147,41 @@ export const startHunting = (client: Client<true>) => {
     true,
     'Europe/Paris',
   );
+};
+
+export const countCookies = async (
+  reaction: MessageReaction | PartialMessageReaction,
+  user: User | PartialUser,
+) => {
+  const currentHuntMessageId = await cache.get('currentHuntMessageId');
+  if (
+    !currentHuntMessageId ||
+    reaction.message.id !== currentHuntMessageId ||
+    reaction.emoji.name === null ||
+    !['🍪', '🥛'].includes(reaction.emoji.name)
+  )
+    return;
+
+  const isMilkJokerAlreadyFound = Boolean(await cache.get('milkJokerUserId'));
+
+  if (reaction.emoji.name === '🥛') {
+    await handleMilkReaction(reaction, user, isMilkJokerAlreadyFound);
+  }
+
+  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
+  const userDailyCount = cookieHunterDailyCount[user.id] || 0;
+  const newDailyCount = { ...cookieHunterDailyCount, [user.id]: userDailyCount + 1 };
+  await cache.set('cookieHunterDailyCount', newDailyCount);
+};
+
+export const displayScoreboard = async (interaction: ChatInputCommandInteraction) => {
+  const cookieHunterScoreboard = await cache.get('cookieHunterScoreboard', {});
+  const ranking = Object.entries(cookieHunterScoreboard)
+    .sort((a, b) => b[1] - a[1])
+    .map(([userId, count], index) => `${index + 1}. <@${userId}>: ${count}`)
+    .join('\n');
+
+  const message = `**🍪 Classement général des chasseurs de cookies**\n${ranking}`;
+
+  await interaction.reply(message);
 };

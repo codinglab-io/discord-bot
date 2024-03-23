@@ -6,7 +6,7 @@ import {
   cleanCacheOnChannelDelete,
   removeChannelFromChache,
 } from '../../helpers/channels';
-import { countCookies, startHunting } from './cookieHunter.helpers';
+import { countCookies, displayScoreboard, startHunting } from './cookieHunter.helpers';
 
 export const cookieHunter = createModule({
   name: 'cookieHunter',
@@ -30,6 +30,9 @@ export const cookieHunter = createModule({
         .addSubcommand((subcommand) =>
           subcommand.setName('remove-daily-log').setDescription('Add daily log to the channel'),
         )
+        .addSubcommand((subcommand) =>
+          subcommand.setName('scoreboard').setDescription('Show the scoreboard'),
+        )
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .toJSON(),
       handler: {
@@ -51,6 +54,7 @@ export const cookieHunter = createModule({
             'Cookie Hunter Daily logs',
             'cookieHunterDailyLogChannels',
           ),
+        'scoreboard': async (interaction) => displayScoreboard(interaction),
       },
     },
   ],
