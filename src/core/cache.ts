@@ -26,6 +26,7 @@ interface CacheEntries {
   quoiFeurChannels: string[];
   cookieHunterChannels: string[];
   currentHuntMessageId: string;
+  cookieHunterDailyCount: Record<string, number>;
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 

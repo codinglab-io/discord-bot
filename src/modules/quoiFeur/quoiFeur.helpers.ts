@@ -9,8 +9,7 @@ import {
   removeNonASCII,
   removePunctuation,
 } from '../../helpers/regex.helper';
-
-const ONE_MINUTE = 1 * 60 * 1000;
+import { ONE_MINUTE } from '../../helpers/timeConstants';
 
 const quoiDetectorRegex = /\bquoi\s*$/i;
 const endWithQuoi = (text: string) =>
