@@ -28,6 +28,7 @@ export interface CacheEntries {
   currentHuntMessageId: string;
   cookieHunterDailyCount: Record<string, number>;
   cookieHunterDailyLogChannels: string[];
+  cookieHunterScoreboard: Record<string, number>;
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 

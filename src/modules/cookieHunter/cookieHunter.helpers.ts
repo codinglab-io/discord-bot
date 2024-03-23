@@ -44,10 +44,12 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
   cookieMessage.react('🥛');
   cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
 
-  setTimeout(() => {
+  setTimeout(async () => {
     cookieMessage.delete();
-    logDailyCount(client);
-    // TODO : add the daily count into the global scoreboard
+    await logDailyCount(client);
+    await updateGlobalScoreboard();
+    await cache.delete('currentHuntMessageId');
+    await cache.delete('cookieHunterDailyCount');
   }, ONE_MINUTE);
 };
 
@@ -112,4 +114,13 @@ const getHuntersFoundGrandmaMessage = (
   const lastWords = `Sacré bande de gourmands !`;
 
   return `${baseMessage}${totalEaten}${ranking}${usersRanking}${lastWords}`;
+};
+
+const updateGlobalScoreboard = async () => {
+  const cookieHunterDailyCount = await cache.get('cookieHunterDailyCount', {});
+  const coockieHunterScoreboard = await cache.get('cookieHunterScoreboard', {});
+  for (const [userId, count] of Object.entries(cookieHunterDailyCount)) {
+    coockieHunterScoreboard[userId] = (coockieHunterScoreboard[userId] || 0) + count;
+  }
+  await cache.set('cookieHunterScoreboard', coockieHunterScoreboard);
 };
