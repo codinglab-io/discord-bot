@@ -27,10 +27,12 @@ const sendMessageInRandomChannel = async (client: Client<true>) => {
 
   if (!channelToSend || !channelToSend.isTextBased()) return;
   const cookieMessage = await channelToSend.send('**👵 Qui veut des cookies ?**');
-  await cache.set('currentHuntMessageId', cookieMessage.id);
-  await cache.set('cookieHunterDailyCount', {});
-  await cookieMessage.react('🥛');
-  await cookieMessage.react('🍪'); // 1 point for grandma here, she beats everyone who doesn't find her
+  await Promise.all([
+    cache.set('currentHuntMessageId', cookieMessage.id),
+    cache.set('cookieHunterDailyCount', {}),
+    cookieMessage.react('🥛'),
+    cookieMessage.react('🍪'), // 1 point for grandma here, she beats everyone who doesn't find her
+  ]);
   setTimeout(() => void dailyHuntEnd(client, cookieMessage), ONE_MINUTE);
 };
 
@@ -87,7 +89,7 @@ const logDailyCount = async (client: Client<true>) => {
 
   for (const channelId of dailyLogChannels) {
     const channel = await client.channels.fetch(channelId);
-    if (!channel || !channel.isTextBased()) return;
+    if (!channel || !channel.isTextBased()) continue;
     await channel.send(message);
   }
 };
@@ -103,15 +105,18 @@ const getHuntersFoundGrandmaMessage = (
   );
   const dailyRank = Object.entries(cookieHunterDailyCount).sort((a, b) => b[1] - a[1]);
 
-  const totalEaten = `Nombre de cookies total mangés : ${cookieEatenCount}\n`;
-  const ranking = `**Classement des chasseurs de cookies du jour**\n`;
-  const usersRanking = dailyRank.map(([userId, count]) => `<@${userId}>: ${count}`).join('\n');
-  const milkJoker = milkJokerUserId
-    ? `\n<@${milkJokerUserId}> a accompagné ses cookies d'un grand verre de lait 🥛`
-    : '';
-  const lastWords = `\nSacré bande de gourmands !`;
-
-  return `${baseMessage}${totalEaten}${ranking}${usersRanking}${milkJoker}${lastWords}`;
+  return [
+    baseMessage,
+    `Nombre de cookies total mangés : ${cookieEatenCount}`,
+    `**Classement des chasseurs de cookies du jour**`,
+    dailyRank.map(([userId, count]) => `<@${userId}>: ${count}`).join('\n'),
+    milkJokerUserId
+      ? `<@${milkJokerUserId}> a accompagné ses cookies d'un grand verre de lait 🥛`
+      : null,
+    `Sacré bande de gourmands !`,
+  ]
+    .filter(Boolean)
+    .join('\n');
 };
 
 const updateGlobalScoreboard = async () => {
@@ -128,9 +133,11 @@ const dailyHuntEnd = async (client: Client<true>, cookieMessage: Message) => {
   await applyMilkJoker();
   await logDailyCount(client);
   await updateGlobalScoreboard();
-  await cache.delete('milkJokerUserId');
-  await cache.delete('currentHuntMessageId');
-  await cache.delete('cookieHunterDailyCount');
+  await Promise.all([
+    cache.delete('milkJokerUserId'),
+    cache.delete('currentHuntMessageId'),
+    cache.delete('cookieHunterDailyCount'),
+  ]);
 };
 
 export const startHunting = (client: Client<true>) => {

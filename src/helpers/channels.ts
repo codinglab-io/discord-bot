@@ -12,9 +12,11 @@ type ChannelArrayCacheKey = Pick<
   'quoiFeurChannels' | 'cookieHunterChannels' | 'cookieHunterDailyLogChannels'
 >;
 
+type FeatureName = 'Cookie Hunter' | 'Cookie Hunter Daily logs' | 'Quoi-Feur';
+
 export const addChannelInCache = async (
   interaction: ChatInputCommandInteraction,
-  featureName: string,
+  featureName: FeatureName,
   cacheKey: keyof ChannelArrayCacheKey,
 ) => {
   const { channel } = interaction;
@@ -35,7 +37,7 @@ export const addChannelInCache = async (
 
 export const removeChannelFromChache = async (
   interaction: ChatInputCommandInteraction,
-  featureName: string,
+  featureName: FeatureName,
   cacheKey: keyof ChannelArrayCacheKey,
 ) => {
   const { channel } = interaction;
