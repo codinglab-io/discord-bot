@@ -2,11 +2,11 @@ import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 
 import { createModule } from '../../core/createModule';
 import {
-  addQuoiFeurToChannel,
+  addChannelInCache,
   cleanCacheOnChannelDelete,
-  reactOnEndWithQuoi,
-  removeQuoiFeurFromChannel,
-} from './quoiFeur.helpers';
+  removeChannelFromChache,
+} from '../../helpers/channels';
+import { reactOnEndWithQuoi } from './quoiFeur.helpers';
 
 export const quoiFeur = createModule({
   name: 'quoiFeur',
@@ -24,14 +24,15 @@ export const quoiFeur = createModule({
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels)
         .toJSON(),
       handler: {
-        enable: addQuoiFeurToChannel,
-        disable: removeQuoiFeurFromChannel,
+        enable: (interaction) => addChannelInCache(interaction, 'Quoi-Feur', 'quoiFeurChannels'),
+        disable: (interaction) =>
+          removeChannelFromChache(interaction, 'Quoi-Feur', 'quoiFeurChannels'),
       },
     },
   ],
   eventHandlers: () => ({
     messageCreate: reactOnEndWithQuoi,
-    channelDelete: cleanCacheOnChannelDelete,
+    channelDelete: (channel) => cleanCacheOnChannelDelete(channel, 'quoiFeurChannels'),
   }),
   intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
 });
