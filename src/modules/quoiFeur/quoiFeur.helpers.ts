@@ -1,10 +1,4 @@
-import {
-  ChannelType,
-  type ChatInputCommandInteraction,
-  DMChannel,
-  type Message,
-  type NonThreadGuildBasedChannel,
-} from 'discord.js';
+import { ChannelType, type Message } from 'discord.js';
 
 import { cache } from '../../core/cache';
 import type { Emoji } from '../../helpers/emoji';
@@ -15,8 +9,7 @@ import {
   removeNonASCII,
   removePunctuation,
 } from '../../helpers/regex.helper';
-
-const ONE_MINUTE = 1 * 60 * 1000;
+import { ONE_MINUTE } from '../../helpers/timeConstants';
 
 const quoiDetectorRegex = /\bquoi\s*$/i;
 const endWithQuoi = (text: string) =>
@@ -60,54 +53,4 @@ export const reactOnEndWithQuoi = async (message: Message) => {
   }
 
   await reactWithFeur(message);
-};
-
-export const addQuoiFeurToChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
-
-  const channels = await cache.get('quoiFeurChannels', []);
-  if (channels.includes(channel.id)) {
-    await interaction.reply({
-      content: 'Quoi-feur is already enabled in this channel',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  await cache.set('quoiFeurChannels', [...channels, channel.id]);
-  await interaction.reply({ content: 'Quoi-feur enabled in this channel', ephemeral: true });
-};
-
-export const removeQuoiFeurFromChannel = async (interaction: ChatInputCommandInteraction) => {
-  const { channel } = interaction;
-  if (!channel || !channel.isTextBased() || channel.type !== ChannelType.GuildText) return;
-
-  const channels = await cache.get('quoiFeurChannels', []);
-  if (!channels.includes(channel.id)) {
-    await interaction.reply({
-      content: 'Quoi-feur is not enabled in this channel',
-      ephemeral: true,
-    });
-    return;
-  }
-
-  await cache.set(
-    'quoiFeurChannels',
-    channels.filter((channelId) => channelId !== channel.id),
-  );
-  await interaction.reply({ content: 'Quoi-feur disabled in this channel', ephemeral: true });
-};
-
-export const cleanCacheOnChannelDelete = async (
-  channel: DMChannel | NonThreadGuildBasedChannel,
-) => {
-  const { id } = channel;
-  const channels = await cache.get('quoiFeurChannels', []);
-  if (!channels.includes(id)) return;
-
-  await cache.set(
-    'quoiFeurChannels',
-    channels.filter((channelId) => channelId !== id),
-  );
 };

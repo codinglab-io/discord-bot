@@ -24,6 +24,12 @@ interface CacheEntries {
   lobbyIds: string[];
   onDemandChannels: string[];
   quoiFeurChannels: string[];
+  cookieHunterChannels: string[];
+  currentHuntMessageId: string;
+  cookieHunterDailyCount: Record<string, number>;
+  cookieHunterDailyLogChannels: string[];
+  cookieHunterScoreboard: Record<string, number>;
+  milkJokerUserId: string;
   recurringMessages: { id: string; channelId: string; frequency: Frequency; message: string }[];
 }
 
@@ -65,3 +71,4 @@ class CacheImpl implements Cache<CacheEntries> {
 }
 
 export const cache = new CacheImpl();
+export type { CacheEntries };
