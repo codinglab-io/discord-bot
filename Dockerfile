@@ -7,7 +7,8 @@ RUN apk add --no-cache python3 make g++
 COPY package.json pnpm-lock.yaml ./
 RUN corepack enable
 
-RUN pnpm fetch
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store/v3 \
+    pnpm fetch
 
 FROM base as build
 
@@ -16,16 +17,17 @@ WORKDIR /app
 COPY tsup.config.ts  ./
 COPY src ./src
 
-RUN pnpm install --frozen-lockfile --offline && \
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store/v3 \
+    pnpm install --frozen-lockfile --offline && \
     pnpm run build
 
 FROM base as production-dependencies
 
 WORKDIR /app
 
-RUN pnpm prune --prod && \
-    pnpm install --production --frozen-lockfile --offline && \
-    pnpm store prune
+RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store/v3 \
+    pnpm prune --prod && \
+    pnpm install --production --frozen-lockfile --offline
 
 FROM node:22.0.0-alpine as application
 
