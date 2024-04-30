@@ -1,4 +1,4 @@
-import { constantCase } from 'constant-case';
+import { constantCase } from 'change-case';
 
 import type { CreatedModule, ModuleCreator } from './createModule';
 

@@ -1,7 +1,7 @@
-import { paramCase } from 'param-case';
+import { kebabCase } from 'change-case';
 
 export const normalizeName = (name: string): string =>
-  paramCase(
+  kebabCase(
     name
       // Normalize Unicode characters
       .normalize('NFD')
