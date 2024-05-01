@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsup-node src/main.ts",
-    "dev": "tsup-node src/main.ts --watch . --watch .env --watch pnpm-lock.yaml --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
+    "dev": "tsup-node src/main.ts --watch src --watch .env --watch pnpm-lock.yaml --on-success \"clear && node --enable-source-maps -r dotenv/config dist/main.js\"",
     "test": "vitest",
     "check:lint": "eslint src --report-unused-disable-directives",
     "check:format": "prettier -c src",
