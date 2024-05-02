@@ -1,3 +1,6 @@
+import { nanoid } from 'nanoid';
+import { z } from 'zod';
+
 const baseUrl = 'https://www.summarize.tech/api/summary';
 
 // Example usage:
@@ -5,37 +8,32 @@ const baseUrl = 'https://www.summarize.tech/api/summary';
 // const summary = await getVideoSummary(videoUrl);
 // console.log({ summary });
 
-type SummaryResponse = {
-  rollups: Record<number, SummaryChunk>;
-  title: string;
-};
+const summarySchema = z.object({
+  title: z.string(),
+  rollups: z.record(
+    z.coerce.number().int().gte(0),
+    z.object({
+      children: z.record(z.coerce.number().int().gte(0), z.string()),
+      summary: z.object({
+        before: z.string(),
+        keyword: z.string(),
+        after: z.string(),
+      }),
+    }),
+  ),
+});
 
-type SummaryChunk = {
-  children: Record<number, string>;
-  summary: string;
-};
-
-const makeId = (length: number) => {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-  const charactersLength = characters.length;
-
-  for (let i = 0; i < length; i++)
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-
-  return result;
-};
-
-export const getVideoSummary = async (videoUrl: string) => {
-  return await fetch(baseUrl, {
+export const getVideoSummary = async (videoUrl: string) =>
+  fetch(baseUrl, {
     method: 'POST',
-    body: JSON.stringify({ url: videoUrl, deviceId: makeId(21) }),
+    body: JSON.stringify({ url: videoUrl, deviceId: nanoid(21) }),
     headers: { 'content-type': 'application/json' },
   })
     .then((res) => res.json())
-    .then((res) =>
-      (Object.values((res as SummaryResponse).rollups) ?? [])
-        .map((chunk) => chunk.summary)
-        .join(' '),
+    .then((json) => summarySchema.parse(json))
+    .then((result) =>
+      Object.values(result.rollups)
+        .map(({ summary }) => summary.before + summary.keyword + summary.after)
+        .join('\n')
+        .replace(/\. /g, '.\n'),
     );
-};
