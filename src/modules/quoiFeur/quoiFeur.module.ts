@@ -5,6 +5,7 @@ import {
   addQuoiFeurToChannel,
   cleanCacheOnChannelDelete,
   reactOnEndWithQuoi,
+  reactOnEndWithQuoiUpdated,
   removeQuoiFeurFromChannel,
 } from './quoiFeur.helpers';
 
@@ -31,6 +32,7 @@ export const quoiFeur = createModule({
   ],
   eventHandlers: () => ({
     messageCreate: reactOnEndWithQuoi,
+    messageUpdate: reactOnEndWithQuoiUpdated,
     channelDelete: cleanCacheOnChannelDelete,
   }),
   intents: ['Guilds', 'GuildMessages', 'MessageContent', 'GuildMessageReactions'],
