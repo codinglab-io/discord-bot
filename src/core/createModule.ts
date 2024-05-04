@@ -1,4 +1,4 @@
-import { constantCase } from 'constant-case';
+import { constantCase } from 'change-case';
 import type { ClientEvents, ClientOptions } from 'discord.js';
 import type { ZodTypeAny } from 'zod';
 import { z } from 'zod';
