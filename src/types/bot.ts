@@ -4,7 +4,7 @@ import type {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from 'discord.js';
 
-type slashCommandHandler = (
+type SlashCommandHandler = (
   interaction: ChatInputCommandInteraction<'cached' | 'raw'>,
 ) => Promise<void>;
 
@@ -14,5 +14,5 @@ export type EventHandler<T extends keyof ClientEvents = keyof ClientEvents> = (
 
 export type BotCommand = {
   schema: RESTPostAPIChatInputApplicationCommandsJSONBody;
-  handler: slashCommandHandler | Record<string, slashCommandHandler>;
+  handler: SlashCommandHandler | Record<string, SlashCommandHandler>;
 };
