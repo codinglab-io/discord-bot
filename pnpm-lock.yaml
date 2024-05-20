@@ -64,8 +64,8 @@ importers:
         specifier: 12.1.0
         version: 12.1.0(eslint@8.57.0)
       eslint-plugin-sonarjs:
-        specifier: 0.25.1
-        version: 0.25.1(eslint@8.57.0)
+        specifier: 1.0.3
+        version: 1.0.3(eslint@8.57.0)
       eslint-plugin-unused-imports:
         specifier: 3.2.0
         version: 3.2.0(@typescript-eslint/eslint-plugin@7.9.0(@typescript-eslint/parser@7.9.0(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)(typescript@5.4.5))(eslint@8.57.0)
@@ -834,11 +834,11 @@ packages:
     peerDependencies:
       eslint: '>=5.0.0'
 
-  eslint-plugin-sonarjs@0.25.1:
-    resolution: {integrity: sha512-5IOKvj/GMBNqjxBdItfotfRHo7w48496GOu1hxdeXuD0mB1JBlDCViiLHETDTfA8pDAVSBimBEQoetRXYceQEw==}
+  eslint-plugin-sonarjs@1.0.3:
+    resolution: {integrity: sha512-6s41HLPYPyDrp+5+7Db5yFYbod6h9pC7yx+xfcNwHRcLe1EZwbbQT/tdOAkR7ekVUkNGEvN3GmYakIoQUX7dEg==}
     engines: {node: '>=16'}
     peerDependencies:
-      eslint: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
+      eslint: ^8.0.0 || ^9.0.0
 
   eslint-plugin-unused-imports@3.2.0:
     resolution: {integrity: sha512-6uXyn6xdINEpxE1MtDjxQsyXB37lfyO2yKGVVgtD7WEWQGORSOZjgrD6hBhvGv4/SO+TOlS+UnC6JppRqbuwGQ==}
@@ -2731,7 +2731,7 @@ snapshots:
     dependencies:
       eslint: 8.57.0
 
-  eslint-plugin-sonarjs@0.25.1(eslint@8.57.0):
+  eslint-plugin-sonarjs@1.0.3(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
 

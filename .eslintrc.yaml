@@ -7,7 +7,7 @@ parserOptions:
 extends:
   - plugin:@typescript-eslint/recommended
   - plugin:@typescript-eslint/recommended-requiring-type-checking
-  - plugin:sonarjs/recommended
+  - plugin:sonarjs/recommended-legacy
   - plugin:import/typescript
 
 plugins:
@@ -15,6 +15,7 @@ plugins:
   - import
   - only-error
   - unused-imports
+  - sonarjs
 
 settings:
   import/resolver:
