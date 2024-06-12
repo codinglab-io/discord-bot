@@ -1,4 +1,4 @@
-FROM node:22.2.0-alpine as base
+FROM node:22.3.0-alpine as base
 
 WORKDIR /app
 
@@ -29,7 +29,7 @@ RUN --mount=type=cache,id=pnpm,target=/root/.local/share/pnpm/store/v3 \
     pnpm prune --prod && \
     pnpm install --production --frozen-lockfile --offline
 
-FROM node:22.2.0-alpine as application
+FROM node:22.3.0-alpine as application
 
 WORKDIR /app
 
