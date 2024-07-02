@@ -22,13 +22,13 @@
     "discord.js": "14.15.3",
     "keyv": "4.5.4",
     "nanoid": "5.0.7",
-    "open-graph-scraper": "6.5.2",
+    "open-graph-scraper": "6.6.2",
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@types/node": "20.14.2",
-    "@typescript-eslint/eslint-plugin": "7.13.0",
-    "@typescript-eslint/parser": "7.13.0",
+    "@types/node": "20.14.9",
+    "@typescript-eslint/eslint-plugin": "7.15.0",
+    "@typescript-eslint/parser": "7.15.0",
     "dotenv": "16.4.5",
     "eslint": "8.57.0",
     "eslint-import-resolver-typescript": "3.6.1",
@@ -40,12 +40,12 @@
     "npm-run-all2": "6.2.0",
     "prettier": "3.3.2",
     "tsup": "8.1.0",
-    "type-fest": "4.20.0",
-    "typescript": "5.4.5",
+    "type-fest": "4.21.0",
+    "typescript": "5.5.3",
     "vitest": "1.6.0"
   },
-  "packageManager": "pnpm@9.3.0",
+  "packageManager": "pnpm@9.4.0",
   "engines": {
-    "node": "22.3.0"
+    "node": "22.4.0"
   }
 }
