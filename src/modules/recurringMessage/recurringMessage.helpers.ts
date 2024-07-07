@@ -51,8 +51,7 @@ export const createRecurringMessage = (
     () => {
       const channel = client.channels.cache.get(channelId);
       if (!channel || !channel.isTextBased()) {
-        console.error(`Channel ${channelId} not found`);
-        return;
+        throw new Error(`Channel ${channelId} not found`);
       }
       void channel.send(message);
     },

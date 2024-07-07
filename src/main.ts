@@ -41,4 +41,4 @@ if (!client.isReady()) {
 
 await loadModules(client, createdModules);
 
-console.log('Bot started.');
+coreLogger.info('Bot fully started.');
