@@ -15,7 +15,7 @@ on:
 jobs:
   validate-pr-title:
     name: Validate PR title
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: amannn/action-semantic-pull-request@v5
         env:
@@ -23,7 +23,7 @@ jobs:
 
   integration:
     name: Continuous integration checks
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -62,7 +62,7 @@ jobs:
         run: pnpm test
 
       - name: Build Docker image for project
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: false
           cache-from: type=gha
