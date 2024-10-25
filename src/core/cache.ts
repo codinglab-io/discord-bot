@@ -1,5 +1,5 @@
-import '@keyv/redis';
-
+import KeyvRedis from '@keyv/redis';
+import Redis from 'ioredis';
 import Keyv from 'keyv';
 
 import type { Frequency } from '../modules/recurringMessage/recurringMessage.helpers';
@@ -28,7 +28,9 @@ interface CacheEntries {
 }
 
 class CacheImpl implements Cache<CacheEntries> {
-  private readonly backend = new Keyv(env.redisUrl);
+  private readonly redis = new Redis(env.redisUrl, { tls: { rejectUnauthorized: false } });
+
+  private readonly backend = new Keyv({ store: new KeyvRedis(this.redis) });
 
   public get<Key extends keyof CacheEntries>(key: Key): Promise<CacheEntries[Key] | undefined>;
   public get<Key extends keyof CacheEntries>(
