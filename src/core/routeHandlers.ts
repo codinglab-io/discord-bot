@@ -2,6 +2,7 @@ import type { Client, ClientEvents } from 'discord.js';
 
 import type { EventHandler } from '../types/bot';
 import type { CreatedModule } from './createModule';
+import { coreLogger } from './logger';
 
 const handleEvent = async (
   eventHandlers: EventHandler[],
