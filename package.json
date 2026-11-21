@@ -24,7 +24,7 @@
     "keyv": "4.5.4",
     "nanoid": "5.0.7",
     "open-graph-scraper": "6.5.2",
-    "zod": "3.23.8"
+    "zod": "4.6.6"
   },
   "devDependencies": {
     "@types/node": "20.14.2",
